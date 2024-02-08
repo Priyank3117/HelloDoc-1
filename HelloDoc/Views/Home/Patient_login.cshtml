@@ -1,4 +1,4 @@
-﻿
+﻿@model DAL.DataModels.AspNetUser;
 @{
     ViewData["Title"] = "Patient_login";
     Layout = null;
@@ -48,19 +48,24 @@
 
                     <h1>Login to your account</h1>
 
+                    <form asp-controller="Home" asp-action="Patient_login" method="post">
                     <div class="inp">
-                        <div class="form-floating d-flex mb-3 border rounded inps">
-                            <input type="email"
+                        <div class="form-floating d-flex  border rounded inps">
+                            <input type="text"
+                                       asp-for="Email"
                                    class="form-control border-0 no-border"
                                    id="floatingInput"
                                    placeholder="name@example.com" />
                             <img src="../images/user_circle.svg"
                                  alt=""
                                  class="pe-3 bg-white" />
-                            <label for="floatingInput">Username</label>
+                            <label for="floatingInput">Email</label>
+                    
                         </div>
-                        <div class="form-floating d-flex mb-3 border rounded">
+                          <span asp-validation-for="Email" class="text-danger d-block text-start"></span>
+                        <div class="form-floating d-flex  mt-3 border rounded">
                             <input type="password"
+                                     asp-for="PasswordHash"
                                    class="form-control border-0 no-border"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -69,8 +74,11 @@
                                  class="pe-3 bg-white" />
                             <label for="floatingPassword">Password</label>
                         </div>
+                            <span asp-validation-for="PasswordHash" class="text-danger  d-block  text-start"></span>
+
                     </div>
-                    <button class="btn btn-info text-white" type="button">Login</button>
+                    <button class="btn btn-info text-white" type="submit">Login</button>
+                    </form>
                     <a asp-action="Patient_ResetPassword" style="text-decoration:none"> <div class="text-center text-info fs-5 mt-3">Forget password? </div></a>
                 </div>
 

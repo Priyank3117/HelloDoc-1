@@ -1,10 +1,10 @@
-﻿using HelloDoc.DataContext;
-using HelloDoc.DataModels;
-using HelloDoc.Models;
+﻿using HelloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-
+using DAL.DataContext;
+using DAL.DataModels;
+using System.Drawing;
 using System.Security.Principal;
 
 namespace HelloDoc.Controllers
@@ -14,6 +14,7 @@ namespace HelloDoc.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
 
+        public object AspNetUsers { get; private set; }
 
         public HomeController(ApplicationDbContext context)
         {
@@ -74,34 +75,34 @@ namespace HelloDoc.Controllers
             return View();
         }
 
-
-        
-
         [HttpPost]
-
-        public IActionResult Create_Patient(Region a)
+        [ValidateAntiForgeryToken]
+        public IActionResult Patient_login(AspNetUser user)
         {
-            if (a != null)
-            {
-                // Check if the region already exists in the database
-                var existingRegion = _context.Regions.FirstOrDefault(r => r.RegionId == a.RegionId);
 
-                if (existingRegion == null)
+            var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == user.Email);
+            var pwd = _context.AspNetUsers.FirstOrDefault(m => m.PasswordHash == user.PasswordHash);
+
+            if (Email == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                if (Email.PasswordHash == user.PasswordHash)
                 {
-                    // Region does not exist, so add it to the database
-                    _context.Regions.Add(a);
-                    _context.SaveChanges();
+                    return RedirectToAction(nameof(Privacy));
+
                 }
                 else
                 {
-                    // Region already exists, handle accordingly (e.g., return a message)
-                    // You can customize this part based on your application's requirements
-                    return BadRequest("Region already exists in the database.");
+                    return NotFound();
                 }
             }
 
-            return View();
         }
+
+        
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
