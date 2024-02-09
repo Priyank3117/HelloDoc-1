@@ -42,11 +42,7 @@ namespace HelloDoc.Controllers
         {
             return View();
         }
-          public IActionResult  Patient_login()
-
-        {
-            return View();
-        }
+          
           public IActionResult  Patient_ResetPassword()
 
         {
@@ -77,33 +73,7 @@ namespace HelloDoc.Controllers
         }
 
         //----------------------------------------------------------------------------
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Patient_login(AspNetUser user)
-        {
-
-            var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == user.Email);
-            var pwd = _context.AspNetUsers.FirstOrDefault(m => m.PasswordHash == user.PasswordHash);
-
-          
-            
-           if(ModelState.IsValid)
-            {
-
-                if (Email != null && Email.PasswordHash == user.PasswordHash)
-                {
-                    return RedirectToAction(nameof(Privacy));
-
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            
-           return View();
-
-        }
+        
 
 
         //-------------------------------login ------------------------------------------
