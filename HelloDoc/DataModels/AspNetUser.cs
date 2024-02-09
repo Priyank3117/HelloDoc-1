@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAL.DataModels;
+namespace HelloDoc.DataModels;
 
 public partial class AspNetUser
 {

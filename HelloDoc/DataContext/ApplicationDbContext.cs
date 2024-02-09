@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using DAL.DataModels;
+using HelloDoc.DataModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAL.DataContext;
+namespace HelloDoc.DataContext;
 
 public partial class ApplicationDbContext : DbContext
 {
@@ -254,9 +254,6 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<Request>(entity =>
         {
             entity.HasKey(e => e.RequestId).HasName("Request_pkey");
-
-            entity.Property(e => e.RequestTypeId).HasDefaultValueSql("1");
-            entity.Property(e => e.Status).HasDefaultValueSql("1");
 
             entity.HasOne(d => d.Physician).WithMany(p => p.Requests).HasConstraintName("Request_PhysicianId_fkey");
 

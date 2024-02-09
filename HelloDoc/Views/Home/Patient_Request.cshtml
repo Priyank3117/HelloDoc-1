@@ -1,4 +1,6 @@
 ﻿
+
+@model DAL.ViewModels.Patient
 @{
     ViewData["Title"] = "Patient_Request";
 }
@@ -45,10 +47,13 @@
                 <div class="container bg-white ps-3 shadow-lg">
                 <h4 class="pt-3 mb-4">Patient Information</h4>
 
+            <form asp-controller="Home" asp-action="Patient_Request" method="post">
+
                 <div class="row">
                     <div class="col col-12 mb-3">
                         <div class="form-floating">
                             <textarea class="form-control"
+                           
                                       placeholder="Leave a comment here"
                                       id="floatingTextarea2"
                                       style="height: 100px"></textarea>
@@ -60,6 +65,7 @@
                     <div class="col col-12 col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text"
+                                    asp-for="FirstName"
                                    class="form-control"
                                    id="floatingInput"
                                    placeholder="name@example.com" />
@@ -69,6 +75,7 @@
                     <div class="col col-12 col-sm-6 mb-3">
                         <div class="form-floating">
                             <input type="text"
+                                           asp-for="LastName"
                                    class="form-control"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -80,6 +87,7 @@
                     <div class="col col-sm-6 col-12">
                         <div class="form-floating">
                             <input type="date"
+                                           asp-for="BirthDate"
                                    class="form-control"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -94,6 +102,7 @@
                     <div class="col col-sm-6 col-12">
                         <div class="form-floating mb-3">
                             <input type="email"
+                                           asp-for="Email"
                                    class="form-control"
                                    id="floatingInput"
                                    placeholder="name@example.com" />
@@ -103,6 +112,7 @@
                     <div class="col col-sm-6 col-12">
                         <div class="form-floating mb-3">
                             <input type="tel"
+                                           asp-for="PhoneNumber"
                                    class="form-control"
                                    id="floatingInput"
                                    placeholder="name@example.com" />
@@ -117,6 +127,7 @@
                     <div class="col col-sm-6 col-12">
                         <div class="form-floating mb-3">
                             <input type="text"
+                                           asp-for="Street"
                                    class="form-control"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -126,6 +137,7 @@
                     <div class="col col-sm-6 col-12">
                         <div class="form-floating mb-3">
                             <input type="text"
+                                asp-for="City"
                                    class="form-control"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -137,6 +149,7 @@
                     <div class="col col-sm-6 col-12">
                         <div class="form-floating mb-3">
                             <input type="text"
+                                asp-for="State"
                                    class="form-control"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -146,6 +159,7 @@
                     <div class="col col-sm-6 col-12">
                         <div class="form-floating mb-3">
                             <input type="text"
+                                           asp-for="ZipCode"
                                    class="form-control"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -204,10 +218,12 @@
        
                 <div class="row mb-3 pb-3">
                     <div class="d-grid gap-2 d-flex justify-content-end mt-4">
-                        <button class="btn btn-info me-md-2 text-white" type="button">Submit</button>
+                        <button class="btn btn-info me-md-2 text-white" type="submit">Submit</button>
                         <button class="btn btn-outline-info" type="button">Cancle</button>
                     </div>
                 </div>
+
+                </form>
             </div>
         </div>
     </div>
