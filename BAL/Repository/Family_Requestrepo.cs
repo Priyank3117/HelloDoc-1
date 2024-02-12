@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BAL.Repository
 {
-    public class Family_Requestrepo : IOther_Request
+    public class Family_Requestrepo : IFamily_Request
     {
 
         private readonly ApplicationDbContext _context;
@@ -33,6 +33,7 @@ namespace BAL.Repository
 
             _context.Requests.Add(request);
             _context.SaveChanges();
+
             //patient data will be added to the request client
             RequestClient requestClient = new RequestClient();
 

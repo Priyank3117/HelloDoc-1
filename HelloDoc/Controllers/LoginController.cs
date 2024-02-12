@@ -33,17 +33,17 @@ namespace HelloDoc.Controllers
 
                 if (Email != null && Email.PasswordHash == user.PasswordHash)
                 {
-                    return RedirectToAction("Privacy","Home");
+                    return RedirectToAction("Privacy", "Home");
 
                 }
                 else
                 {
                     return NotFound();
                 }
+
+                
             }
-
-            return View(user);
-
+            return View();
         }
     }
 

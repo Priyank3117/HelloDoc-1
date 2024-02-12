@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BAL.Interface
 {
-    public interface IOther_Request
+    public interface IFamily_Request
     {
         public void AddData(Other_Request Req);
     }

@@ -18,9 +18,12 @@ h1 {
     margin-right: auto;
 }
 
-.logo {
-    margin-top: 0;
+
+img#img-logo {
+    height: 3rem;
 }
+
+  
 /* ---------------------------- */
 
 .btn {

@@ -38,7 +38,7 @@
             </div>
 
             <!-- -----------------form-------------------------- -->
-            <form>
+            <form asp-controller="Request" asp-action="Concierge_Request" method="post">
             <div class="container-fluid bg-body-secondary" style="background-color:#E9ECEF">
                 <div class="container bg-white ps-3 shadow-lg">
 
@@ -94,11 +94,11 @@
                         <div class="col col-sm-6 col-12">
                             <div class="form-floating">
                                 <input type="text"
-                                    asp-for="Relation"
+                                    asp-for="HotelName"
                                        class="form-control"
                                        id="floatingPassword"
                                        placeholder="Password" />
-                                <label for="floatingPassword">Relation With Patient</label>
+                                <label for="floatingPassword">Hotel_Name</label>
                             </div>
                         </div>
                     </div>

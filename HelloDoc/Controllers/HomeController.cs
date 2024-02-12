@@ -50,11 +50,7 @@ namespace HelloDoc.Controllers
             return View();
         } 
        
-       public IActionResult  Concierge_Request()
-
-        {
-            return View();
-        } 
+       
         public IActionResult  Business_Request()
 
         {

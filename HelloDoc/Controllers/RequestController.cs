@@ -12,14 +12,17 @@ namespace HelloDoc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IPatient_Request _request;
-        private readonly IOther_Request _other_Request;
+        private readonly IFamily_Request _other_Request;
+        private readonly IConcierge_Request _concierge;
 
 
-        public RequestController(ApplicationDbContext context,IPatient_Request patient_Request,IOther_Request other_Req)
+        public RequestController(ApplicationDbContext context,IPatient_Request patient_Request,IFamily_Request other_Req,
+            IConcierge_Request concierge)
         {
             _context = context;
             _request = patient_Request;
             _other_Request = other_Req;
+            _concierge = concierge; 
         }
 
 
@@ -55,6 +58,19 @@ namespace HelloDoc.Controllers
 
         {
             _other_Request.AddData(other_Reqs);
+            return View();
+        }
+
+        public IActionResult Concierge_Request()
+
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Concierge_Request(Other_Request other_Reqs)
+
+        {
+            _concierge.AddData(other_Reqs);
             return View();
         }
     }

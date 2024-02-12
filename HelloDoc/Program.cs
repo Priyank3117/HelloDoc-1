@@ -10,7 +10,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddScoped<IPatient_Request,Patient_Requestrepo>();
-builder.Services.AddScoped<IOther_Request,Family_Requestrepo>();
+builder.Services.AddScoped<IFamily_Request,Family_Requestrepo>();
+builder.Services.AddScoped<IConcierge_Request,Concierge_Requestrepo>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
