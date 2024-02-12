@@ -7,6 +7,7 @@ using DAL.DataModels;
 using System.Drawing;
 using System.Security.Principal;
 using DAL.ViewModels;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace HelloDoc.Controllers
 {
@@ -48,15 +49,8 @@ namespace HelloDoc.Controllers
         {
             return View();
         } 
-        public IActionResult  Patient_Request()
-
-        {
-            return View();
-        } public IActionResult  Family_Friend_Request()
-
-        {
-            return View();
-        } public IActionResult  Concierge_Request()
+       
+       public IActionResult  Concierge_Request()
 
         {
             return View();
@@ -72,118 +66,7 @@ namespace HelloDoc.Controllers
             return View();
         }
 
-        //----------------------------------------------------------------------------
-        
-
-
-        //-------------------------------login ------------------------------------------
-        //-------------------------------view model-------------------------------------------
-        [HttpPost]
-        public  IActionResult Patient_Request(Patient patient)
-        {
-            AspNetUser aspnetUser = new AspNetUser();
-            User user = new User();
-            Request request = new Request();   
-
-            var status = _context.Users.FirstOrDefault(User => User.Email == patient.Email);
-            RequestClient request_c = new RequestClient();    
-            var username = aspnetUser.UserName = patient.FirstName + ' ' + patient.LastName;
-
-
-            if (patient != null && status == null)
-            {
-                Guid id = Guid.NewGuid();
-                aspnetUser.AspNetUserId = id.ToString(); ;
-                aspnetUser.UserName = username;
-                aspnetUser.Email = patient.Email;
-                aspnetUser.PhoneNumber = patient.PhoneNumber;
-                aspnetUser.CreatedDate = DateTime.Now;
-
-                _context.AspNetUsers.Add(aspnetUser);
-                _context.SaveChanges();
-
-                user.AspNetUserId = aspnetUser.AspNetUserId;
-                user.FirstName = patient.FirstName;
-                user.LastName = patient.LastName;
-                user.Email = patient.Email;
-                user.Mobile = patient.PhoneNumber;
-                user.CreatedDate = DateTime.Now;
-                user.Street = patient.Street;
-                user.City = patient.City;
-                user.State = patient.State;
-                user.ZipCode = patient.ZipCode;
-                user.CreatedBy = patient.FirstName;
-                user.CreatedDate = DateTime.Now;
-
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                request.UserId = user.UserId;
-                request.FirstName = patient.FirstName;
-                request.LastName = patient.LastName;
-                request.Email = patient.Email;
-                request.PhoneNumber = patient.PhoneNumber;
-                request.CreatedDate = DateTime.Now;
-
-                _context.Requests.Add(request);
-                _context.SaveChanges();
-
-
-                request_c.RequestId = request.RequestId;
-                request_c.FirstName = patient.FirstName;
-                request_c.LastName = patient.LastName;
-                request_c.Email = patient.Email;
-                request_c.PhoneNumber = patient.PhoneNumber;
-                request_c.Street = patient.Street;
-                request_c.City = patient.City;
-                request_c.State = patient.State;
-                request_c.ZipCode = patient.ZipCode;
-
-
-
-
-                _context.RequestClients.Add(request_c);
-                _context.SaveChanges();
-
-            }
-            else {
-
-                request.UserId = status.UserId;
-                request.FirstName = patient.FirstName;
-                request.LastName = patient.LastName;
-                request.Email = patient.Email;
-                request.PhoneNumber = patient.PhoneNumber;
-                request.CreatedDate = DateTime.Now;
-
-                _context.Requests.Add(request);
-                _context.SaveChanges();
-
-
-                request_c.RequestId = request.RequestId;
-                request_c.FirstName = patient.FirstName;
-                request_c.LastName = patient.LastName;
-                request_c.Email = patient.Email;
-                request_c.PhoneNumber = patient.PhoneNumber;
-                request_c.Street = patient.Street;
-                request_c.City = patient.City;
-                request_c.State = patient.State;
-                request_c.ZipCode = patient.ZipCode;
-
-
-
-
-                _context.RequestClients.Add(request_c);
-                _context.SaveChanges();
-
-            }
-
-            return View();
-        }
-
-
-        //-------------------------------view model-------------------------------------------
-
+      
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

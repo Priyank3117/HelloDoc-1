@@ -21,6 +21,9 @@ namespace DAL.ViewModels
         [Column(TypeName = "character varying")]
         [Required]
         public string? PasswordHash { get; set; }
+        [Column(TypeName = "character varying")]
+        [Required]
+        public string? Confirmpassword { get; set; }
 
         [StringLength(256)]
         public string? Email { get; set; }

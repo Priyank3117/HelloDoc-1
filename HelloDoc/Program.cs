@@ -1,3 +1,5 @@
+using BAL.Interface;
+using BAL.Repository;
 using DAL.DataContext;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,8 @@ builder.Services.AddControllersWithViews();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddScoped<IPatient_Request,Patient_Requestrepo>();
+builder.Services.AddScoped<IOther_Request,Family_Requestrepo>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
