@@ -44,18 +44,10 @@ namespace HelloDoc.Controllers
             return View();
         }
           
-          public IActionResult  Patient_ResetPassword()
-
-        {
-            return View();
-        } 
        
        
-        public IActionResult  Business_Request()
-
-        {
-            return View();
-        } 
+       
+      
         public IActionResult  Create_Patient()
 
         {

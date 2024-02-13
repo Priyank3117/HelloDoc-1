@@ -1,5 +1,5 @@
 ﻿using DAL.DataContext;
-using DAL.DataModels;
+using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,30 +18,30 @@ namespace HelloDoc.Controllers
         {
             return View();
         }
+
+        public IActionResult Patient_ResetPassword()
+
+        {
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Patient_login(AspNetUser user)
+        public IActionResult Patient_login(Patient_login patient)
         {
 
-            var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == user.Email);
-            var pwd = _context.AspNetUsers.FirstOrDefault(m => m.PasswordHash == user.PasswordHash);
+            var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
+            var pwd = _context.AspNetUsers.FirstOrDefault(m => m.PasswordHash == patient.PasswordHash);
 
 
 
             if (ModelState.IsValid)
             {
 
-                if (Email != null && Email.PasswordHash == user.PasswordHash)
+                if (Email != null && Email.PasswordHash == patient.PasswordHash)
                 {
                     return RedirectToAction("Privacy", "Home");
 
-                }
-                else
-                {
-                    return NotFound();
-                }
-
-                
+                } 
             }
             return View();
         }

@@ -20,7 +20,7 @@ h1 {
 
 
 img#img-logo {
-    height: 3rem;
+    height: 10rem !important;
 }
 
   
@@ -68,6 +68,7 @@ img#img-logo {
     filter: blur(6px);
     margin-left: auto;
     margin-right: auto;
+    opacity:0.4 !important;
 }
 
 /* ------------------------------------------------------------- */

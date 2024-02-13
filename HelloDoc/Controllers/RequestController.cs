@@ -5,6 +5,7 @@ using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace HelloDoc.Controllers
 {
@@ -12,19 +13,26 @@ namespace HelloDoc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IPatient_Request _request;
-        private readonly IFamily_Request _other_Request;
+        private readonly IFamily_Request _Family_Request;
         private readonly IConcierge_Request _concierge;
+        private readonly IBusiness_Request _business;
 
 
-        public RequestController(ApplicationDbContext context,IPatient_Request patient_Request,IFamily_Request other_Req,
-            IConcierge_Request concierge)
+        //-----------------------Add Context---------------------------------
+
+        public RequestController(ApplicationDbContext context,IPatient_Request patient_Request,IFamily_Request Family_Req,
+            IConcierge_Request concierge,IBusiness_Request business_Request)
         {
             _context = context;
             _request = patient_Request;
-            _other_Request = other_Req;
+            _Family_Request = Family_Req;
             _concierge = concierge; 
+            _business = business_Request;
         }
 
+        //-----------------------Add Context---------------------------------
+
+        //----------------Patient Request----------------------------
 
         public IActionResult Patient_Request()
 
@@ -47,6 +55,10 @@ namespace HelloDoc.Controllers
 
              return View();
         }
+        //----------------Patient Request----------------------------
+
+
+        //--------------------Family/Friend----------------------------------------
         public IActionResult Family_Friend_Request()
 
         {
@@ -57,15 +69,19 @@ namespace HelloDoc.Controllers
         public IActionResult Family_Friend_Request(Other_Request other_Reqs)
 
         {
-            _other_Request.AddData(other_Reqs);
+            _Family_Request.AddData(other_Reqs);
             return View();
         }
+        //--------------------Family/Friend----------------------------------------
+
+        //--------------------Concierge---------------------------------------
 
         public IActionResult Concierge_Request()
 
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Concierge_Request(Other_Request other_Reqs)
 
@@ -73,5 +89,24 @@ namespace HelloDoc.Controllers
             _concierge.AddData(other_Reqs);
             return View();
         }
+        //--------------------Concierge---------------------------------------
+
+        //--------------------Business Request---------------------------------------
+
+        public IActionResult Business_Request()
+
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Business_Request(Other_Request other_Reqs)
+        {
+            _business.addbusinessdata(other_Reqs);
+            return View();
+        }
+
+        
+        //--------------------Business Request---------------------------------------
     }
 }
