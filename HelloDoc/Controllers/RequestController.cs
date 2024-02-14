@@ -5,7 +5,9 @@ using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HelloDoc.Controllers
 {
@@ -16,18 +18,23 @@ namespace HelloDoc.Controllers
         private readonly IFamily_Request _Family_Request;
         private readonly IConcierge_Request _concierge;
         private readonly IBusiness_Request _business;
+        private readonly IAddFile _file;
+        private readonly IHostingEnvironment _environment;
+       
 
 
         //-----------------------Add Context---------------------------------
 
         public RequestController(ApplicationDbContext context,IPatient_Request patient_Request,IFamily_Request Family_Req,
-            IConcierge_Request concierge,IBusiness_Request business_Request)
+            IConcierge_Request concierge,IBusiness_Request business_Request,IAddFile file,IHostingEnvironment hostingEnvironment)
         {
             _context = context;
             _request = patient_Request;
             _Family_Request = Family_Req;
             _concierge = concierge; 
             _business = business_Request;
+            _file = file;
+            _environment = hostingEnvironment;
         }
 
         //-----------------------Add Context---------------------------------
@@ -52,8 +59,12 @@ namespace HelloDoc.Controllers
         public IActionResult Patient_Request(Patient patient)
         {
              _request.AddPatient(patient);
-
-             return View();
+            string path = Path.Combine(this._environment.WebRootPath, "Files");
+            string filename = patient.Filedata.FileName;
+            _file.AddFile(patient.Filedata, path);
+            var Request = _request.GetUserByEmail(patient.Email);
+            _request.RequestWiseFile(filename, Request.RequestId);
+            return View();
         }
         //----------------Patient Request----------------------------
 

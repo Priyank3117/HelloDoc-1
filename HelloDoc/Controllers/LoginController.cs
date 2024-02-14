@@ -28,7 +28,7 @@ namespace HelloDoc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Patient_login(Patient_login patient)
         {
-
+           
             var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
             var pwd = _context.AspNetUsers.FirstOrDefault(m => m.PasswordHash == patient.PasswordHash);
 
@@ -37,9 +37,10 @@ namespace HelloDoc.Controllers
             if (ModelState.IsValid)
             {
 
-                if (Email != null && Email.PasswordHash == patient.PasswordHash)
+                if (Email != null && Email.PasswordHash == patient.PasswordHash )
                 {
-                    return RedirectToAction("Privacy", "Home");
+                    HttpContext.Session.SetString("Email",patient.Email);
+                    return RedirectToAction("index", "Dashboard");
 
                 } 
             }

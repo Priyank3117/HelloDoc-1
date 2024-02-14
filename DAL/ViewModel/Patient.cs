@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,7 +27,7 @@ namespace DAL.ViewModels
         public string? Confirmpassword { get; set; }
 
         [StringLength(256)]
-        public string? Email { get; set; }
+        public string? Email { get; set;}
 
         [Column(TypeName = "character varying")]
         public string? PhoneNumber { get; set; }
@@ -56,5 +57,7 @@ namespace DAL.ViewModels
         public string? ZipCode { get; set; }
 
         public int Typeid { get; set; }
+
+        public IFormFile? Filedata { get; set; }
     }
 }

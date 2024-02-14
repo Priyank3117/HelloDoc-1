@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,14 +31,14 @@ namespace BAL.Repository
             var status = _context.Users.FirstOrDefault(User => User.Email == patient.Email);
 
             RequestClient request_c = new RequestClient();
-            var username = aspnetUser.UserName = patient.FirstName + ' ' + patient.LastName;
 
 
             if (patient != null && status == null && patient.PasswordHash == patient.Confirmpassword)
             {
+               
                 Guid id = Guid.NewGuid();
                 aspnetUser.AspNetUserId = id.ToString(); ;
-                aspnetUser.UserName = username;
+                aspnetUser.UserName = String.Concat(patient.FirstName, ' ' ,patient.LastName);
                 aspnetUser.Email = patient.Email;
                 aspnetUser.PasswordHash = patient.PasswordHash;
                 aspnetUser.PhoneNumber = patient.PhoneNumber;
@@ -61,7 +62,7 @@ namespace BAL.Repository
 
 
                 _context.Users.Add(user);
-                _context.SaveChanges();
+                _context.SaveChanges();           
 
                 request.UserId = user.UserId;
                 request.FirstName = patient.FirstName;
@@ -83,10 +84,6 @@ namespace BAL.Repository
                 request_c.City = patient.City;
                 request_c.State = patient.State;
                 request_c.ZipCode = patient.ZipCode;
-
-
-
-
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
 
@@ -100,7 +97,6 @@ namespace BAL.Repository
                 request.Email = patient.Email;
                 request.PhoneNumber = patient.PhoneNumber;
                 request.CreatedDate = DateTime.Now;
-
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
@@ -114,14 +110,32 @@ namespace BAL.Repository
                 request_c.City = patient.City;
                 request_c.State = patient.State;
                 request_c.ZipCode = patient.ZipCode;
-
-
-
-
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
 
+
+                
+
             }
+        }
+
+        public Request GetUserByEmail(string email)
+        {
+            return _context.Requests.OrderBy(e => e.RequestId).LastOrDefault(x => x.Email == email);
+        }
+
+        public void RequestWiseFile(string filename, int Requestid)
+        {
+            //make new obj
+            var RequestwiseFile = new RequestWiseFile()
+            {
+                FileName = filename,
+                RequestId = Requestid,
+                CreatedDate = DateTime.Now,
+            };
+
+            _context.RequestWiseFiles.Add(RequestwiseFile);
+            _context.SaveChanges();
         }
     }
 }

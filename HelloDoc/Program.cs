@@ -9,10 +9,17 @@ builder.Services.AddControllersWithViews();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>();
-builder.Services.AddScoped<IPatient_Request,Patient_Requestrepo>();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set your desired timeout
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddScoped<IPatient_Request, Patient_Requestrepo>();
 builder.Services.AddScoped<IFamily_Request,Family_Requestrepo>();
 builder.Services.AddScoped<IConcierge_Request,Concierge_Requestrepo>();
 builder.Services.AddScoped<IBusiness_Request,Business_Requestrepo>();
+builder.Services.AddScoped<IAddFile,AddFilerepo>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,6 +36,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
