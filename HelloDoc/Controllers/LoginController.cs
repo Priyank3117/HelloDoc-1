@@ -40,7 +40,7 @@ namespace HelloDoc.Controllers
                 if (Email != null && Email.PasswordHash == patient.PasswordHash )
                 {
                     HttpContext.Session.SetString("Email",patient.Email);
-                    return RedirectToAction("index", "Dashboard");
+                    return RedirectToAction("index", "Dashboard", new {email = patient.Email});
 
                 } 
             }

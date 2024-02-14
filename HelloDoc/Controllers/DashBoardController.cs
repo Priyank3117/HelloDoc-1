@@ -14,21 +14,33 @@ namespace HelloDoc.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+        public IActionResult Index( string Email)
         {
-
+            var mail = _context.AspNetUsers.FirstOrDefault(u => u.Email == Email);
+            if (mail == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                ViewBag.username = mail.UserName;
+            }
             var email = HttpContext.Session.GetString("Email");
-            var result = (from req in _context.Requests
-                          join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId
-                          where req.Email == email
-                          select new Patient_Dash 
-                          {
-                              CurrentStatus = req.Status,
-                              CreatedDate = requestfile.CreatedDate,
+            var result = from req in _context.Requests
+                         join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId
+                         into reqs
+                         where req.Email == email
+                         from requestfile in reqs.DefaultIfEmpty()
 
-                          }).ToList();
+                         select new Patient_Dash
+                         {
+                             CurrentStatus = req.Status,
+                             CreatedDate = req.CreatedDate,
+                             FilePath = requestfile.FileName != null ? requestfile.FileName : null
 
-            return View(result);
+                          };
+
+            return View(result.ToList());
 
         }
     }

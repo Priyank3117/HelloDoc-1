@@ -21,14 +21,16 @@ namespace DAL.ViewModels
 
         [Column(TypeName = "character varying")]
         [Required]
-        public string? PasswordHash { get; set; }
+        public string PasswordHash { get; set; }
         [Column(TypeName = "character varying")]
         [Required]
-        public string? Confirmpassword { get; set; }
+        public string Confirmpassword { get; set; }
 
+        [Required]
         [StringLength(256)]
-        public string? Email { get; set;}
+        public string Email { get; set;}
 
+       
         [Column(TypeName = "character varying")]
         public string? PhoneNumber { get; set; }
 
@@ -38,11 +40,13 @@ namespace DAL.ViewModels
         [Column(TypeName = "timestamp without time zone")]
         public DateTime? BirthDate { get; set; }
 
+        [Required]
         [StringLength(100)]
         public string FirstName { get; set; } = null!;
 
+        [Required]
         [StringLength(100)]
-        public string? LastName { get; set; }
+        public string LastName { get; set; }
 
         [StringLength(100)]
         public string? Street { get; set; }

@@ -4,21 +4,64 @@
     <div class="mx-auto pt-5" style="width:95%;">
        <h3>Medical History</h3>
        <div class="d-flex justify-content-end bg-white">
-            <button type="button" class="btn btn-outline-info mx-3 my-2">Create New Request</button>
+            <button type="button" class="btn btn-outline-info mx-3 my-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Create New Request</button>
+           
+
+            <!-- Modal -->
+            <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info">
+                            <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Create New Request</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p> Here I Want to Create Request For...</p>
+
+                            <div class="d-flex justify-content-center">
+                              <button type="button" class="btn btn-info" data-bs-dismiss="modal">Me</button>
+                                <button type="button" class="btn btn-outline-info ms-3">Some One else</button>
+                            </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Continue</button>
+                                <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                            </div>
+
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
        </div>
-        <table class="table">
-            <thead>
-                <tr style="background-color:#E9ECEF">
+        <table class="table text-center">
+            <thead class="table-secondary">
+                <tr>
                     <th scope="col">Created Date</th>
                     <th scope="col">Current Status</th>
                     <th scope="col">Documents</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="bg-white"> 
                @foreach (var item in Model)
                 {
                     <tr>
-                    <td>@Html.DisplayFor(Modelitem => item.CreatedDate)</td>
+                    <td >@Html.DisplayFor(Modelitem => item.CreatedDate)</td>
+                    <td >@Html.DisplayFor(Modelitem => item.CurrentStatus)</td>
+                        <td> 
+                            @if (item.FilePath !=null)
+                            {
+                                
+                            @if(item.FilePath.Count() > 1)
+                            {
+                                  <button type="button" class="btn btn-outline-info mx-3">View Document</button>
+                            }
+                            }
+                            else
+                            {
+                               
+                            }
+
+                        </td>
                     </tr>
                 }
             </tbody>

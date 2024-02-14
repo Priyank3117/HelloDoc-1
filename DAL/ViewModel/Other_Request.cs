@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.ViewModel
@@ -65,6 +66,7 @@ namespace DAL.ViewModel
         [Required(ErrorMessage = "Please Enter Zipcode")]
         public string Zipcode { get; set; } = null!;
 
+        public IFormFile? Filedata { get; set; }
 
     }
 
