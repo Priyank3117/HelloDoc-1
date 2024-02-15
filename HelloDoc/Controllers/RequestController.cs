@@ -60,13 +60,15 @@ namespace HelloDoc.Controllers
         public IActionResult Patient_Request(Patient patient)
         {
             if (ModelState.IsValid)
-             _request.AddPatient(patient);
             {
+              _request.AddPatient(patient);
                 if (patient.Filedata != null)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Files");
                     string filename = patient.Filedata.FileName;
                     _file.AddFile(patient.Filedata, path);
+                     
+
                     var Request = _request.GetUserByEmail(patient.Email);
                     _request.RequestWiseFile(filename, Request.RequestId);
                     return View();
@@ -88,16 +90,20 @@ namespace HelloDoc.Controllers
         public IActionResult Family_Friend_Request(Other_Request other_Reqs)
 
         {
-            _Family_Request.AddData(other_Reqs);
-            if (other_Reqs.Filedata != null)
-            {
-                string path = Path.Combine(this._environment.WebRootPath, "Files");
-                string filename = other_Reqs.Filedata.FileName;
-                _file.AddFile(other_Reqs.Filedata, path);
-                var Request = _request.GetUserByEmail(other_Reqs.Email_P);
-                _request.RequestWiseFile(filename, Request.RequestId);
-                return View();
-            }
+
+            if(ModelState.IsValid)
+            { 
+                 _Family_Request.AddData(other_Reqs);
+                if (other_Reqs.Filedata != null)
+                {
+                    string path = Path.Combine(this._environment.WebRootPath, "Files");
+                    string filename = other_Reqs.Filedata.FileName;
+                    _file.AddFile(other_Reqs.Filedata, path);
+                    var Request = _request.GetUserByEmail(other_Reqs.Email_P);
+                    _request.RequestWiseFile(filename, Request.RequestId);
+               
+                   }
+                }
             return View();
         }
         //--------------------Family/Friend----------------------------------------

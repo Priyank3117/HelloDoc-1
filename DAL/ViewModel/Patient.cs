@@ -17,7 +17,7 @@ namespace DAL.ViewModels
 
         [Key]
         [StringLength(128)]
-        public string Id { get; set; } = null!;
+        public string? Id { get; set; }
 
         [Column(TypeName = "character varying")]
         [Required]

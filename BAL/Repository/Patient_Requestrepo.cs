@@ -37,7 +37,8 @@ namespace BAL.Repository
             {
                
                 Guid id = Guid.NewGuid();
-                aspnetUser.AspNetUserId = id.ToString(); ;
+                aspnetUser.AspNetUserId = id.ToString(); 
+
                 aspnetUser.UserName = String.Concat(patient.FirstName, ' ' ,patient.LastName);
                 aspnetUser.Email = patient.Email;
                 aspnetUser.PasswordHash = patient.PasswordHash;

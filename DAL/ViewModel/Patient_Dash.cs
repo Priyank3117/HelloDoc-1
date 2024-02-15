@@ -19,5 +19,7 @@ namespace DAL.ViewModel
         [StringLength(50)]
         public string? FilePath { get; set; }
 
+        public int requestid {  get; set; }
+
     }
 }

@@ -55,6 +55,7 @@
                                        placeholder="name@example.com" />
                                 <label for="floatingInput">Your First Name</label>
                             </div>
+                               
                         </div>
                         <div class="col col-12 col-sm-6 mb-3">
                             <div class="form-floating">
@@ -125,6 +126,7 @@
                                        id="floatingInput"
                                        placeholder="name@example.com" />
                                 <label for="floatingInput">First Name</label>
+                                  <span asp-validation-for="FirstName_P" class="text-danger mb-2"></span>
                             </div>
                         </div>
                         <div class="col col-12 col-sm-6 mb-3">
@@ -135,6 +137,7 @@
                                        id="floatingPassword"
                                        placeholder="Password" />
                                 <label for="floatingPassword">Last Name</label>
+                                    <span asp-validation-for="LastName_P" class="text-danger mb-2"></span>
                             </div>
                         </div>
                     </div>
@@ -162,6 +165,7 @@
                                        id="floatingInput"
                                        placeholder="name@example.com" />
                                 <label for="floatingInput">Email</label>
+                                    <span asp-validation-for="Email_P" class="text-danger mb-2"></span>
                             </div>
                         </div>
                         <div class="col col-sm-6 col-12">

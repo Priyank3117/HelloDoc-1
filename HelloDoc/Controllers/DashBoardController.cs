@@ -36,12 +36,38 @@ namespace HelloDoc.Controllers
                          {
                              CurrentStatus = req.Status,
                              CreatedDate = req.CreatedDate,
-                             FilePath = requestfile.FileName != null ? requestfile.FileName : null
+                             FilePath = requestfile.FileName != null ? requestfile.FileName : null,
+                             requestid = req.RequestId
 
                           };
 
             return View(result.ToList());
 
+        }
+
+        [HttpGet]
+        public IActionResult viewDocs(int requestid)
+        {
+            var Email = HttpContext.Session.GetString("Email");
+            var mail = _context.AspNetUsers.FirstOrDefault(u => u.Email == Email);
+            var reque = _context.RequestWiseFiles.FirstOrDefault(u => u.RequestId == requestid);
+            if (mail == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                ViewBag.username = mail.UserName;
+            }
+            var result = (from req in _context.Requests where req.RequestId == requestid
+               select new ViewDoc
+            {
+                DocName =  reque.FileName,
+                Uploader = req.FirstName + " " + req.LastName,
+                   UpDate = req.CreatedDate
+                
+            }).ToList();
+            return View(result);
         }
     }
 }

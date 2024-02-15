@@ -14,18 +14,18 @@ namespace DAL.ViewModel
         [Key]
         [StringLength(256)]
         [Required(ErrorMessage = "Please Enter First Name")]
-        public string FirstNameOther { get; set; } = null!;
+        public string? FirstNameOther { get; set; } = null!;
 
         [StringLength(256)]
         [Required(ErrorMessage = "Please Enter Last Name")]
-        public string LastNameOther { get; set; } = null!;
+        public string? LastNameOther { get; set; } = null!;
 
         [Column(TypeName = "character varying")]
         public string? PhoneNumberother { get; set; }
 
         [StringLength(256)]
         [Required(ErrorMessage = "Please Enter  Email")]
-        public string EmailOther { get; set; } = null!;
+        public string? EmailOther { get; set; } = null!;
 
         [StringLength(256)]
         public string? Relation { get; set; }
@@ -52,19 +52,19 @@ namespace DAL.ViewModel
         public string? PhoneNumber_P { get; set; }
 
         [Required(ErrorMessage = "Please Enter The DOB Of the Patient")]
-        public DateOnly BirthDate_P { get; set; }
+        public DateTime BirthDate_P { get; set; }
 
         [Required(ErrorMessage = "Please Enter Street")]
-        public string Street { get; set; } = null!;
+        public string? Street { get; set; } = null!;
 
         [Required(ErrorMessage = "Please Enter City")]
-        public string City { get; set; } = null!;
+        public string? City { get; set; } = null!;
 
         [Required(ErrorMessage = "Please Enter State")]
-        public string State { get; set; } = null!;
+        public string? State { get; set; } = null!;
 
         [Required(ErrorMessage = "Please Enter Zipcode")]
-        public string Zipcode { get; set; } = null!;
+        public string? Zipcode { get; set; } = null!;
 
         public IFormFile? Filedata { get; set; }
 
