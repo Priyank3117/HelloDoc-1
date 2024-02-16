@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,8 @@ namespace DAL.ViewModel
 {
     public class ViewDoc
     {
-        public string? DocName {get; set;}
+        public List<RequestWiseFile> requestwisefile {  get; set; }
 
-        public DateTime? UpDate { get; set;}
-
-        public string? Uploader { get; set;}
+        public int? requestid { get; set; }
     }
 }

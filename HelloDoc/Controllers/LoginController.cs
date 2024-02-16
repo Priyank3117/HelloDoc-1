@@ -24,6 +24,7 @@ namespace HelloDoc.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Patient_login(Patient_login patient)
@@ -40,11 +41,11 @@ namespace HelloDoc.Controllers
                 if (Email != null && Email.PasswordHash == patient.PasswordHash )
                 {
                     HttpContext.Session.SetString("Email",patient.Email);
-                    return RedirectToAction("index", "Dashboard", new {email = patient.Email});
+                    return RedirectToAction("Index", "DashBoard");
 
                 } 
             }
-            return View();
+            return View(patient);
         }
     }
 

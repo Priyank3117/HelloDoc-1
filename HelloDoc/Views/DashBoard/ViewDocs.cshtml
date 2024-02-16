@@ -1,4 +1,4 @@
-﻿@model List<DAL.ViewModel.ViewDoc>
+﻿@model DAL.ViewModel.ViewDoc
 
 @{
     Layout = "~/Views/Shared/_Layout-1.cshtml";
@@ -19,25 +19,28 @@
 
             @* ----------------------------------------------------------------- *@
 
+                    <form asp-action="uploadfile" asp-route-reqid="@Model.requestid" enctype="multipart/form-data" >
             <div class="input-group row p-2 mx-auto mt-3" style="height:60px">
                 <div class="d-flex">
-                    <label for="fileUpload" class="col d-flex">
-                        <div class="col bg-white p-1 ps-3 text-muted border"><span id="infoArea">Select File</span></div>
-                        <div id="btn" class="p-1 btn btn-info">
+                        <label for="fileUpload" class="col d-flex">
+                            <div class="col bg-white p-1 ps-3 text-muted border" ><span id="infoArea">Select File</span></div>
+                            <div id="btn" class="p-1 btn btn-info">
 
-                            <i class="bi bi-cloud-arrow-up text-white"></i>
-                            <span style="color:white;" class="ps-1">Upload</span>
+                                <i class="bi bi-cloud-arrow-up text-white"></i>
+                                <button class="ps-2 btn btn-outline-info text-white" type="submit"> Upload</button>
 
-                        </div>
-                        <input type="file"  class="form-control-file" id="fileUpload" hidden>
-                    </label>
+                            </div>
+                            <input type="file" name="file" class="form-control-file" id="fileUpload" hidden multiple>
+                        </label>
+                      
                 </div>
             </div>
+                    </form>
             @* ----------------------------------------------------------------- *@
 
             <div class="d-flex justify-content-between mt-3">
-                <h4>View Documents</h4>
-                <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none  text-decoration-none">Download All</button>
+                <h4 class="mt-1">View Documents</h4>
+                <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none  text-decoration-none mb-3">Download All</button>
             </div>
 
             <table class="table text-center">
@@ -51,12 +54,12 @@
                 </thead>
                 <tbody class="bg-white">
                   
-                    <tr>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.requestwisefile)
                         {
-                            <td>@item.DocName </td>
-                            <td>@item.Uploader</td>
-                            <td>@item.UpDate</td>
+                    <tr>
+                            <td>test testing </td>
+                            <td>@item.FileName</td>
+                            <td>@item.CreatedDate</td>
                             <td>
                                 <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none text-decoration-none ">
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -71,8 +74,8 @@
                                     </svg>
                                 </button>
                             </td>
-                        }
                     </tr>
+                        }
                   
                        
                 </tbody>

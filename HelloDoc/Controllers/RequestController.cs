@@ -38,7 +38,7 @@ namespace HelloDoc.Controllers
             _environment = hostingEnvironment;
         }
 
-        //-----------------------Add Context---------------------------------
+        //-----------------------Add Context-------------------------------------
 
         //----------------Patient Request----------------------------
 

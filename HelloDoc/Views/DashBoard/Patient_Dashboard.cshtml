@@ -1,5 +1,9 @@
 ﻿@model List<DAL.ViewModel.Patient_Dash>
 
+@{
+    var Uniqueid = new HashSet<int?>();
+}
+
 <div class="tab-pane fade show active " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0" style="background-color:#E9ECEF">
 
     <div class="mx-auto pt-5" style="width:95%;">
@@ -46,25 +50,30 @@
             <tbody class="bg-white"> 
                @foreach (var item in Model)
                 {
-                    <tr>
-                    <td >@Html.DisplayFor(Modelitem => item.CreatedDate)</td>
-                    <td >@Html.DisplayFor(Modelitem => item.CurrentStatus)</td>
-                        <td> 
-                            @if (item.FilePath !=null)
-                            {
-                                
-                            @if(item.FilePath.Count() > 1)
-                            {
-                                    <a asp-action="ViewDocs" asp-route-requestid="@item.requestid">  <button type="button" class="btn btn-outline-info mx-3">View Document</button> </a>
-                                }
-                            }
-                            else
-                            {
-                               
-                            }
 
-                        </td>
-                    </tr>
+
+                    if (Uniqueid.Add(item.requestid) == true)
+                    {
+                        <tr>
+                            <td >@Html.DisplayFor(Modelitem => item.CreatedDate)</td>
+                            <td >@Html.DisplayFor(Modelitem => item.CurrentStatus)</td>
+                            <td> 
+                                @if (item.FilePath != null)
+                                {
+
+                                    @if (item.FilePath.Count() > 1)
+                                    {
+                                        <a asp-action="ViewDocs" asp-route-requestid="@item.requestid">  <button type="button" class="btn btn-outline-info mx-3">View Document</button> </a>
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>

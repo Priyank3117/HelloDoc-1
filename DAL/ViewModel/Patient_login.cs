@@ -12,7 +12,7 @@ namespace DAL.ViewModel
     {
         [StringLength(256)]
         [Required]
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         [Column(TypeName = "character varying")]
         [Required]
