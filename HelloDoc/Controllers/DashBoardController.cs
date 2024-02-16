@@ -39,7 +39,8 @@ namespace HelloDoc.Controllers
                              CurrentStatus = req.Status,
                              CreatedDate = req.CreatedDate,
                              FilePath = requestfile.FileName != null ? requestfile.FileName : null,
-                             requestid = req.RequestId
+                             requestid = req.RequestId,
+                             count = _context.RequestWiseFiles.Count(u => u.RequestId == req.RequestId),
 
                          };
 

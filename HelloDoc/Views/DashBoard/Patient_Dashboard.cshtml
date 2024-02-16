@@ -63,7 +63,7 @@
 
                                     @if (item.FilePath.Count() > 1)
                                     {
-                                        <a asp-action="ViewDocs" asp-route-requestid="@item.requestid">  <button type="button" class="btn btn-outline-info mx-3">View Document</button> </a>
+                                        <a asp-action="ViewDocs" asp-route-requestid="@item.requestid">  <button type="button" class="btn btn-outline-info mx-3"><span>(@item.count )</span>View Document</button> </a>
                                     }
                                 }
                                 else

@@ -21,5 +21,7 @@ namespace DAL.ViewModel
 
         public int requestid {  get; set; }
 
+        public int count { get; set; }
+
     }
 }
