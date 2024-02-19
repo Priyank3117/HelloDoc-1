@@ -23,8 +23,12 @@
                     </div>
                     <div class=" float-end ">
                         <span class="fw-bold me-2"> Welcome:@ViewBag.username</span>
-                        <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"
-                        style="height:3rem">logout</button>
+                        <a asp-action="Logout" asp-controller="Login"> 
+                            <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"
+                                    style="height:3rem">
+                                logout
+                            </button>
+                        </a>
                         <button class="dark-button border border-2 border-info bg-white my-3 mx-2">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="35"
@@ -49,7 +53,11 @@
         </main>
     </div>
 
-   
+    <footer class="border-top footer text-muted ">
+        <div class="d-flex flex-row justify-content-end align-items-center bg-dark text-white pe-3 footer position-absolute bottom-0 w-100">
+            <span>Terms Of Condition | Privacy Policy</span>
+        </div>
+    </footer>
         <!-- jQuery script -->
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/lib/jquery/jquery.min.js"></script>

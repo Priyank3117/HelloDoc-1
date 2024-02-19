@@ -91,11 +91,13 @@
     </div>
   
 </div>
+
+
 <script>
-    document.getElementById("fileUpload").onchange = function () {
-        let path = this.value.substr(this.value.lastIndexOf('\\') + 1);
-        document.getElementById("infoArea").innerText = path;
-    };
+    // document.getElementById("fileUpload").onchange = function () {
+    //     let path = this.value.substr(this.value.lastIndexOf('\\') + 1);
+    //     document.getElementById("infoArea").innerText = path;
+    // };
 
     document.getElementById("chkbox").addEventListener("change", function () {
         // Toggle all checkboxes based on the state of the "Select All" checkbox
@@ -116,7 +118,7 @@
         // Download selected files
         selectedFiles.forEach(function (filename) {
             var link = document.createElement("a");
-            link.href = "/Files/" + filename; // Adjust the path accordingly
+            link.href = "/Files/" + filename; 
             link.download = filename;
             link.style.display = "none";
             document.body.appendChild(link);

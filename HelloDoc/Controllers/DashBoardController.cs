@@ -26,8 +26,17 @@ namespace HelloDoc.Controllers
         {
             
             var Email = HttpContext.Session.GetString("Email");
-            var mail = _context.AspNetUsers.FirstOrDefault(u => u.Email == Email);
-            
+            var mail = _context.Users.FirstOrDefault(u => u.Email == Email);
+   
+            if (mail == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                ViewBag.username = mail.FirstName + " " + mail.LastName;
+            }
+
             var result = from req in _context.Requests
                          join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId
                          into reqs
@@ -51,7 +60,7 @@ namespace HelloDoc.Controllers
         public IActionResult viewDocs(int requestid)
         {
             var Email = HttpContext.Session.GetString("Email");
-            var mail = _context.AspNetUsers.FirstOrDefault(u => u.Email == Email);
+            var mail = _context.Users.FirstOrDefault(u => u.Email == Email);
             var reque = _context.RequestWiseFiles.Where(u => u.RequestId == requestid).ToList();
             if (mail == null)
             {
@@ -59,7 +68,7 @@ namespace HelloDoc.Controllers
             }
             else
             {
-                ViewBag.username = mail.UserName;
+                ViewBag.username = mail.FirstName + " " +mail.LastName;
             }
             var result = new ViewDoc
             {
@@ -68,6 +77,8 @@ namespace HelloDoc.Controllers
             };
             return View(result);
         }
+
+
 
         [HttpPost]
         public IActionResult uploadfile(int reqid)
@@ -86,6 +97,17 @@ namespace HelloDoc.Controllers
 
         public  IActionResult  Patient_Profile()
         {
+            var Email = HttpContext.Session.GetString("Email");
+            var mail = _context.Users.FirstOrDefault(u => u.Email == Email);
+
+            if (mail == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                ViewBag.username = mail.FirstName + " " + mail.LastName;
+            }
 
             var email = HttpContext.Session.GetString("Email");
             var user = _context.Users.FirstOrDefault(u => u.Email == email);
@@ -102,6 +124,38 @@ namespace HelloDoc.Controllers
         
              
             return View(Patient_Profile);
+        }
+
+        [HttpPost]
+        public  IActionResult  Patient_Profile(Patient_Profile patient_Profile)
+        {
+
+            var email = HttpContext.Session.GetString("Email");
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+              
+
+            if(ModelState.IsValid)
+            {
+
+                user.FirstName = patient_Profile.FirstName;
+                user.LastName = patient_Profile.LastName;
+                user.Mobile = patient_Profile.PhoneNumber;
+                user.Street = patient_Profile.Street;
+                user.City = patient_Profile.City;
+                user.State = patient_Profile.State;
+                user.ZipCode = patient_Profile.ZipCode;
+
+                _context.Update(user);
+                _context.SaveChanges();
+                return RedirectToAction("Patient_Profile");
+            }
+            else
+            {
+                return View(patient_Profile);
+            }
+
+          
+                
         }
     }
 }

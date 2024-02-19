@@ -47,6 +47,12 @@ namespace HelloDoc.Controllers
             }
             return View(patient);
         }
+
+        public IActionResult Logout() 
+        { 
+            HttpContext.Session.Remove("Email");
+            return RedirectToAction("Patient_login");
+        }
     }
 
     
