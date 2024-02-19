@@ -44,10 +44,6 @@ namespace HelloDoc.Controllers
             return View();
         }
           
-       
-       
-       
-      
         public IActionResult  Create_Patient()
 
         {

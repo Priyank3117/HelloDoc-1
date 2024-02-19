@@ -58,6 +58,9 @@ namespace BAL.Repository
                 user.City = patient.City;
                 user.State = patient.State;
                 user.ZipCode = patient.ZipCode;
+                user.IntYear = patient.BirthDate.Value.Year;
+                user.IntDate = patient.BirthDate.Value.Day;
+                user.StrMonth = (patient.BirthDate.Value.Month).ToString();
                 user.CreatedBy = patient.FirstName;
                 user.CreatedDate = DateTime.Now;
 

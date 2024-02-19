@@ -40,16 +40,14 @@
 
             <div class="d-flex justify-content-between mt-3">
                 <h4 class="mt-1">View Documents</h4>
-             
-
-              
-                    <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none  text-decoration-none mb-3">Download All</button>
+              <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none  text-decoration-none mb-3"
+              id="DownloadAll">Download All</button>
             </div>
 
             <table class="table text-center">
                 <thead class="table-secondary">
                     <tr>
-                        <th scope="col">DocumentName</th>
+                        <th scope="col"><input type="checkbox" id="chkbox"/></th>
                         <th scope="col">Uploader</th>
                         <th scope="col">Upload Date</th>
                         <th scope="col">Action</th>
@@ -60,8 +58,9 @@
                         @foreach (var item in Model.requestwisefile)
                         {
                     <tr>
-                            <td>test testing </td>
+                            <td><input type="checkbox" class="chkboxind"  data-filename="@item.FileName"/></td>
                             <td>@item.FileName</td>
+                            <td>test testing </td>
                             <td>@item.CreatedDate</td>
                             <td>
 
@@ -92,3 +91,37 @@
     </div>
   
 </div>
+<script>
+    document.getElementById("fileUpload").onchange = function () {
+        let path = this.value.substr(this.value.lastIndexOf('\\') + 1);
+        document.getElementById("infoArea").innerText = path;
+    };
+
+    document.getElementById("chkbox").addEventListener("change", function () {
+        // Toggle all checkboxes based on the state of the "Select All" checkbox
+        let checkboxes = document.querySelectorAll(".chkboxind");
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = document.getElementById("chkbox").checked;
+        });
+    });
+
+    document.getElementById("DownloadAll").addEventListener("click", function () {
+        // Get selected filenames
+        let selectedFiles = [];
+        let checkboxes = document.querySelectorAll(".chkboxind:checked");
+        checkboxes.forEach(function (checkbox) {
+            selectedFiles.push(checkbox.dataset.filename);
+        });
+
+        // Download selected files
+        selectedFiles.forEach(function (filename) {
+            var link = document.createElement("a");
+            link.href = "/Files/" + filename; // Adjust the path accordingly
+            link.download = filename;
+            link.style.display = "none";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    });
+</script>

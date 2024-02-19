@@ -48,19 +48,6 @@ namespace HelloDoc.Controllers
 
         }
 
-        [HttpPost]
-        public IActionResult uploadfile(int reqid)
-        {
-            var file = Request.Form.Files["file"];
-            string path = Path.Combine(_environment.WebRootPath, "Files");
-            _files.AddFile(file, path);
-
-            _patient.RequestWiseFile(file.FileName , reqid);
-            return RedirectToAction("viewDocs", new { requestid = reqid} );
-
-        }
-
-       
         public IActionResult viewDocs(int requestid)
         {
             var Email = HttpContext.Session.GetString("Email");
@@ -80,6 +67,41 @@ namespace HelloDoc.Controllers
                 requestid = requestid
             };
             return View(result);
+        }
+
+        [HttpPost]
+        public IActionResult uploadfile(int reqid)
+        {
+            var file = Request.Form.Files["file"];
+            string path = Path.Combine(_environment.WebRootPath, "Files");
+            _files.AddFile(file, path);
+
+            _patient.RequestWiseFile(file.FileName , reqid);
+            return RedirectToAction("viewDocs", new { requestid = reqid} );
+
+        }
+
+       
+       
+
+        public  IActionResult  Patient_Profile()
+        {
+
+            var email = HttpContext.Session.GetString("Email");
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var Patient_Profile = new Patient_Profile();
+            Patient_Profile.FirstName = user.FirstName;
+            Patient_Profile.Email = user.Email;
+            Patient_Profile.LastName = user.LastName;
+            Patient_Profile.PhoneNumber = user.Mobile;
+            Patient_Profile.Street = user.Street;
+            Patient_Profile.City = user.City;
+            Patient_Profile.State = user.State;
+            Patient_Profile. ZipCode = user.ZipCode;
+
+        
+             
+            return View(Patient_Profile);
         }
     }
 }
