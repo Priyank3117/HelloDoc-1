@@ -1,4 +1,5 @@
-﻿using DAL.DataContext;
+﻿using BAL.Interface;
+using DAL.DataContext;
 using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,11 @@ namespace HelloDoc.Controllers
     public class LoginController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public LoginController(ApplicationDbContext context)
+        private readonly IPatient_ResetPassword _patient_ResetPassword;
+        public LoginController(ApplicationDbContext context,IPatient_ResetPassword patient_ResetPassword)
         {
             _context = context;
+            _patient_ResetPassword = patient_ResetPassword;
         }
         public IActionResult Patient_login()
 
@@ -19,11 +22,7 @@ namespace HelloDoc.Controllers
             return View();
         }
 
-        public IActionResult Patient_ResetPassword()
-
-        {
-            return View();
-        }
+       
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -53,6 +52,26 @@ namespace HelloDoc.Controllers
             HttpContext.Session.Remove("Email");
             return RedirectToAction("Patient_login");
         }
+
+        public IActionResult Patient_ResetPassword()
+
+        {
+            return View();
+        }
+        [HttpPost]
+           public IActionResult Patient_ResetPassword(Patient_ResetPassword patient_ResetPassword)
+
+        {
+            var mail = patient_ResetPassword.Email;
+
+            if (ModelState.IsValid) {
+                _patient_ResetPassword.SendEmail(mail, "hello", "hello");
+            }
+
+
+            return View();
+        }
+
     }
 
     
