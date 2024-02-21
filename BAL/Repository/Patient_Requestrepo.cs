@@ -74,6 +74,7 @@ namespace BAL.Repository
                 request.Email = patient.Email;
                 request.PhoneNumber = patient.PhoneNumber;
                 request.CreatedDate = DateTime.Now;
+                request.RequestTypeId = 1;
 
                 _context.Requests.Add(request);
                 _context.SaveChanges();
@@ -88,6 +89,9 @@ namespace BAL.Repository
                 request_c.City = patient.City;
                 request_c.State = patient.State;
                 request_c.ZipCode = patient.ZipCode;
+                request_c.IntYear = patient.BirthDate.Value.Year;
+                request_c.IntDate = patient.BirthDate.Value.Day;
+                request_c.StrMonth = (patient.BirthDate.Value.Month).ToString();
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
 
@@ -101,6 +105,7 @@ namespace BAL.Repository
                 request.Email = patient.Email;
                 request.PhoneNumber = patient.PhoneNumber;
                 request.CreatedDate = DateTime.Now;
+                request.RequestTypeId = 1;
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
@@ -114,6 +119,9 @@ namespace BAL.Repository
                 request_c.City = patient.City;
                 request_c.State = patient.State;
                 request_c.ZipCode = patient.ZipCode;
+                request_c.IntYear = patient.BirthDate.Value.Year;
+                request_c.IntDate = patient.BirthDate.Value.Day;
+                request_c.StrMonth = (patient.BirthDate.Value.Month).ToString();
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
 

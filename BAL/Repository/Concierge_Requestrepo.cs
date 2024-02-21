@@ -25,6 +25,7 @@ namespace BAL.Repository
             request.LastName = req.LastNameOther;
             request.Email = req.EmailOther;
             request.PhoneNumber = req.PhoneNumberother;
+            request.RequestTypeId = 3;
 
             _context.Requests.Add(request);
             _context.SaveChanges();

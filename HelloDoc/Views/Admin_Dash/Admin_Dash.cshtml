@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<DAL.ViewModel.Admin_DashBoard>
+
+@{
     ViewData["Title"] = "Admin_Dash";
     Layout = "~/Views/Shared/_Admin_Dash.cshtml";
 }
@@ -10,23 +12,28 @@
         <div class="row gx-5 mt-4 ms-3 me-3" >
             <div class="col">
                 <div class="px-3 py-2 text-white border  rounded" style="background-color:#203f9a">
+                <a id="New">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                         </svg>
                         <h4>new</h4>
-                    </div >
+                    </div>
                     <h3>1345</h3>
+                </a>
                 </div>
-            </div>  <div class="col">
+            </div> 
+            <div class="col">
             <div class="px-3 py-2 border text-info rounded" style="background-color:#e5f2f8">
+                  <a id="Pending">
                     <div class="d-flex align-items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill me-2" viewBox="0 0 16 16">
-                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                    </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill me-2" viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                        </svg>
                         <h4>Pending</h4>
-                    </div >
+                    </div>
                     <h3>1345</h3>
+                  </a>
                 </div>
             </div> 
             <div class="col">
@@ -136,7 +143,7 @@
                 </select>
             </div>
         </div>
-        <div class="d-flex col-6 justify-content-end ">
+        <div class="d-flex col-6 justify-content-end  my-3">
             <button class="active-filter filter-options d-flex align-items-center  px-3 py-1 rounded btn ">
                 <span>All</span>
             </button>
@@ -179,5 +186,57 @@
        
         @* -------------------------------Search--------------------------------------------- *@
 
-   
+ <div id="PartialViews">
+    <partial name="Admin_Table" model="@Model"></partial>
+    <partial name="Admin_TablePending" model="@Model"></partial>
 
+ </div>
+
+
+@section scripts {
+    <!-- jQuery script -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            LoadPartialView("Admin_Table");
+            $('Admin_Tablepending').hide();
+            $("#New").click(function () {
+            
+                LoadPartialView("Admin_Table");
+            });
+
+            $("#Pending").click(function () {
+            
+                LoadPartialView("Admin_TablePending");
+            });
+            // -----------------------------          
+            function LoadPartialView(partialName) { 
+
+                $.ajax({
+                    url: '@Url.Action("AdminDash", "Admin_Dash")',
+                    type: 'GET',
+                    data: { partialName: partialName },
+                    success: function (result) {
+                        console.log(result)
+                        $("#PartialViews").html(result);
+                    },
+
+                    error: function (error) {
+                        console.error("Error loading partial view" + error);
+                    }
+                });
+            }
+              // -----------------------------
+
+
+            
+
+          
+        });
+
+    </script>
+}

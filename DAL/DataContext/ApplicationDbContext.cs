@@ -255,7 +255,6 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.RequestId).HasName("Request_pkey");
 
-            entity.Property(e => e.RequestTypeId).HasDefaultValueSql("1");
             entity.Property(e => e.Status).HasDefaultValueSql("1");
 
             entity.HasOne(d => d.Physician).WithMany(p => p.Requests).HasConstraintName("Request_PhysicianId_fkey");

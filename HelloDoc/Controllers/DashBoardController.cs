@@ -116,6 +116,7 @@ namespace HelloDoc.Controllers
             Patient_Profile.Email = user.Email;
             Patient_Profile.LastName = user.LastName;
             Patient_Profile.PhoneNumber = user.Mobile;
+           
             Patient_Profile.Street = user.Street;
             Patient_Profile.City = user.City;
             Patient_Profile.State = user.State;
@@ -143,6 +144,9 @@ namespace HelloDoc.Controllers
                 user.Street = patient_Profile.Street;
                 user.City = patient_Profile.City;
                 user.State = patient_Profile.State;
+                user.IntDate = patient_Profile.BirthDate.Value.Day;
+                user.IntYear = patient_Profile.BirthDate.Value.Year;
+                user.StrMonth = (patient_Profile.BirthDate.Value.Month).ToString();
                 user.ZipCode = patient_Profile.ZipCode;
 
                 _context.Update(user);

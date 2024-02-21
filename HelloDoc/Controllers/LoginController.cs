@@ -58,6 +58,9 @@ namespace HelloDoc.Controllers
         {
             return View();
         }
+
+
+        //--------------------------------------    
         [HttpPost]
            public IActionResult Patient_ResetPassword(Patient_ResetPassword patient_ResetPassword)
 
@@ -72,6 +75,9 @@ namespace HelloDoc.Controllers
             return View();
         }
 
+
+
+        //--------------------------------------
     }
 
     
