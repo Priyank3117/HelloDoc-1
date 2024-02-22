@@ -26,5 +26,7 @@ namespace DAL.ViewModel
         public string? Notes { get; set; }
 
         public int? requesttypeid { get; set; }
+
+        public int? regionid { get; set;}
     }
 }

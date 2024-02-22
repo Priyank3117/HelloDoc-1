@@ -30,8 +30,10 @@ namespace HelloDoc.Controllers
                                   RequestedDate = req.CreatedDate,
                                   PhoneNumber = req.PhoneNumber,
                                   requesttypeid = req.RequestTypeId,
-                                  Address = reqclient.Street + " " + reqclient.City
-                                  
+                                 PhoneNumber_P = reqclient.PhoneNumber,
+                                 regionid = reqclient.RegionId,
+                                Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode
+
                             }).ToList();
 
             return View(DashData);
@@ -51,7 +53,8 @@ namespace HelloDoc.Controllers
                                 PhoneNumber = req.PhoneNumber,
                                 PhoneNumber_P = reqclient.PhoneNumber,
                                 requesttypeid = req.RequestTypeId,
-                                Address = reqclient.Street + " " + reqclient.City
+                                regionid = reqclient.RegionId,
+                                Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode
 
                             }).ToList();
 
@@ -60,24 +63,28 @@ namespace HelloDoc.Controllers
         } 
         
         
-        public IActionResult SearchPatient(string SearchValue,string Filterselect)
+        public IActionResult SearchPatient(string SearchValue,string Filterselect,string selectvalue)
                {
             var FilterData = (from req in _context.Requests
-                            join reqclient in _context.RequestClients
-                            on req.RequestId equals reqclient.RequestId
+                              join reqclient in _context.RequestClients
+                              on req.RequestId equals reqclient.RequestId
 
-                            select new Admin_DashBoard()
-                            {
-                                Name = reqclient.FirstName.ToLower(),
-                                Requestor = req.FirstName,
-                                BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
-                                RequestedDate = req.CreatedDate,
-                                PhoneNumber = req.PhoneNumber,
-                                PhoneNumber_P = reqclient.PhoneNumber,
-                                requesttypeid = req.RequestTypeId,
-                                Address = reqclient.Street + " " + reqclient.City
+                              select new Admin_DashBoard()
+                              {
+                                  Name = reqclient.FirstName.ToLower(),
+                                  Requestor = req.FirstName,
+                                  BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
+                                  RequestedDate = req.CreatedDate,
+                                  PhoneNumber = req.PhoneNumber,
+                                  PhoneNumber_P = reqclient.PhoneNumber,
+                                  regionid = reqclient.RegionId,
+                                  requesttypeid = req.RequestTypeId,
+                                  Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode
 
-                            }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) && (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect) )).ToList();
+                              }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
+                              (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
+                              (string.IsNullOrEmpty(selectvalue) || item.regionid == int.Parse(selectvalue))).ToList();
+
 
 
             return PartialView("Admin_Table", FilterData);
