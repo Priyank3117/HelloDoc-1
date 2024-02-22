@@ -49,6 +49,7 @@ namespace HelloDoc.Controllers
                                 BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
                                 RequestedDate = req.CreatedDate,
                                 PhoneNumber = req.PhoneNumber,
+                                PhoneNumber_P = reqclient.PhoneNumber,
                                 requesttypeid = req.RequestTypeId,
                                 Address = reqclient.Street + " " + reqclient.City
 
