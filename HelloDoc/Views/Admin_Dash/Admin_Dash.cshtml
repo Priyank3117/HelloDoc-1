@@ -38,46 +38,54 @@
             </div> 
             <div class="col">
             <div class="px-3 py-2 border  rounded" style="background-color:#e9f0e8">
+                <a id="Active">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                         </svg>
                         <h4>Active</h4>
-                    </div >
+                    </div>
                     <h3>1345</h3>
+                </a>
                 </div>
             </div> 
             <div class="col">
             <div class="px-3 py-2 border  rounded text-pink" style="background-color:#f7e6ee">
+                   <a id="Conclude">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                         </svg>
                         <h4>conclude</h4>
-                    </div >
+                    </div>
                     <h3>1345</h3>
+                   </a>
                 </div>
             </div>  
             <div class="col">
             <div class="px-3 py-2 border  rounded" style="background-color:#e5eef5">
+                <a id="ToClose">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                         </svg>
                         <h4>To close</h4>
-                    </div >
+                    </div>
                     <h3>1345</h3>
+                </a>
                 </div>
             </div>  
             <div class="col">
             <div class="px-3 py-2 border  rounded" style="background-color:#efeef4">
+                <a id="UnPaid">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                         </svg>
                         <h4>Unpaid</h4>
-                    </div >
+                    </div>
                     <h3>1345</h3>
+                </a>
                 </div>
             </div>
         </div>
@@ -187,8 +195,14 @@
         @* -------------------------------Search--------------------------------------------- *@
 
  <div id="PartialViews">
-    <partial name="Admin_Table" model="@Model"></partial>
+
+
+    <partial name="Admin_TableNew" model="@Model"></partial>
     <partial name="Admin_TablePending" model="@Model"></partial>
+    <partial name="Admin_TableActive" model="@Model"></partial>
+    <partial name="Admin_TableConclude" model="@Model"></partial>
+    <partial name="Admin_TableToClose" model="@Model"></partial>
+    <partial name="Admin_TableUnPaid" model="@Model"></partial>
 
  </div>
 
@@ -202,40 +216,62 @@
     <script>
 
         $(document).ready(function () {
-            LoadPartialView("Admin_Table");
-            $('Admin_Tablepending').hide();
+
+            var currentPartialview = "Admin_TableNew"
+
+            LoadPartialView(currentPartialview);
+            $('Admin_TablePending').hide();
+            $('Admin_TableActive').hide();
+            $('Admin_TableConclude').hide(); 
+            $('Admin_TableToClose').hide();
+            $('Admin_TableUnPaid').hide();
+
+
             $("#New").click(function () {
-            
-                LoadPartialView("Admin_Table");
+                 currentPartialview = "Admin_TableNew"
+                LoadPartialView(currentPartialview);
             });
 
             $("#Pending").click(function () {
-            
-                LoadPartialView("Admin_TablePending");
+                 currentPartialview = "Admin_TablePending"
+                LoadPartialView(currentPartialview);
             });
 
+            $("#Active").click(function () {
+                currentPartialview = "Admin_TableActive"
+                LoadPartialView(currentPartialview);
+            });
+            $("#Conclude").click(function () {
+                currentPartialview = "Admin_TableConclude"
+                LoadPartialView(currentPartialview);
+            });
 
+            $("#ToClose").click(function () {
+                currentPartialview = "Admin_TableToClose"
+                LoadPartialView(currentPartialview);
+            });
+
+            $("#UnPaid").click(function () {
+                currentPartialview = "Admin_TableUnPaid"
+                LoadPartialView(currentPartialview);
+            });
 
             $('.form-select').on("change", function () {
-
-                   filtertable()
-
+                filtertable(currentPartialview)
             });
 
-
-           
              // -------------filter btn-----------------------------
             $('.filter-btn').click(function () {
                 $('.filter-btn').removeClass('active')
                 $(this).addClass('active')
-                filtertable()
+                filtertable(currentPartialview)
 
             });
              // -------------filter btn-----------------------------
 
             // -------on search value--------------------          
             $("#Search").on("input", function () {
-                filtertable();
+                filtertable(currentPartialview);
             });
 
           
@@ -261,15 +297,11 @@
             }
             // --------------LoadPartialView---------------
 
-            function filtertable() {
+            function filtertable(partialName) {
 
-
-  
-            
                 var SearchValue = $("#Search").val();
-                console.log(SearchValue)
                 var Filterselect = $('.filter-btn.active').data('value');
-                console.log(Filterselect)
+            
 
                 var selectopt = $(".form-select").find(':selected');
                 var selectvalue = selectopt.data('value');
@@ -277,15 +309,17 @@
                 var region = $("#Region").val();
 
 
-                if (SearchValue == "" && Filterselect == "") {
-                     LoadPartialView("Admin_Table");
+                if (SearchValue == "" && Filterselect == "" ) {
+                    LoadPartialView(currentPartialview);
                 }
 
                 else {
                     $.ajax({
                         type:"GET",
                         url: '@Url.Action("SearchPatient", "Admin_Dash")',
-                        data: { SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue },
+                        data: { SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
+                            , partialName:partialName
+                        },
                         success: function (data) 
                         {
                             $('#PartialViews').html(data);

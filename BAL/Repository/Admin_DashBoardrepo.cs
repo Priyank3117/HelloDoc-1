@@ -20,9 +20,53 @@ namespace BAL.Repository
         }
         
 
-        public List<Admin_DashBoard> GetDashList(Admin_DashBoard admin_DashBoard)
+       
+        public Admin_DashBoard GetList()
         {
-            throw new NotImplementedException();
+            var DashData = (from req in _context.Requests
+                            join reqclient in _context.RequestClients
+                           on req.RequestId equals reqclient.RequestId
+
+                            select new Admin_DashBoard()
+                            {
+                                Name = reqclient.FirstName,
+                                Requestor = req.FirstName,
+                                BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
+                                RequestedDate = req.CreatedDate,
+                                PhoneNumber = req.PhoneNumber,
+                                requesttypeid = req.RequestTypeId,
+                                PhoneNumber_P = reqclient.PhoneNumber,
+                                regionid = reqclient.RegionId,
+                                Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
+                                status = req.Status
+
+                            });
+
+                   return (Admin_DashBoard)DashData;
+        }
+
+        public IQueryable<Admin_DashBoard> GetRequestData()
+        {
+            var DashData = (from req in _context.Requests
+                            join reqclient in _context.RequestClients
+                             on req.RequestId equals reqclient.RequestId
+
+                            select new Admin_DashBoard()
+                            {
+                                Name = reqclient.FirstName.ToLower(),
+                                Requestor = req.FirstName,
+                                BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
+                                RequestedDate = req.CreatedDate,
+                                PhoneNumber = req.PhoneNumber,
+                                requesttypeid = req.RequestTypeId,
+                                PhoneNumber_P = reqclient.PhoneNumber,
+                                regionid = reqclient.RegionId,
+                                Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
+                                status = req.Status
+
+                            });
+
+            return DashData;
         }
     }
 }

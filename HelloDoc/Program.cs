@@ -26,6 +26,7 @@ builder.Services.AddScoped<IConcierge_Request,Concierge_Requestrepo>();
 builder.Services.AddScoped<IBusiness_Request,Business_Requestrepo>();
 builder.Services.AddScoped<IAddFile,AddFilerepo>();
 builder.Services.AddScoped<IPatient_ResetPassword,Patient_ResetPasswordrepo>();
+builder.Services.AddScoped<IAdmin_DashBoard,Admin_DashBoardrepo>();
 
 //Jwt configuration starts here
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();

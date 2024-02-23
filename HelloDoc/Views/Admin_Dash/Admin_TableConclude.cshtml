@@ -1,4 +1,6 @@
-﻿
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
 @*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -6,28 +8,30 @@
 
 
 <table class="table text-center table-responsive-lg">
+
+
+
     <thead class="table-secondary">
         <tr class="fs-5">
             <th scope="col">Name</th>
             <th scope="col"></th>
             <th scope="col">Date of Birth</th>
-            <th scope="col">requestor</th>
-            <th scope="col">Requested Date</th>
+            <th scope="col">Physician Name</th>
+            <th scope="col">Date Of Service</th>
             <th scope="col">Phone</th>
             <th scope="col">Address</th>
-            <th scope="col">Notes</th>
             <th scope="col">Chatwith</th>
             <th scope="col">Action</th>
         </tr>
     </thead>
-    <tbody class="fs-5" >
+    <tbody class="fs-5">
         @foreach (var item in Model)
         {
 
-            if (item.requesttypeid == 1)
+            if (item.requesttypeid == 1 && item.status == 6)
             {
-              @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
-                  <tr class="table-success">
+                @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
+                <tr class="table-success">
                     <td class="my-auto">
                         @item.Name
                     </td>
@@ -39,8 +43,10 @@
                         </button>
                     </td>
                     <td class="my-auto"> @item.BirthDate</td>
-                    <td class="my-auto"><span>Patient </span>@item.Requestor</td>
-                    <td class="my-auto">@item.RequestedDate</td>
+                   
+
+                    <td class="my-auto">physician Name</td>
+                    <td class="my-auto">Date Of Service</td>
                     <td class="my-auto ">
                         <button class="btn border border-2 border-dark rounded my-1 btn-success">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
@@ -49,9 +55,13 @@
                         </button><br /><span>(Patient)</span>
                     </td>
                     <td class="my-auto">@item.Address</td>
-                    <td class="my-auto">@item.Notes</td>
+                  
                     <td class="my-auto">
-                        <button class="btn border rounded btn-success ">
+                        <button class="btn border rounded  btn-success ">
+                            <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+                            </svg>Patient
+                        </button>  <button class="btn border rounded  btn-success ">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
                                 <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
                             </svg>Provider
@@ -71,13 +81,13 @@
                         </ul>
                     </td>
                 </tr>
-            } 
-            
-            
-            else if (item.requesttypeid == 2)
+            }
+
+
+            else if (item.requesttypeid == 2 && item.status == 6)
             {
-              @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
-                  <tr class="table-warning">
+                @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
+                <tr class="table-warning">
                     <td class="my-auto">
                         @item.Name
                     </td>
@@ -89,14 +99,15 @@
                         </button>
                     </td>
                     <td class="my-auto"> @item.BirthDate</td>
-                    <td class="my-auto"><span>Patient </span>@item.Requestor</td>
-                    <td class="my-auto">@item.RequestedDate</td>
+                   
+                    <td class="my-auto">physician Name</td>
+                    <td class="my-auto">Date Of Service</td>
                     <td class="my-auto ">
                         <button class="btn border border-2 border-dark rounded my-1 btn-warning">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
                             </svg>@item.PhoneNumber
-                        </button><br /><span>(Family/Friend) </span> <br/>
+                        </button><br /><span>(Family/Friend) </span> <br />
                         <button class="btn border border-2 border-dark rounded my-1 btn-warning">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
@@ -104,9 +115,13 @@
                         </button><br /><span>(Patient) </span>
                     </td>
                     <td class="my-auto">@item.Address</td>
-                    <td class="my-auto">@item.Notes</td>
+             
                     <td class="my-auto">
-                        <button class="btn border rounded btn-warning  ">
+                        <button class="btn border rounded  btn-warning ">
+                            <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+                            </svg>Patient
+                        </button>  <button class="btn border rounded   btn-warning ">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
                                 <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
                             </svg>Provider
@@ -127,10 +142,10 @@
                     </td>
                 </tr>
             }
-           else  if (item.requesttypeid == 3)
+            else if (item.requesttypeid == 3 && item.status == 6)
             {
-              @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
-                  <tr class="table-info">
+                @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
+                <tr class="table-info">
                     <td class="my-auto">
                         @item.Name
                     </td>
@@ -142,14 +157,15 @@
                         </button>
                     </td>
                     <td class="my-auto"> @item.BirthDate</td>
-                    <td class="my-auto"><span>Concierge </span>@item.Requestor</td>
-                    <td class="my-auto">@item.RequestedDate</td>
+                   
+                    <td class="my-auto">physician Name</td>
+                    <td class="my-auto">Date Of Service</td>
                     <td class="my-auto ">
                         <button class="btn border border-2 border-dark rounded my-1 btn-info">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
                             </svg>@item.PhoneNumber
-                        </button><br /><span>(Concierge)</span> <br/>
+                        </button><br /><span>(Concierge)</span> <br />
                         <button class="btn border border-2 border-dark rounded my-1 btn-info">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
@@ -157,9 +173,13 @@
                         </button><br /><span>(Patient)</span>
                     </td>
                     <td class="my-auto">@item.Address</td>
-                    <td class="my-auto">@item.Notes</td>
+             
                     <td class="my-auto">
-                        <button class="btn border rounded  btn-info">
+                        <button class="btn border rounded btn-info ">
+                            <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+                            </svg>Patient
+                        </button>  <button class="btn border rounded  btn-info ">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
                                 <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
                             </svg>Provider
@@ -180,12 +200,12 @@
                         </ul>
                     </td>
                 </tr>
-            } 
-            
-          else if (item.requesttypeid == 4)
-            {   
-              @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
-                  <tr class="table-danger">
+            }
+
+            else if (item.requesttypeid == 4 && item.status == 6)
+            {
+                @*   <tr style="background-color:#5FBC61 !important; color:white !important;"> *@
+                <tr class="table-danger">
                     <td class="my-auto">
                         @item.Name
                     </td>
@@ -197,14 +217,14 @@
                         </button>
                     </td>
                     <td class="my-auto"> @item.BirthDate</td>
-                    <td class="my-auto"><span>BusinessPartner </span>@item.Requestor</td>
-                    <td class="my-auto">@item.RequestedDate</td>
+                    <td class="my-auto">physician Name</td>
+                    <td class="my-auto">Date Of Service</td>
                     <td class="my-auto ">
                         <button class="btn border border-2 border-dark rounded my-1 btn-danger">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
                             </svg>@item.PhoneNumber
-                        </button><br /><span>(BusinessPartner)</span> <br/>
+                        </button><br /><span>(BusinessPartner)</span> <br />
                         <button class="btn border border-2 border-dark rounded my-1 btn-danger">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z" />
@@ -212,9 +232,13 @@
                         </button><br /><span>(Patient)</span>
                     </td>
                     <td class="my-auto">@item.Address</td>
-                    <td class="my-auto">@item.Notes</td>
+                
                     <td class="my-auto">
-                        <button class="btn border rounded btn-danger">
+                        <button class="btn border rounded  btn-danger ">
+                            <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+                            </svg>Patient
+                        </button>  <button class="btn border rounded  btn-danger ">
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
                                 <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
                             </svg>Provider
@@ -235,15 +259,16 @@
                     </td>
                 </tr>
             }
-          
+
 
 
 
         }
 
     </tbody>
+
 </table>
 
 
 
-  @* ---------------table---------------------------- *@
+@* ---------------table---------------------------- *@

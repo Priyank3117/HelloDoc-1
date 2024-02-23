@@ -28,5 +28,7 @@ namespace DAL.ViewModel
         public int? requesttypeid { get; set; }
 
         public int? regionid { get; set;}
+
+        public int? status { get; set;}
     }
 }
