@@ -4,14 +4,27 @@
     ViewData["Title"] = "Admin_Dash";
     Layout = "~/Views/Shared/_Admin_Dash.cshtml";
 }
+<style>
+    .triangle {
+        width: 0;
+        height: 0;
+        border-left: 20px solid;
+        border-right: 20px solid ;
+        border-top: 20px solid black;
+        position: absolute;
+        bottom:-20px;
+        left: 50%;
+        transform: translateX(-50%)
+    }
+</style>
 
 
     <div class="container-fluid" style="margin-top:3rem">
 
         @* -------------------------------gutters--------------------------------------------- *@
-        <div class="row gx-5 mt-4 ms-3 me-3" >
+        <div class="row gx-5 mt-4 ms-3 me-3 " >
             <div class="col">
-                <div class="px-3 py-2 text-white border  rounded" style="background-color:#203f9a">
+                <div class="px-3 py-2 text-white border  rounded-4 position-relative" style="background-color:#203f9a">
                 <a id="New">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -19,12 +32,13 @@
                         </svg>
                         <h4>new</h4>
                     </div>
+                 <div class="triangle"></div>
                     <h3>1345</h3>
                 </a>
                 </div>
             </div> 
             <div class="col">
-            <div class="px-3 py-2 border text-info rounded" style="background-color:#e5f2f8">
+            <div class="px-3 py-2 border text-info rounded-4" style="background-color:#e5f2f8">
                   <a id="Pending">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill me-2" viewBox="0 0 16 16">
@@ -37,7 +51,7 @@
                 </div>
             </div> 
             <div class="col">
-            <div class="px-3 py-2 border  rounded" style="background-color:#e9f0e8">
+            <div class="px-3 py-2 border  rounded-4" style="background-color:#e9f0e8">
                 <a id="Active">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -50,7 +64,7 @@
                 </div>
             </div> 
             <div class="col">
-            <div class="px-3 py-2 border  rounded text-pink" style="background-color:#f7e6ee">
+            <div class="px-3 py-2 border  rounded-4 text-pink" style="background-color:#f7e6ee">
                    <a id="Conclude">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -63,7 +77,7 @@
                 </div>
             </div>  
             <div class="col">
-            <div class="px-3 py-2 border  rounded" style="background-color:#e5eef5">
+            <div class="px-3 py-2 border  rounded-4" style="background-color:#e5eef5">
                 <a id="ToClose">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -76,7 +90,7 @@
                 </div>
             </div>  
             <div class="col">
-            <div class="px-3 py-2 border  rounded" style="background-color:#efeef4">
+            <div class="px-3 py-2 border  rounded-4" style="background-color:#efeef4">
                 <a id="UnPaid">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -218,6 +232,7 @@
         $(document).ready(function () {
 
             var currentPartialview = "Admin_TableNew"
+       
 
             LoadPartialView(currentPartialview);
             $('Admin_TablePending').hide();
@@ -228,13 +243,14 @@
 
 
             $("#New").click(function () {
-                 currentPartialview = "Admin_TableNew"
+                currentPartialview = "Admin_TableNew"
                 LoadPartialView(currentPartialview);
+           
             });
 
             $("#Pending").click(function () {
                  currentPartialview = "Admin_TablePending"
-                LoadPartialView(currentPartialview);
+                 LoadPartialView(currentPartialview);
             });
 
             $("#Active").click(function () {
@@ -279,7 +295,7 @@
 
 
             // --------------LoadPartialView---------------
-            function LoadPartialView(partialName) { 
+            function LoadPartialView(partialName) {
 
                 $.ajax({
                     url: '@Url.Action("AdminDash", "Admin_Dash")',
@@ -318,7 +334,7 @@
                         type:"GET",
                         url: '@Url.Action("SearchPatient", "Admin_Dash")',
                         data: { SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
-                            , partialName:partialName
+                            , partialName: partialName
                         },
                         success: function (data) 
                         {

@@ -36,6 +36,7 @@ namespace HelloDoc.Controllers
         
         public IActionResult SearchPatient(string SearchValue,string Filterselect,string selectvalue, string partialName)
                {
+
             var FilterData = _AdminDashboard.GetRequestData()
                 .Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
                               (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
@@ -43,6 +44,7 @@ namespace HelloDoc.Controllers
 
             return PartialView(partialName, FilterData);
 
-            }
+         
+        }
     }
 }
