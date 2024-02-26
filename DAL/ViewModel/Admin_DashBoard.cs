@@ -12,7 +12,11 @@ namespace DAL.ViewModel
          [StringLength(100)]
         public string? Name { get; set; } 
 
+         public string? LastName { get; set; }
+
         public string? BirthDate { get; set;}
+
+        public string? Email { get; set; }
 
         public string? Requestor { get; set; }
 
@@ -29,6 +33,10 @@ namespace DAL.ViewModel
 
         public int? regionid { get; set;}
 
+        public string regionname { get; set; }
+
         public int? status { get; set;}
+
+        public int? reqclientid { get; set;}
     }
 }

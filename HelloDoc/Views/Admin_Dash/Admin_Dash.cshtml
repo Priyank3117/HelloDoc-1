@@ -24,7 +24,7 @@
         @* -------------------------------gutters--------------------------------------------- *@
         <div class="row gx-5 mt-4 ms-3 me-3 " >
             <div class="col">
-                <div class="px-3 py-2 text-white border  rounded-4 position-relative" style="background-color:#203f9a">
+                <div class="px-3 py-2 text-white border  rounded-4 position-relative" style="background-color:#203f9a" id="divnew">
                 <a id="New">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -32,26 +32,27 @@
                         </svg>
                         <h4>new</h4>
                     </div>
-                 <div class="triangle"></div>
-                    <h3>1345</h3>
+                    <div class="triangle"></div>
+                    <h3>@ViewBag.NewCount</h3>
                 </a>
                 </div>
             </div> 
             <div class="col">
-            <div class="px-3 py-2 border text-info rounded-4" style="background-color:#e5f2f8">
+            <div class="px-3 py-2 border rounded-4 position-relative" style="background-color:#e5f2f8;color:#0dcaf0;" id="divpen">
                   <a id="Pending">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill me-2" viewBox="0 0 16 16">
                             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
                         </svg>
-                        <h4>Pending</h4>
+                        <h4>pending</h4>
                     </div>
-                    <h3>1345</h3>
+                    <div class="triangle  text-white" id="trapending"></div>
+                    <h3>@ViewBag.PendingCount</h3>
                   </a>
                 </div>
             </div> 
             <div class="col">
-            <div class="px-3 py-2 border  rounded-4" style="background-color:#e9f0e8">
+            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#e9f0e8" >
                 <a id="Active">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -59,12 +60,13 @@
                         </svg>
                         <h4>Active</h4>
                     </div>
-                    <h3>1345</h3>
+                    <div class="triangle text-white"></div>
+                    <h3>@ViewBag.activecount</h3>
                 </a>
                 </div>
             </div> 
             <div class="col">
-            <div class="px-3 py-2 border  rounded-4 text-pink" style="background-color:#f7e6ee">
+            <div class="px-3 py-2 border  rounded-4 text-pink position-relative" style="background-color:#f7e6ee">
                    <a id="Conclude">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -72,12 +74,13 @@
                         </svg>
                         <h4>conclude</h4>
                     </div>
-                    <h3>1345</h3>
+                    <div class="triangle text-white"></div>
+                    <h3>@ViewBag.conclude</h3>
                    </a>
                 </div>
             </div>  
             <div class="col">
-            <div class="px-3 py-2 border  rounded-4" style="background-color:#e5eef5">
+            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#e5eef5">
                 <a id="ToClose">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -85,12 +88,13 @@
                         </svg>
                         <h4>To close</h4>
                     </div>
-                    <h3>1345</h3>
+                    <div class="triangle text-white"></div>
+                    <h3>@ViewBag.toclosed</h3>
                 </a>
                 </div>
             </div>  
             <div class="col">
-            <div class="px-3 py-2 border  rounded-4" style="background-color:#efeef4">
+            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#efeef4">
                 <a id="UnPaid">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -98,7 +102,8 @@
                         </svg>
                         <h4>Unpaid</h4>
                     </div>
-                    <h3>1345</h3>
+                    <div class="triangle text-white"></div>
+                    <h3>@ViewBag.unpaid</h3>
                 </a>
                 </div>
             </div>
@@ -233,6 +238,8 @@
 
             var currentPartialview = "Admin_TableNew"
        
+               $('.triangle').css('display', 'none');
+           
 
             LoadPartialView(currentPartialview);
             $('Admin_TablePending').hide();
@@ -248,9 +255,19 @@
            
             });
 
+          
+            
+            $("#divpen").hover(function () {
+                $(this).css("background-color", "#0dcaf0").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e5f2f8").css("color", "#0dcaf0");
+            });
+
             $("#Pending").click(function () {
                  currentPartialview = "Admin_TablePending"
                  LoadPartialView(currentPartialview);
+                $('.triangle').css('display', 'none');
+                $('#trapending').css('display', 'block').css('border-top', '20px solid  #0dcaf0');
             });
 
             $("#Active").click(function () {

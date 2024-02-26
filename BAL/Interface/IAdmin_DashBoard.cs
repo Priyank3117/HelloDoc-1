@@ -9,7 +9,8 @@ namespace BAL.Interface
 {
     public interface IAdmin_DashBoard
     {
-        public IQueryable<Admin_DashBoard> GetRequestData();
+        public IQueryable<Admin_DashBoard> GetRequestData();  
+        public IQueryable<Admin_DashBoard> getregionwise();
 
         public Admin_DashBoard GetList();
     }

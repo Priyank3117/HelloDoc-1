@@ -38,7 +38,8 @@ namespace BAL.Repository
                                 PhoneNumber_P = reqclient.PhoneNumber,
                                 regionid = reqclient.RegionId,
                                 Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
-                                status = req.Status
+                                status = req.Status,
+                              
 
                             });
 
@@ -50,10 +51,12 @@ namespace BAL.Repository
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
+                            
 
                             select new Admin_DashBoard()
                             {
                                 Name = reqclient.FirstName.ToLower(),
+                                LastName = reqclient.LastName,
                                 Requestor = req.FirstName,
                                 BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
                                 RequestedDate = req.CreatedDate,
@@ -62,11 +65,48 @@ namespace BAL.Repository
                                 PhoneNumber_P = reqclient.PhoneNumber,
                                 regionid = reqclient.RegionId,
                                 Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
-                                status = req.Status
+                                status = req.Status,
+                                reqclientid = reqclient.RequestClientId,
+                                 Email = reqclient.Email,
+                                 Notes = reqclient.Notes,
 
+                            });
+
+            return DashData;
+
+        } 
+        
+        public IQueryable<Admin_DashBoard> getregionwise()
+        {
+            var DashData = (from req in _context.Requests
+                            join reqclient in _context.RequestClients
+                             on req.RequestId equals reqclient.RequestId
+                            join region in _context.Regions on reqclient.RegionId equals region.RegionId
+
+                            select new Admin_DashBoard()
+                            {
+                                Name = reqclient.FirstName.ToLower(),
+                                LastName = reqclient.LastName,
+                                Requestor = req.FirstName,
+                                BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
+                                RequestedDate = req.CreatedDate,
+                                PhoneNumber = req.PhoneNumber,
+                                requesttypeid = req.RequestTypeId,
+                                PhoneNumber_P = reqclient.PhoneNumber,
+                                regionid = reqclient.RegionId,
+                                Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
+                                status = req.Status,
+                                reqclientid = reqclient.RequestClientId,
+                                 Email = reqclient.Email,
+                                 Notes = reqclient.Notes,
+                                 regionname = region.Name,
                             });
 
             return DashData;
         }
     }
 }
+
+
+
+//join region in _context.Regions on reqclient.RegionId equals region.RegionId
