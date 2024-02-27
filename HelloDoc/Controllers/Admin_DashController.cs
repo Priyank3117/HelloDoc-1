@@ -77,5 +77,11 @@ namespace HelloDoc.Controllers
            return View(viewCase);
         }
 
+        public ActionResult ViewNotes()
+        {
+            return View();
+        }
+
+
     }
 }
