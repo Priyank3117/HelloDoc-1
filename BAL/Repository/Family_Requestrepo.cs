@@ -30,6 +30,7 @@ namespace BAL.Repository
             request.FirstName = req.FirstNameOther;
             request.LastName = req.LastNameOther;
             request.RelationName = req.Relation;
+            request.CreatedDate = DateTime.Now;
             request.RequestTypeId = 2;
 
             _context.Requests.Add(request);

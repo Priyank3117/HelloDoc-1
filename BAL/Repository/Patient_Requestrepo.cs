@@ -26,6 +26,7 @@ namespace BAL.Repository
             AspNetUser aspnetUser = new AspNetUser();
             User user = new User();
             Request request = new Request();
+              
 
             //Status shows that user is Exists or not
             var status = _context.Users.FirstOrDefault(User => User.Email == patient.Email);
@@ -48,6 +49,8 @@ namespace BAL.Repository
                 _context.AspNetUsers.Add(aspnetUser);
                 _context.SaveChanges();
 
+
+
                 user.AspNetUserId = aspnetUser.AspNetUserId;
                 user.FirstName = patient.FirstName;
                 user.LastName = patient.LastName;
@@ -64,6 +67,26 @@ namespace BAL.Repository
                 user.CreatedBy = patient.FirstName;
                 user.CreatedDate = DateTime.Now;
 
+               if(patient.State != null)
+                {
+                   if (patient.State.ToLower() == "maryaland")
+                    {
+                        user.RegionId = 1;
+                    }
+                   else if(patient.State.ToLower() == "virginia")
+                    {
+                        user.RegionId = 2;
+                    } 
+                    else if(patient.State.ToLower() == "newyork")
+                    {
+                        user.RegionId = 3;
+                    } 
+                    else if(patient.State.ToLower() == "alaska")
+                    {
+                        user.RegionId = 4;
+                    }
+                }
+
 
                 _context.Users.Add(user);
                 _context.SaveChanges();           
@@ -79,7 +102,7 @@ namespace BAL.Repository
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
-
+                
                 request_c.RequestId = request.RequestId;
                 request_c.FirstName = patient.FirstName;
                 request_c.LastName = patient.LastName;
@@ -91,9 +114,17 @@ namespace BAL.Repository
                 request_c.ZipCode = patient.ZipCode;
                 request_c.IntYear = patient.BirthDate.Value.Year;
                 request_c.IntDate = patient.BirthDate.Value.Day;
+                if(user.RegionId != null)
+                {
+                    request_c.RegionId = user.RegionId;
+                }
                 request_c.StrMonth = (patient.BirthDate.Value.Month).ToString();
+
+
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
+
+
 
             }
             else if (patient.PasswordHash == patient.Confirmpassword)
@@ -109,6 +140,8 @@ namespace BAL.Repository
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
+                var users = _context.Users.FirstOrDefault(x => x.Email == request.Email);
+                                        
 
                 request_c.RequestId = request.RequestId;
                 request_c.FirstName = patient.FirstName;
@@ -122,15 +155,24 @@ namespace BAL.Repository
                 request_c.IntYear = patient.BirthDate.Value.Year;
                 request_c.IntDate = patient.BirthDate.Value.Day;
                 request_c.StrMonth = (patient.BirthDate.Value.Month).ToString();
+
+                if(users != null)
+                {
+                    request_c.RegionId = users.RegionId;
+                }
+
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
 
-
-                
+                var region = _context.Regions.FirstOrDefault(x => x.RegionId == request_c.RegionId);
+  //-------------------------------------
+                if(region != null)
+                {
+                    string confirmationnum = region.Abbreviation.ToUpper() + request_c.FirstName.Substring(0,2);
+                }
 
             }
         }
-
         public Request GetUserByEmail(string email)
         {
             return _context.Requests.OrderBy(e => e.RequestId).LastOrDefault(x => x.Email == email);

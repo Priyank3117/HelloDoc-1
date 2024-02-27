@@ -172,16 +172,20 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col col-sm-6 col-12">
+                           <div class="col col-sm-6 col-12">
                                 <div class="form-floating mb-3">
-                                    <input type="text"
-                                           asp-for="State"
-                                           class="form-control"
-                                           id="floatingPassword"
-                                           placeholder="Password" />
+                                     <input class="form-control"  asp-for="State" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+                                <datalist id="datalistOptions">
+                                  <option value="Maryaland" />
+                                  <option value="NewYork" />
+                                  <option value="Alaska" />
+                                  <option value="Virginia" />
+                                </datalist>
                                     <label for="floatingPassword">State</label>
                                 </div>
-                            </div>
+                            </div> 
+                            
+                              
                             <div class="col col-sm-6 col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text"

@@ -19,12 +19,12 @@
 </style>
 
 
-    <div class="container-fluid" style="margin-top:3rem">
+   
 
         @* -------------------------------gutters--------------------------------------------- *@
-        <div class="row gx-5 mt-4 ms-3 me-3 " >
-            <div class="col">
-                <div class="px-3 py-2 text-white border  rounded-4 position-relative" style="background-color:#203f9a" id="divnew">
+ <div class="row gx-4 gy-4 mt-4 ms-3 me-3 " style="margin-top:3rem">
+            <div class="col-4 col-xl-2 col-md-4 ">
+            <div class="px-3 py-2  border  rounded-4 position-relative" id="divnew" style="background-color:#e9eaef">
                 <a id="New">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -32,12 +32,12 @@
                         </svg>
                         <h4>new</h4>
                     </div>
-                    <div class="triangle"></div>
+                    <div class="triangle" id="tranew"></div>
                     <h3>@ViewBag.NewCount</h3>
                 </a>
                 </div>
             </div> 
-            <div class="col">
+            <div class="col-4 col-xl-2 col-md-4 ">
             <div class="px-3 py-2 border rounded-4 position-relative" style="background-color:#e5f2f8;color:#0dcaf0;" id="divpen">
                   <a id="Pending">
                     <div class="d-flex align-items-center">
@@ -51,8 +51,8 @@
                   </a>
                 </div>
             </div> 
-            <div class="col">
-            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#e9f0e8" >
+            <div class="col-4 col-xl-2 col-md-4 ">
+            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#e9f0e8"  id="divact">
                 <a id="Active">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -60,13 +60,13 @@
                         </svg>
                         <h4>Active</h4>
                     </div>
-                    <div class="triangle text-white"></div>
+                    <div class="triangle text-white" id="traact"></div>
                     <h3>@ViewBag.activecount</h3>
                 </a>
                 </div>
             </div> 
-            <div class="col">
-            <div class="px-3 py-2 border  rounded-4 text-pink position-relative" style="background-color:#f7e6ee">
+            <div class="col-4 col-xl-2 col-md-4 ">
+            <div class="px-3 py-2 border  rounded-4 text-pink position-relative" style="background-color:#f7e6ee" id="divcon">
                    <a id="Conclude">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -74,13 +74,13 @@
                         </svg>
                         <h4>conclude</h4>
                     </div>
-                    <div class="triangle text-white"></div>
+                    <div class="triangle text-white" id="tracon"></div>
                     <h3>@ViewBag.conclude</h3>
                    </a>
                 </div>
             </div>  
-            <div class="col">
-            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#e5eef5">
+            <div class="col-4 col-xl-2 col-md-4 ">
+            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#e5eef5" id="divclo">
                 <a id="ToClose">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -88,13 +88,13 @@
                         </svg>
                         <h4>To close</h4>
                     </div>
-                    <div class="triangle text-white"></div>
+                    <div class="triangle text-white" id="traclo"></div>
                     <h3>@ViewBag.toclosed</h3>
                 </a>
                 </div>
             </div>  
-            <div class="col">
-            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#efeef4">
+            <div class="col-4 col-xl-2 col-md-4 ">
+            <div class="px-3 py-2 border  rounded-4 position-relative" style="background-color:#efeef4" id="divun">
                 <a id="UnPaid">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
@@ -102,7 +102,7 @@
                         </svg>
                         <h4>Unpaid</h4>
                     </div>
-                    <div class="triangle text-white"></div>
+                    <div class="triangle text-white" id="traun"></div>
                     <h3>@ViewBag.unpaid</h3>
                 </a>
                 </div>
@@ -110,32 +110,32 @@
         </div>
         @* -------------------------------gutters--------------------------------------------- *@
         @* -------------------------------buttons--------------------------------------------- *@
-<div class="mt-3 mt-md-5 d-flex-column d-sm-flex justify-content-between align-items-center">
+    <div class="mt-3 mt-md-5 d-sm-flex justify-content-between align-items-center">
     <div class="ms-4">
-        <p class="fs-2 ps-2">Patients<span class="text-primary">(new)</span></p>
+        <p class="fs-2 ps-2">Patients<span class="text-primary" id="textspan">(new)</span></p>
     </div>
     <div class="me-4" >
         <button type="button" class="btn btn-info text-white me-2">
-            <i class="bi bi-send  me-md-2 "></i><span class="d-none d-lg-inline">Send Link</span>
+            <i class="bi bi-send  me-md-2 "></i><span class="d-none d-xl-inline">Send Link</span>
         </button>
             <button type="button" class="btn btn-info  text-white me-2">
-            <i class="bi bi-pencil-square me-md-2"></i><span class="d-none d-lg-inline">
+            <i class="bi bi-pencil-square me-md-2"></i><span class="d-none d-xl-inline">
                 Create
                 Requests
             </span>
         </button>
             <button type="button" class="btn btn-info  text-white me-2">
             <i class="bi bi-arrow-up-right "></i>
-            <span class="d-none d-lg-inline ">Export</span>
+            <span class="d-none d-xl-inline ">Export</span>
         </button>
             <button type="button" class="btn btn-info  text-white me-2">
-            <i class="bi bi-box-arrow-up-right "></i><span class="d-none d-lg-inline">
+            <i class="bi bi-box-arrow-up-right "></i><span class="d-none d-xl-inline">
                 Export
                 All
             </span>
         </button>
             <button type="button" class="btn btn-info  text-white me-2">
-            <i class="bi bi-person-plus  me-md-2"></i><span class="d-none d-lg-inline">
+            <i class="bi bi-person-plus  me-md-2"></i><span class="d-none d-xl-inline">
                 Request DTY
                 Support
             </span>
@@ -149,7 +149,7 @@
         @* -------------------------------Search--------------------------------------------- *@
        <div class="container-fluid">
     <div class="row d-flex border rounded" style="">
-        <div class="d-flex col-6 ">
+        <div class="d-flex col-xl-6">
             <div class="input-group bg-white mt-2 mb-2 d-flex align-items-center ms-2 " style="width:17rem">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50">
                     <path d="M 21 3 C 11.654545 3 4 10.654545 4 20 C 4 29.345455 11.654545 37 21 37 C 24.701287 37 28.127393 35.786719 30.927734 33.755859 L 44.085938 46.914062 L 46.914062 44.085938 L 33.875 31.046875 C 36.43682 28.068316 38 24.210207 38 20 C 38 10.654545 30.345455 3 21 3 z M 21 5 C 29.254545 5 36 11.745455 36 20 C 36 28.254545 29.254545 35 21 35 C 12.745455 35 6 28.254545 6 20 C 6 11.745455 12.745455 5 21 5 z">
@@ -170,7 +170,7 @@
                 </select>
             </div>
         </div>
-        <div class="d-flex col-6 justify-content-end  my-3">
+        <div class="d-flex  col-xl-6  col-sm-12 justify-content-end   ">
             <button class="active-filter filter-options d-flex align-items-center  px-3 py-1 rounded btn filter-btn" data-value="">
                 <span>All</span>
             </button>
@@ -209,13 +209,13 @@
         </div>
 
     </div>
-       </div>
+      
+
+
        
         @* -------------------------------Search--------------------------------------------- *@
 
  <div id="PartialViews">
-
-
     <partial name="Admin_TableNew" model="@Model"></partial>
     <partial name="Admin_TablePending" model="@Model"></partial>
     <partial name="Admin_TableActive" model="@Model"></partial>
@@ -239,6 +239,7 @@
             var currentPartialview = "Admin_TableNew"
        
                $('.triangle').css('display', 'none');
+                $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color','white');
            
 
             LoadPartialView(currentPartialview);
@@ -249,23 +250,61 @@
             $('Admin_TableUnPaid').hide();
 
 
-            $("#New").click(function () {
-                currentPartialview = "Admin_TableNew"
-                LoadPartialView(currentPartialview);
            
-            });
 
           
+            // ---------------hover----------------------       
+            $("#divnew").hover(function () {
+                $(this).css("background-color", "#203f9a").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e9eaef").css("color", "black");
+            }); 
             
             $("#divpen").hover(function () {
                 $(this).css("background-color", "#0dcaf0").css("color", "white");
             }, function () {
                 $(this).css("background-color", "#e5f2f8").css("color", "#0dcaf0");
+            });   
+            $("#divact").hover(function () {
+                $(this).css("background-color", "#228c20").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e9f0e8").css("color", "black");
             });
+            $("#divcon").hover(function () {
+                $(this).css("background-color", "#da0f82").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#f7e6ee").css("color", "black");
+            });
+            $("#divclo").hover(function () {
+                $(this).css("background-color", "#0370d7").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e5eef5").css("color", "black");
+            }); 
+            $("#divun").hover(function () {
+                $(this).css("background-color", "#9966cd").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#efeef4").css("color", "#0dcaf0");
+            });
+
+
+              // -------------hover  end---------------------
+
+        //-------------------on click functionality------------------------------
+
+            $("#New").click(function () {
+                currentPartialview = "Admin_TableNew"
+                LoadPartialView(currentPartialview);
+                $('#textspan').text('(new)');
+                $('.triangle').css('display', 'none');
+                $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+            });
+
 
             $("#Pending").click(function () {
                  currentPartialview = "Admin_TablePending"
                  LoadPartialView(currentPartialview);
+
+                $('#textspan').text('(pending)');
                 $('.triangle').css('display', 'none');
                 $('#trapending').css('display', 'block').css('border-top', '20px solid  #0dcaf0');
             });
@@ -273,25 +312,44 @@
             $("#Active").click(function () {
                 currentPartialview = "Admin_TableActive"
                 LoadPartialView(currentPartialview);
+                $('#textspan').text('(Active)');
+                $('.triangle').css('display', 'none');
+                $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
             });
+
+
             $("#Conclude").click(function () {
                 currentPartialview = "Admin_TableConclude"
                 LoadPartialView(currentPartialview);
+                $('#textspan').text('(Conclude)');
+                $('.triangle').css('display', 'none');
+                $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
             });
 
             $("#ToClose").click(function () {
                 currentPartialview = "Admin_TableToClose"
                 LoadPartialView(currentPartialview);
+                $('#textspan').text('(To Close)');
+                $('.triangle').css('display', 'none');
+                $('#traclo').css('display', 'block').css('border-top', '20px solid #0370d7').css('color', 'white');
             });
 
             $("#UnPaid").click(function () {
                 currentPartialview = "Admin_TableUnPaid"
                 LoadPartialView(currentPartialview);
+                $('#textspan').text('(UnPaid)');
+                $('.triangle').css('display', 'none');
+                $('#traun').css('display', 'block').css('border-top', '20px solid #9966cd').css('color', 'white');
             });
+
+        //-------------------on click functionality end------------------------------
 
             $('.form-select').on("change", function () {
                 filtertable(currentPartialview)
             });
+
+
+
 
              // -------------filter btn-----------------------------
             $('.filter-btn').click(function () {
@@ -300,15 +358,13 @@
                 filtertable(currentPartialview)
 
             });
-             // -------------filter btn-----------------------------
+             // -------------filter btn end -----------------------------
 
             // -------on search value--------------------          
             $("#Search").on("input", function () {
                 filtertable(currentPartialview);
             });
-
-          
-            // -------on search value---------------------
+            // -------on search value end---------------------
 
 
             // --------------LoadPartialView---------------
@@ -328,7 +384,7 @@
                     }
                 });
             }
-            // --------------LoadPartialView---------------
+            // --------------LoadPartialView end---------------
 
             function filtertable(partialName) {
 

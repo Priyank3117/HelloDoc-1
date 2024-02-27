@@ -15,5 +15,7 @@ namespace BAL.Interface
         public Request GetUserByEmail(string email);
 
        public void RequestWiseFile(string filename, int Requestid);
+
+       // public string GetConfirmationNumber(User user);
     }
 }
