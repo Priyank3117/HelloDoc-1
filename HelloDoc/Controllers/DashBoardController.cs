@@ -73,7 +73,8 @@ namespace HelloDoc.Controllers
             var result = new ViewDoc
             {
                 requestwisefile = reque,
-                requestid = requestid
+                requestid = requestid,
+                confirmationnum = _context.Requests.FirstOrDefault(s => s.RequestId == requestid).ConfirmationNumber,
             };
             return View(result);
         }

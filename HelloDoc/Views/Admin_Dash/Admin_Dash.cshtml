@@ -237,12 +237,14 @@
         $(document).ready(function () {
 
             var currentPartialview = "Admin_TableNew"
-       
+
+            var currentstatus = [1];
+      
                $('.triangle').css('display', 'none');
                 $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color','white');
            
 
-            LoadPartialView(currentPartialview);
+                filtertable(currentPartialview,currentstatus);
             $('Admin_TablePending').hide();
             $('Admin_TableActive').hide();
             $('Admin_TableConclude').hide(); 
@@ -292,8 +294,9 @@
         //-------------------on click functionality------------------------------
 
             $("#New").click(function () {
+                currentstatus = [1];
                 currentPartialview = "Admin_TableNew"
-                LoadPartialView(currentPartialview);
+                    filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(new)');
                 $('.triangle').css('display', 'none');
                 $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
@@ -302,7 +305,8 @@
 
             $("#Pending").click(function () {
                  currentPartialview = "Admin_TablePending"
-                 LoadPartialView(currentPartialview);
+                 currentstatus=[2]
+                    filtertable(currentPartialview, currentstatus);
 
                 $('#textspan').text('(pending)');
                 $('.triangle').css('display', 'none');
@@ -311,7 +315,8 @@
 
             $("#Active").click(function () {
                 currentPartialview = "Admin_TableActive"
-                LoadPartialView(currentPartialview);
+                currentstatus=[4,5]
+                    filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(Active)');
                 $('.triangle').css('display', 'none');
                 $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
@@ -320,7 +325,8 @@
 
             $("#Conclude").click(function () {
                 currentPartialview = "Admin_TableConclude"
-                LoadPartialView(currentPartialview);
+                currentstatus = [6]
+                    filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(Conclude)');
                 $('.triangle').css('display', 'none');
                 $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
@@ -328,7 +334,8 @@
 
             $("#ToClose").click(function () {
                 currentPartialview = "Admin_TableToClose"
-                LoadPartialView(currentPartialview);
+                currentstatus=[3,7,8]
+                    filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(To Close)');
                 $('.triangle').css('display', 'none');
                 $('#traclo').css('display', 'block').css('border-top', '20px solid #0370d7').css('color', 'white');
@@ -336,8 +343,9 @@
 
             $("#UnPaid").click(function () {
                 currentPartialview = "Admin_TableUnPaid"
-                LoadPartialView(currentPartialview);
-                $('#textspan').text('(UnPaid)');
+                currentstatus = [9];
+                    filtertable(currentPartialview, currentstatus);
+                $('#textspan').text('(Unpaid)');
                 $('.triangle').css('display', 'none');
                 $('#traun').css('display', 'block').css('border-top', '20px solid #9966cd').css('color', 'white');
             });
@@ -345,7 +353,7 @@
         //-------------------on click functionality end------------------------------
 
             $('.form-select').on("change", function () {
-                filtertable(currentPartialview)
+                    filtertable(currentPartialview, currentstatus)
             });
 
 
@@ -355,38 +363,23 @@
             $('.filter-btn').click(function () {
                 $('.filter-btn').removeClass('active')
                 $(this).addClass('active')
-                filtertable(currentPartialview)
+                    filtertable(currentPartialview, currentstatus)
 
             });
              // -------------filter btn end -----------------------------
 
             // -------on search value--------------------          
             $("#Search").on("input", function () {
-                filtertable(currentPartialview);
+                    filtertable(currentPartialview, currentstatus);
             });
             // -------on search value end---------------------
 
 
             // --------------LoadPartialView---------------
-            function LoadPartialView(partialName) {
-
-                $.ajax({
-                    url: '@Url.Action("AdminDash", "Admin_Dash")',
-                    type: 'GET',
-                    data: { partialName: partialName }, 
-                    success: function (result) {
-                        console.log(result)
-                        $("#PartialViews").html(result);
-                    },
-
-                    error: function (error) {
-                        console.error("Error loading partial view" + error);
-                    }
-                });
-            }
+                
             // --------------LoadPartialView end---------------
 
-            function filtertable(partialName) {
+                function filtertable(partialName, currentstatus) {
 
                 var SearchValue = $("#Search").val();
                 var Filterselect = $('.filter-btn.active').data('value');
@@ -399,15 +392,16 @@
 
 
                 if (SearchValue == "" && Filterselect == "" ) {
-                    LoadPartialView(currentPartialview);
+                        filtertable(currentPartialview, currentstatus);
                 }
 
                 else {
                     $.ajax({
                         type:"GET",
                         url: '@Url.Action("SearchPatient", "Admin_Dash")',
+                        traditional:true,
                         data: { SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
-                            , partialName: partialName
+                                , partialName: partialName, currentstatus: currentstatus
                         },
                         success: function (data) 
                         {

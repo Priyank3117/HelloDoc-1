@@ -12,5 +12,7 @@ namespace DAL.ViewModel
         public List<RequestWiseFile> requestwisefile {  get; set; }
 
         public int? requestid { get; set;}
+
+        public string? confirmationnum {  get; set; }
     }
 }

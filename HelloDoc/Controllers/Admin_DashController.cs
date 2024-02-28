@@ -3,6 +3,7 @@ using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HelloDoc.Controllers
 {
@@ -21,7 +22,7 @@ namespace HelloDoc.Controllers
         }
         public IActionResult Admin_Dash()
         {
-             var DashData = _AdminDashboard.GetRequestData();
+             var DashData = _AdminDashboard.GetList();
 
             var newcount = (_context.Requests.Where(item => item.Status == 1)).Count();
             var pendingcount = (_context.Requests.Where(item => item.Status == 2)).Count();
@@ -38,24 +39,16 @@ namespace HelloDoc.Controllers
 
             return View(DashData.ToList());
         }  
-       public IActionResult AdminDash(string partialName)
-        {
-            var DashData = _AdminDashboard.GetRequestData().ToList();
-
-            return PartialView(partialName,DashData);
-
-        } 
+     
         
         
-        public IActionResult SearchPatient(string SearchValue,string Filterselect,string selectvalue, string partialName)
+        public IActionResult SearchPatient(string SearchValue,string Filterselect,string selectvalue, string partialName, int[] currentstatus)
                {
 
-            var FilterData = _AdminDashboard.GetRequestData()
-                .Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
-                              (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
-                              (string.IsNullOrEmpty(selectvalue) || item.regionid == int.Parse(selectvalue))).ToList();
+            var FilterData = _AdminDashboard.GetRequestData( SearchValue,  Filterselect, selectvalue,  partialName,currentstatus).ToList();
+               
 
-            return PartialView(partialName, FilterData);
+            return PartialView(partialName, FilterData);    
        
         }
 
@@ -73,13 +66,34 @@ namespace HelloDoc.Controllers
             viewCase.Notes = patientdata.Notes;
             viewCase.region = patientdata.regionname;
             viewCase.address = patientdata.Address;
+            viewCase.ConfirmationNumber = patientdata.confirmationnum;
 
            return View(viewCase);
         }
 
-        public ActionResult ViewNotes()
+        public ActionResult ViewNotes(int id)
         {
-            return View();
+
+            //if admin add notes in transfer request that will added in the requeststatus log
+            //tables notes it will known as the transfer notes
+            var result = (from reqnote in _context.RequestNotes
+                          join
+                          reqstatuslog in _context.RequestStatusLogs
+                          on reqnote.RequestId equals reqstatuslog.RequestId
+                          into grp
+                          where reqnote.RequestId == id
+                          from reqstatuslog in grp.DefaultIfEmpty()
+                          select new ViewNotes
+                          {
+                              AdminNotes = reqnote.AdminNotes,
+                              PhysicianNotes = reqnote.PhysicianNotes,
+                              TransferNotes = reqstatuslog.Notes ?? "-----"
+               
+                          }).ToList();
+
+
+
+            return View(result);
         }
 
 

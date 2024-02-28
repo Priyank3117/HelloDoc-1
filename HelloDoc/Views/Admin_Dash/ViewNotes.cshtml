@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<DAL.ViewModel.ViewNotes>
+
+@{
     ViewData["Title"] = "viewCase";
     Layout = "~/Views/Shared/_Admin_Dash.cshtml";
 }
@@ -33,10 +35,10 @@
                             </svg>Transfer Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                           @*  @foreach (var item in Model)
+                            @foreach (var item in Model)
                             {
                                 @item.TransferNotes
-                            } *@
+                            } 
                         </p>
                     </div>
                 </div>
@@ -49,10 +51,10 @@
                             </svg>Physician Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                          @*   @foreach (var item in Model)
+                             @foreach (var item in Model)
                             {
                                 @item.PhysicianNotes
-                            } *@
+                            } 
                         </p>
                     </div>
                 </div>
@@ -64,10 +66,10 @@
                             </svg>Admin Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                         @*    @foreach (var item in Model)
+                            @foreach (var item in Model)
                             {
                                 @item.AdminNotes
-                            } *@
+                            }   
                         </p>
                     </div>
                 </div>

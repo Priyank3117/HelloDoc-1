@@ -35,8 +35,13 @@ namespace DAL.ViewModel
 
         public string regionname { get; set; }
 
-        public int? status { get; set;}
+        public int status { get; set;}
 
         public int? reqclientid { get; set;}
+        public int? requestid { get; set;}
+
+        public string? confirmationnum {  get; set; }
+
+        
     }
 }

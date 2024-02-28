@@ -5,6 +5,7 @@ using DAL.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -69,7 +70,7 @@ namespace BAL.Repository
 
                if(patient.State != null)
                 {
-                   if (patient.State.ToLower() == "maryaland")
+                   if (patient.State.ToLower() == "maryland")
                     {
                         user.RegionId = 1;
                     }
@@ -114,6 +115,8 @@ namespace BAL.Repository
                 request_c.ZipCode = patient.ZipCode;
                 request_c.IntYear = patient.BirthDate.Value.Year;
                 request_c.IntDate = patient.BirthDate.Value.Day;
+
+
                 if(user.RegionId != null)
                 {
                     request_c.RegionId = user.RegionId;
@@ -124,9 +127,28 @@ namespace BAL.Repository
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
 
+                var region = _context.Regions.FirstOrDefault(x => x.RegionId == request_c.RegionId);
+                var count = _context.Requests.Where(x => x.CreatedDate.Date == request.CreatedDate.Date).Count();
 
 
-            }
+                //-------------------------------------
+                if (region != null)
+                {
+                    var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") + 
+                        request_c.LastName.Substring(0, 2).ToUpper() + request_c.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                    request.ConfirmationNumber = confirmationnum;
+                }
+                else
+                {
+                    var confirmationnum = "AB" + request.CreatedDate.ToString("ddMMyy") + 
+                        request_c.LastName.Substring(0, 2).ToUpper() + request_c.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                    request.ConfirmationNumber = confirmationnum;
+                }
+
+
+                _context.Update(request);
+                _context.SaveChanges();
+        }
             else if (patient.PasswordHash == patient.Confirmpassword)
             {
 
@@ -165,11 +187,25 @@ namespace BAL.Repository
                 _context.SaveChanges();
 
                 var region = _context.Regions.FirstOrDefault(x => x.RegionId == request_c.RegionId);
-  //-------------------------------------
-                if(region != null)
+                var count = _context.Requests.Where(x => x.CreatedDate.Date == request.CreatedDate.Date).Count();
+
+                if (region != null)
                 {
-                    string confirmationnum = region.Abbreviation.ToUpper() + request_c.FirstName.Substring(0,2);
+                    var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") + 
+                        request_c.LastName.Substring(0, 2).ToUpper() + request_c.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                    request.ConfirmationNumber = confirmationnum;
                 }
+                else
+                {
+                    var confirmationnum = "AB" + request.CreatedDate.ToString("ddMMyy") +
+                        request_c.LastName.Substring(0, 2).ToUpper() + request_c.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                    request.ConfirmationNumber = confirmationnum;
+                }
+
+
+                _context.Update(request);
+                _context.SaveChanges();
+
 
             }
         }

@@ -1,5 +1,6 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
+using DAL.DataModels;
 using DAL.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace BAL.Repository
         
 
        
-        public Admin_DashBoard GetList()
+        public IQueryable<Admin_DashBoard> GetList()
         {
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
@@ -39,14 +40,15 @@ namespace BAL.Repository
                                 regionid = reqclient.RegionId,
                                 Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
                                 status = req.Status,
-                              
+                                requestid = reqclient.RequestId
+
 
                             });
 
-                   return (Admin_DashBoard)DashData;
+            return DashData;
         }
 
-        public IQueryable<Admin_DashBoard> GetRequestData()
+        public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect, string selectvalue, string partialName, int[] currentstatus)
         {
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
@@ -69,8 +71,14 @@ namespace BAL.Repository
                                 reqclientid = reqclient.RequestClientId,
                                  Email = reqclient.Email,
                                  Notes = reqclient.Notes,
+                                confirmationnum = req.ConfirmationNumber,
+                                requestid = reqclient.RequestId
 
-                            });
+
+                            }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
+                              (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
+                              (string.IsNullOrEmpty(selectvalue) || item.regionid == int.Parse(selectvalue)) &&
+                               currentstatus.Any(status => item.status == status)).ToList(); 
 
             return DashData;
 
@@ -100,6 +108,9 @@ namespace BAL.Repository
                                  Email = reqclient.Email,
                                  Notes = reqclient.Notes,
                                  regionname = region.Name,
+                                 confirmationnum = req.ConfirmationNumber,
+                                requestid = reqclient.RequestId
+
                             });
 
             return DashData;
