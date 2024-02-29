@@ -31,6 +31,8 @@ namespace BAL.Repository
             _context.Requests.Add(request);
             _context.SaveChanges();
 
+            var users = _context.Users.FirstOrDefault(x => x.Email == request.Email);
+
             requestClient.RequestId = request.RequestId;
             requestClient.FirstName = req.FirstName_P;
             requestClient.LastName = req.LastName_P;
@@ -44,7 +46,32 @@ namespace BAL.Repository
             requestClient.State = req.State;
             requestClient.ZipCode = req.Zipcode;
 
+            if (users != null)
+            {
+                requestClient.RegionId = users.RegionId;
+            }
+
             _context.RequestClients.Add(requestClient);
+            _context.SaveChanges();
+
+            var region = _context.Regions.FirstOrDefault(x => x.RegionId == requestClient.RegionId);
+            var count = _context.Requests.Where(x => x.CreatedDate.Date == request.CreatedDate.Date).Count();
+
+            if (region != null)
+            {
+                var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") +
+                    requestClient.LastName.Substring(0, 2).ToUpper() + requestClient.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                request.ConfirmationNumber = confirmationnum;
+            }
+            else
+            {
+                var confirmationnum = "AB" + request.CreatedDate.ToString("ddMMyy") +
+                    requestClient.LastName.Substring(0, 2).ToUpper() + requestClient.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                request.ConfirmationNumber = confirmationnum;
+            }
+
+
+            _context.Update(request);
             _context.SaveChanges();
 
             concierge.ConciergeName = req.FirstNameOther+ req.LastNameOther;

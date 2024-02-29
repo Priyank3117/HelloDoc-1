@@ -24,6 +24,9 @@ namespace BAL.Repository
        
         public IQueryable<Admin_DashBoard> GetList()
         {
+
+
+
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                            on req.RequestId equals reqclient.RequestId
@@ -40,10 +43,11 @@ namespace BAL.Repository
                                 regionid = reqclient.RegionId,
                                 Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
                                 status = req.Status,
-                                requestid = reqclient.RequestId
+                                requestid = reqclient.RequestId,
+                                cases = _context.CaseTags.ToList()
 
 
-                            });
+                            }) ;
 
             return DashData;
         }
@@ -114,6 +118,26 @@ namespace BAL.Repository
                             });
 
             return DashData;
+        }
+
+        public IQueryable<ViewNotes> GetViewNotes(int id)
+        {
+            var result = (from reqnote in _context.RequestNotes
+                          join
+                          reqstatuslog in _context.RequestStatusLogs
+                          on reqnote.RequestId equals reqstatuslog.RequestId
+                          into grp
+                          where reqnote.RequestId == id
+                          from reqstatuslog in grp.DefaultIfEmpty()
+                          select new ViewNotes
+                          {
+                              AdminNotes = reqnote.AdminNotes,
+                              PhysicianNotes = reqnote.PhysicianNotes,
+                              TransferNotes = reqstatuslog.Notes ?? "-----"
+
+                          });
+
+            return result;
         }
     }
 }

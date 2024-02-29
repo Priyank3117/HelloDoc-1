@@ -8,7 +8,7 @@ namespace DAL.ViewModel
 {
     public class ViewCase
     {
-          public int? RequestClientId { get; set; }  
+        public int? RequestClientId { get; set; }  
 
         public string? ConfirmationNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
@@ -23,6 +23,9 @@ namespace DAL.ViewModel
 
         public string? region { get; set; }
 
+        public int? requestid { get; set; }
+
+        public int? status { get; set; }
 
         //public string Location { get; set; }
     }

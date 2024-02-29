@@ -13,5 +13,9 @@ namespace BAL.Interface
         public IQueryable<Admin_DashBoard> getregionwise();
 
         public IQueryable<Admin_DashBoard> GetList();
+
+        public IQueryable<ViewNotes> GetViewNotes(int id);
+
+       
     }
 }

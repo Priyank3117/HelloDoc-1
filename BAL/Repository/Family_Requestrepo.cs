@@ -36,6 +36,7 @@ namespace BAL.Repository
             _context.Requests.Add(request);
             _context.SaveChanges();
 
+            var users = _context.Users.FirstOrDefault(x => x.Email == request.Email);
             //patient data will be added to the request client
             RequestClient requestClient = new RequestClient();
 
@@ -52,10 +53,35 @@ namespace BAL.Repository
             requestClient.IntYear = req.BirthDate_P.Year;
             requestClient.IntDate = req.BirthDate_P.Day;
 
+            if (users != null)
+            {
+                requestClient.RegionId = users.RegionId;
+            }
+
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
-            
-           
+
+            var region = _context.Regions.FirstOrDefault(x => x.RegionId == requestClient.RegionId);
+            var count = _context.Requests.Where(x => x.CreatedDate.Date == request.CreatedDate.Date).Count();
+
+            if (region != null)
+            {
+                var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") +
+                    requestClient.LastName.Substring(0, 2).ToUpper() + requestClient.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                request.ConfirmationNumber = confirmationnum;
+            }
+            else
+            {
+                var confirmationnum = "AB" + request.CreatedDate.ToString("ddMMyy") +
+                    requestClient.LastName.Substring(0, 2).ToUpper() + requestClient.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                request.ConfirmationNumber = confirmationnum;
+            }
+
+
+            _context.Update(request);
+            _context.SaveChanges();
+
+
         }
     }
 }

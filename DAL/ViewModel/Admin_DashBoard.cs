@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.DataModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -41,6 +42,8 @@ namespace DAL.ViewModel
         public int? requestid { get; set;}
 
         public string? confirmationnum {  get; set; }
+
+      public  List<CaseTag>? cases { get; set; }
 
         
     }
