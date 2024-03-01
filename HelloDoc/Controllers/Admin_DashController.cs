@@ -4,6 +4,7 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HelloDoc.Controllers
@@ -71,6 +72,8 @@ namespace HelloDoc.Controllers
             viewCase.address = patientdata.Address;
             viewCase.ConfirmationNumber = patientdata.confirmationnum;
             viewCase.status = status;
+            viewCase.requestid= patientdata.requestid;
+            viewCase.cases = _context.CaseTags.ToList();
 
             
 
@@ -116,6 +119,80 @@ namespace HelloDoc.Controllers
 
             return Ok();
            
+        }
+
+        public IActionResult GetPhysician(string regionid)
+         {
+            var result = (from physician in _context.Physicians join
+                           region in _context.PhysicianRegions on
+                           physician.PhysicianId equals region.PhysicianId into phy 
+                           select physician).Where(s => s.RegionId == int.Parse(regionid)).ToList();
+            return Json(result);
+       }
+
+     
+        public IActionResult AssignCase(int req, string Description,string phyid)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == req);
+
+            if (user != null)
+            {
+                user.Status = 2;
+                user.ModifiedDate = DateTime.Now;
+                user.PhysicianId = int.Parse(phyid);
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = req;
+                requeststatuslog.Notes = Description;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 2;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+
+            return Ok();
+        }
+
+        
+        public IActionResult BlockCase(int blocknameid, string blocknotes)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == blocknameid);
+
+            if (user != null)
+            {
+                user.Status = 11;
+       
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = blocknameid;
+                requeststatuslog.Notes = blocknotes ?? "--";
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 11;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+                BlockRequest blockRequest = new BlockRequest();
+
+                blockRequest.RequestId = blocknameid.ToString();
+                blockRequest.CreatedDate = DateTime.Now;
+                blockRequest.Email = user.Email;
+                blockRequest.PhoneNumber = user.PhoneNumber;
+                blockRequest.Reason = blocknotes ?? "--";
+
+            }
+
+            return Ok();
         }
 
 

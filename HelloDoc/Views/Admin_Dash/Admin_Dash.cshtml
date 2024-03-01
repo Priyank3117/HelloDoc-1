@@ -4,6 +4,7 @@
     ViewData["Title"] = "Admin_Dash";
     Layout = "~/Views/Shared/_Admin_Dash.cshtml";
     int i = 0;
+    int j = 0;
 }
 <style>
     .triangle {
@@ -211,7 +212,9 @@
         </div>
 
     </div>
-      
+
+    @* -------------------------------Modal--------------------------------------------- *@
+    @* -----------CancelCase Modal  --------------------------- *@
     <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -262,6 +265,92 @@
         </div>
     </div>
 
+    @* -----------CancelCase Modal  --------------------------- *@
+
+    @* -----------AssignCase Modal  --------------------------- *@
+    <div class="modal fade" id="AssignCaseModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Assign Request</h1>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  id="AssignCaseModalsubmit">
+                    <div class="modal-body">
+                        <p> To assign this request search and select another physician</p>
+
+                        <select class="form-select py-2 my-3 shadow-none border" name="Region" id="regiondropdown">
+                            <option value="0" selected>Narrow Search By Region</option>
+                            @foreach (var item in Model)
+                            {
+                                @if (j == 0)
+                                {
+                                    @foreach (var it in item.region)
+                                    {
+                                        <option value="@it.RegionId">@it.Name</option>
+                                    }
+                                }
+                                j++;
+                            }
+                        </select>
+                        <input id="request" name="req" hidden />
+
+                        <select class="form-select py-2 my-3 shadow-none border" name="phyid" id="physiciandropdown">
+                         
+                          
+                          </select>
+
+                        <div class="form-floating mt-3">
+                            <textarea class="form-control border border-info" name="Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <label for="floatingTextarea2">Description</label>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-info">Confirm</button>
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @* -----------AssignCase Modal  --------------------------- *@
+
+
+    @* -----------BlockCase Modal  --------------------------- *@
+    <div class="modal fade"  tabindex="-1" aria-labelledby="exampleModalLabel" id="BlockCaseModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="BlockCaseModalsubmit">
+                    <div class="modal-body">
+                        <p> Patient Name : <span id="blocktext"></span></p>
+                       
+
+                        <input id="blockid" name="blocknameid" hidden />
+                        <div class="form-floating mt-3">
+                            <textarea class="form-control" name="blocknotes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <label for="floatingTextarea2">Reason For Block</label>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-info">Confirm</button>
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @* -----------BlockCase Modal  --------------------------- *@
+    @* -------------------------------Modal--------------------------------------------- *@
        
         @* -------------------------------Search--------------------------------------------- *@
 
@@ -277,224 +366,7 @@
 
 @section scripts {
     <!-- jQuery script -->
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-    <script>
-
-        $(document).ready(function () {
-
-            var currentPartialview = "Admin_TableNew"
-
-            var currentstatus = [1];
-      
-               $('.triangle').css('display', 'none');
-                $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color','white');
-           
-
-                filtertable(currentPartialview,currentstatus);
-            $('Admin_TablePending').hide();
-            $('Admin_TableActive').hide();
-            $('Admin_TableConclude').hide(); 
-            $('Admin_TableToClose').hide();
-            $('Admin_TableUnPaid').hide();
-
-
-           
-
-          
-            // ---------------hover----------------------       
-            $("#divnew").hover(function () {
-                $(this).css("background-color", "#203f9a").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e9eaef").css("color", "black");
-            }); 
-            
-            $("#divpen").hover(function () {
-                $(this).css("background-color", "#0dcaf0").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e5f2f8").css("color", "#0dcaf0");
-            });   
-            $("#divact").hover(function () {
-                $(this).css("background-color", "#228c20").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e9f0e8").css("color", "black");
-            });
-            $("#divcon").hover(function () {
-                $(this).css("background-color", "#da0f82").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#f7e6ee").css("color", "black");
-            });
-            $("#divclo").hover(function () {
-                $(this).css("background-color", "#0370d7").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e5eef5").css("color", "black");
-            }); 
-            $("#divun").hover(function () {
-                $(this).css("background-color", "#9966cd").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#efeef4").css("color", "#0dcaf0");
-            });
-
-
-              // -------------hover  end---------------------
-
-        //-------------------on click functionality------------------------------
-
-            $("#New").click(function () {
-                currentstatus = [1];
-                currentPartialview = "Admin_TableNew"
-                    filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(new)');
-                $('.triangle').css('display', 'none');
-                $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
-            });
-
-
-            $("#Pending").click(function () {
-                 currentPartialview = "Admin_TablePending"
-                 currentstatus=[2]
-                 filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(pending)');
-                $('.triangle').css('display', 'none');
-                $('#trapending').css('display', 'block').css('border-top', '20px solid  #0dcaf0');
-                
-            });
-
-            $("#Active").click(function () {
-                currentPartialview = "Admin_TableActive"
-                currentstatus=[4,5]
-                    filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(Active)');
-                $('.triangle').css('display', 'none');
-                $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
-            });
-
-
-            $("#Conclude").click(function () {
-                currentPartialview = "Admin_TableConclude"
-                currentstatus = [6]
-                    filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(Conclude)');
-                $('.triangle').css('display', 'none');
-                $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
-            });
-
-            $("#ToClose").click(function () {
-                currentPartialview = "Admin_TableToClose"
-                currentstatus=[3,7,8]
-                    filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(To Close)');
-                $('.triangle').css('display', 'none');
-                $('#traclo').css('display', 'block').css('border-top', '20px solid #0370d7').css('color', 'white');
-            });
-
-            $("#UnPaid").click(function () {
-                currentPartialview = "Admin_TableUnPaid"
-                currentstatus = [9];
-                    filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(Unpaid)');
-                $('.triangle').css('display', 'none');
-                $('#traun').css('display', 'block').css('border-top', '20px solid #9966cd').css('color', 'white');
-            });
-
-        //-------------------on click functionality end------------------------------
-
-            $('.form-select').on("change", function () {
-                    filtertable(currentPartialview, currentstatus)
-            });
-
-
-
-
-             // -------------filter btn-----------------------------
-            $('.filter-btn').click(function () {
-                $('.filter-btn').removeClass('active')
-                $(this).addClass('active')
-                    filtertable(currentPartialview, currentstatus)
-
-            });
-             // -------------filter btn end -----------------------------
-
-            // -------on search value--------------------          
-            $("#Search").on("input", function () {
-                    filtertable(currentPartialview, currentstatus);
-            });
-            // -------on search value end---------------------
-
-
-            // --------------LoadPartialView---------------
-                
-            // --------------LoadPartialView end---------------
-
-                function filtertable(partialName, currentstatus) {
-
-                var SearchValue = $("#Search").val();
-                var Filterselect = $('.filter-btn.active').data('value');
-            
-
-                var selectopt = $(".form-select").find(':selected');
-                var selectvalue = selectopt.data('value');
-
-                var region = $("#Region").val();
-
-
-                if (SearchValue == "" && Filterselect == "" ) {
-                        filtertable(currentPartialview, currentstatus);
-                }
-
-                else {
-                    $.ajax({
-                        type:"GET",
-                        url: '@Url.Action("SearchPatient", "Admin_Dash")',
-                        traditional:true,
-                        data: { SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
-                                , partialName: partialName, currentstatus: currentstatus
-                        },
-                        success: function (data) 
-                        {
-                            $('#PartialViews').html(data);
-                            console.log(data)
-                        },
-
-                        error: function (error) {
-                            console.error(" " , error);
-                        }
-                    });
-                }
-            }
-
-
-
-               
-
-                $('#ModalFormsubmit').submit(function (event) {
-                    event.preventDefault();
-
-                    var formData = $(this).serialize();
-                    console.log(formData);
-                    $.ajax({
-                        url: '/Admin_Dash/CancelCase',
-                        type: 'POST',
-                        data: formData,
-                        success: function (response) {
-
-                            $('#modalForm').modal('hide');
-                            window.location.href = "/Admin_Dash/Admin_Dash";
-                        },
-                        error: function (xhr, status, error) {
-
-                            console.error('Error submitting form:', error);
-                        }
-                    });
-                });
-                $('#modalForm').on('hidden.bs.modal', function () {
-                    $(this).find('form')[0].reset();
-                });
-
-          
-        });
-
-    </script>
+    
 }
+
+

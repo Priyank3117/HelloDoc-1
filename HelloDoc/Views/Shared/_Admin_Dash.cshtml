@@ -94,6 +94,306 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>   @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            var currentPartialview = "Admin_TableNew"
+
+            var currentstatus = [1];
+
+            $('.triangle').css('display', 'none');
+            $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+
+
+            filtertable(currentPartialview, currentstatus);
+            $('Admin_TablePending').hide();
+            $('Admin_TableActive').hide();
+            $('Admin_TableConclude').hide();
+            $('Admin_TableToClose').hide();
+            $('Admin_TableUnPaid').hide();
+
+
+
+
+
+            // ---------------hover----------------------
+            $("#divnew").hover(function () {
+                $(this).css("background-color", "#203f9a").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e9eaef").css("color", "black");
+            });
+
+            $("#divpen").hover(function () {
+                $(this).css("background-color", "#0dcaf0").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e5f2f8").css("color", "#0dcaf0");
+            });
+            $("#divact").hover(function () {
+                $(this).css("background-color", "#228c20").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e9f0e8").css("color", "black");
+            });
+            $("#divcon").hover(function () {
+                $(this).css("background-color", "#da0f82").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#f7e6ee").css("color", "black");
+            });
+            $("#divclo").hover(function () {
+                $(this).css("background-color", "#0370d7").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#e5eef5").css("color", "black");
+            });
+            $("#divun").hover(function () {
+                $(this).css("background-color", "#9966cd").css("color", "white");
+            }, function () {
+                $(this).css("background-color", "#efeef4").css("color", "#0dcaf0");
+            });
+
+
+            // -------------hover  end---------------------
+
+            //-------------------on click functionality------------------------------
+
+            $("#New").click(function () {
+                currentstatus = [1];
+                currentPartialview = "Admin_TableNew"
+                filtertable(currentPartialview, currentstatus);
+                $('#textspan').text('(new)');
+                $('.triangle').css('display', 'none');
+                $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+            });
+
+
+            $("#Pending").click(function () {
+                currentPartialview = "Admin_TablePending"
+                currentstatus = [2]
+                filtertable(currentPartialview, currentstatus);
+                $('#textspan').text('(pending)');
+                $('.triangle').css('display', 'none');
+                $('#trapending').css('display', 'block').css('border-top', '20px solid  #0dcaf0');
+
+            });
+
+            $("#Active").click(function () {
+                currentPartialview = "Admin_TableActive"
+                currentstatus = [4, 5]
+                filtertable(currentPartialview, currentstatus);
+                $('#textspan').text('(Active)');
+                $('.triangle').css('display', 'none');
+                $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
+            });
+
+
+            $("#Conclude").click(function () {
+                currentPartialview = "Admin_TableConclude"
+                currentstatus = [6]
+                filtertable(currentPartialview, currentstatus);
+                $('#textspan').text('(Conclude)');
+                $('.triangle').css('display', 'none');
+                $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
+            });
+
+            $("#ToClose").click(function () {
+                currentPartialview = "Admin_TableToClose"
+                currentstatus = [3, 7, 8]
+                filtertable(currentPartialview, currentstatus);
+                $('#textspan').text('(To Close)');
+                $('.triangle').css('display', 'none');
+                $('#traclo').css('display', 'block').css('border-top', '20px solid #0370d7').css('color', 'white');
+            });
+
+            $("#UnPaid").click(function () {
+                currentPartialview = "Admin_TableUnPaid"
+                currentstatus = [9];
+                filtertable(currentPartialview, currentstatus);
+                $('#textspan').text('(Unpaid)');
+                $('.triangle').css('display', 'none');
+                $('#traun').css('display', 'block').css('border-top', '20px solid #9966cd').css('color', 'white');
+            });
+
+            //-------------------on click functionality end------------------------------
+
+            $('.form-select').on("change", function () {
+                filtertable(currentPartialview, currentstatus)
+            });
+
+
+
+
+            // -------------filter btn-----------------------------
+            $('.filter-btn').click(function () {
+                $('.filter-btn').removeClass('active')
+                $(this).addClass('active')
+                filtertable(currentPartialview, currentstatus)
+
+            });
+            // -------------filter btn end -----------------------------
+
+            // -------on search value--------------------
+            $("#Search").on("input", function () {
+                filtertable(currentPartialview, currentstatus);
+            });
+            // -------on search value end---------------------
+
+
+            // --------------LoadPartialView---------------
+
+            // --------------LoadPartialView end---------------
+
+            function filtertable(partialName, currentstatus) {
+
+                var SearchValue = $("#Search").val();
+                var Filterselect = $('.filter-btn.active').data('value');
+
+
+                var selectopt = $(".form-select").find(':selected');
+                var selectvalue = selectopt.data('value');
+
+                var region = $("#Region").val();
+
+
+                if (SearchValue == "" && Filterselect == "") {
+                    filtertable(currentPartialview, currentstatus);
+                }
+
+                else {
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("SearchPatient", "Admin_Dash")',
+                        traditional: true,
+                        data: {
+                            SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
+                            , partialName: partialName, currentstatus: currentstatus
+                        },
+                        success: function (data) {
+                            $('#PartialViews').html(data);
+                            console.log(data)
+                        },
+
+                        error: function (error) {
+                            console.error(" ", error);
+                        }
+                    });
+                }
+            }
+
+
+
+
+
+            $('#ModalFormsubmit').submit(function (event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+                console.log(formData);
+                $.ajax({
+                    url: '/Admin_Dash/CancelCase',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+
+                        $('#modalForm').modal('hide');
+                        window.location.href = "/Admin_Dash/Admin_Dash";
+                    },
+                    error: function (xhr, status, error) {
+
+                        console.error('Error submitting form:', error);
+                    }
+                });
+            });
+            $('#modalForm').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+            
+            
+            
+            $('#AssignCaseModalsubmit').submit(function (event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+                console.log(formData);
+                $.ajax({
+                    url: '/Admin_Dash/AssignCase',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+
+                        $('#AssignCaseModalsubmit').modal('hide');
+                        window.location.href = "/Admin_Dash/Admin_Dash";
+                    },
+                    error: function (xhr, status, error) {
+
+                        console.error('Error submitting form:', error);
+                    }
+                });
+            });
+            $('#AssignCaseModal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            }); 
+            
+            
+            
+          
+
+
+            // ------------------
+            $('#regiondropdown').change(function () {
+
+
+                var regionid = $(this).val();
+
+                if (regionid != 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Admin_Dash/GetPhysician", // Controller action to fetch models based on brand ID
+                        data: { regionid: regionid },
+                        success: function (response) {
+                            // Clear existing options
+                            $('#physiciandropdown').empty();
+                            console.log(response.FirstName)
+                            $.each(response, function (index, item) {
+                                $('#physiciandropdown').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                            });
+
+                        }
+                    });
+                }
+            });
+
+
+            $('#BlockCaseModalsubmit').submit(function (event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+                console.log(formData);
+                $.ajax({
+                    url: '/Admin_Dash/BlockCase',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+
+                        $('#BlockCaseModalsubmit').modal('hide');
+                        window.location.href = "/Admin_Dash/Admin_Dash";
+                    },
+                    error: function (xhr, status, error) {
+
+                        console.error('Error submitting form:', error);
+                    }
+                });
+            });
+            $('#BlockCaseModal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+
+        });
+
+    </script>
+
 </body>
 </html>
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,8 @@ namespace DAL.ViewModel
         public int? requestid { get; set; }
 
         public int? status { get; set; }
+
+        public List<CaseTag> cases { get; set; }
 
         //public string Location { get; set; }
     }

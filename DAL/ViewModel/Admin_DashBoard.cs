@@ -44,6 +44,7 @@ namespace DAL.ViewModel
         public string? confirmationnum {  get; set; }
 
       public  List<CaseTag>? cases { get; set; }
+      public  List<Region>? region { get; set; }
 
         
     }

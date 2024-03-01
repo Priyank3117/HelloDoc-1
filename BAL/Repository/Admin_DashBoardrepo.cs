@@ -44,7 +44,8 @@ namespace BAL.Repository
                                 Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
                                 status = req.Status,
                                 requestid = reqclient.RequestId,
-                                cases = _context.CaseTags.ToList()
+                                cases = _context.CaseTags.ToList(),
+                                region = _context.Regions.ToList(),
 
 
                             }) ;
