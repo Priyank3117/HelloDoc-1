@@ -25,5 +25,17 @@ namespace BAL.Repository
                 file.CopyTo(stream);
             }
         }
+
+        public void RemoveFile(string path)
+        {
+              if(File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            else
+            {
+                Console.WriteLine("file nahi he");   
+            }
+        }
     }
 }

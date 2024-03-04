@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Admin_Dash.cshtml";
     int i = 0;
     int j = 0;
+   
 }
 <style>
     .triangle {
@@ -356,17 +357,12 @@
 
  <div id="PartialViews">
     <partial name="Admin_TableNew" model="@Model"></partial>
-    <partial name="Admin_TablePending" model="@Model"></partial>
+     <partial name="Admin_TablePending" model="@Model"></partial>
     <partial name="Admin_TableActive" model="@Model"></partial>
     <partial name="Admin_TableConclude" model="@Model"></partial>
     <partial name="Admin_TableToClose" model="@Model"></partial>
-    <partial name="Admin_TableUnPaid" model="@Model"></partial>
+    <partial name="Admin_TableUnPaid" model="@Model"></partial> 
  </div>
 
-
-@section scripts {
-    <!-- jQuery script -->
-    
-}
 
 

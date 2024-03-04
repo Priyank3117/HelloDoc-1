@@ -250,14 +250,14 @@
                 var SearchValue = $("#Search").val();
                 var Filterselect = $('.filter-btn.active').data('value');
 
-
+                console.log(Filterselect);
                 var selectopt = $(".form-select").find(':selected');
                 var selectvalue = selectopt.data('value');
 
                 var region = $("#Region").val();
 
 
-                if (SearchValue == "" && Filterselect == "") {
+                if (SearchValue == "" && Filterselect == " " ) {
                     filtertable(currentPartialview, currentstatus);
                 }
 

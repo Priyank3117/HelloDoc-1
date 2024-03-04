@@ -11,5 +11,7 @@ namespace BAL.Interface
     public interface IAddFile
     {
         public void AddFile(IFormFile file, String path);
+
+        public void RemoveFile(string path);
     }
 }
