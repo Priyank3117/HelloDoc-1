@@ -10,11 +10,12 @@ namespace HelloDoc.Controllers
     public class LoginController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IPatient_ResetPassword _patient_ResetPassword;
-        public LoginController(ApplicationDbContext context,IPatient_ResetPassword patient_ResetPassword)
+     
+        private readonly IEmailService _emailService;
+        public LoginController(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
-            _patient_ResetPassword = patient_ResetPassword;
+            _emailService = emailService;
         }
         public IActionResult Patient_login()
 
@@ -68,7 +69,7 @@ namespace HelloDoc.Controllers
             var mail = patient_ResetPassword.Email;
 
             if (ModelState.IsValid) {
-                _patient_ResetPassword.SendEmail(mail, "hello", "hello");
+                _emailService.SendEmail(mail, "hello123", "hello");
             }
 
 

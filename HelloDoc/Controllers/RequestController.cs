@@ -65,12 +65,15 @@ namespace HelloDoc.Controllers
                 if (patient.Filedata != null)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Files");
-                    string filename = patient.Filedata.FileName;
-                    _file.AddFile(patient.Filedata, path);
+                    var uniquefilesavetoken = new Guid().ToString();
+
+                    string fileName = Path.GetFileName(patient.Filedata.FileName);
+                    fileName = $"{fileName}_{uniquefilesavetoken}";
+                    _file.AddFile(patient.Filedata, fileName, path);
                      
 
                     var Request = _request.GetUserByEmail(patient.Email);
-                    _request.RequestWiseFile(filename, Request.RequestId);
+                    _request.RequestWiseFile(fileName, Request.RequestId);
                     return View();
                 }
             }
@@ -97,10 +100,13 @@ namespace HelloDoc.Controllers
                 if (other_Reqs.Filedata != null)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Files");
-                    string filename = other_Reqs.Filedata.FileName;
-                    _file.AddFile(other_Reqs.Filedata, path);
+                    var uniquefilesavetoken = new Guid().ToString();
+
+                    string fileName = Path.GetFileName(other_Reqs.Filedata.FileName);
+                    fileName = $"{fileName}_{uniquefilesavetoken}";
+                    _file.AddFile(other_Reqs.Filedata, path, fileName);
                     var Request = _request.GetUserByEmail(other_Reqs.Email_P);
-                    _request.RequestWiseFile(filename, Request.RequestId);
+                    _request.RequestWiseFile(fileName, Request.RequestId);
                
                    }
                 }

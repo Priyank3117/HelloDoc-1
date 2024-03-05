@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.NetworkInformation;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HelloDoc.Controllers
@@ -84,10 +85,14 @@ namespace HelloDoc.Controllers
         public IActionResult uploadfile(int reqid)
         {
             var file = Request.Form.Files["file"];
-            string path = Path.Combine(_environment.WebRootPath, "Files");
-            _files.AddFile(file, path);
+            var uniquefilesavetoken = new Guid().ToString();
 
-            _patient.RequestWiseFile(file.FileName , reqid);
+            string fileName = Path.GetFileName(file.FileName);
+            fileName = $"{fileName}_{uniquefilesavetoken}";
+            string path = Path.Combine(_environment.WebRootPath, "Files");
+            _files.AddFile(file, path, fileName);
+
+            _patient.RequestWiseFile(fileName, reqid);
             return RedirectToAction("viewDocs", new { requestid = reqid} );
 
         }

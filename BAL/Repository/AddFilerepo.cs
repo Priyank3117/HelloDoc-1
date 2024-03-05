@@ -11,15 +11,13 @@ namespace BAL.Repository
 {
     public class AddFilerepo : IAddFile
     {
-        public void AddFile(IFormFile file,String path)
+        public void AddFile(IFormFile file,String path, string filename)
         {
             if(!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-
-            string filename = Path.GetFileName(file.FileName);
-
+           
             using (FileStream stream = new FileStream(Path.Combine(path, filename), FileMode.Create))
             {
                 file.CopyTo(stream);

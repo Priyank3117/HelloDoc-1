@@ -9,6 +9,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 using System.Collections;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using System.Net.NetworkInformation;
+using Microsoft.AspNetCore.Http.Extensions;
+using System.Net.Mail;
 
 namespace HelloDoc.Controllers
 {
@@ -21,15 +24,17 @@ namespace HelloDoc.Controllers
         private readonly IHostingEnvironment _environment;
         private readonly IAddFile _files;
         private readonly IPatient_Request _patient;
+        private readonly IEmailService _emailService;
 
 
-        public Admin_DashController(ApplicationDbContext context, IAdmin_DashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient)
+        public Admin_DashController(ApplicationDbContext context, IAdmin_DashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
             _environment = environment;
             _files = files;
             _patient = patient;
+            _emailService = emailService;   
         }
         public IActionResult Admin_Dash()
         {
@@ -207,7 +212,11 @@ namespace HelloDoc.Controllers
 
         public IActionResult ViewUpload(int id)
         {
-            var reque = _context.RequestWiseFiles.Where(u => u.RequestId == id).ToList();
+
+            bool[] bitValues = { true };
+            BitArray bits = new BitArray(bitValues);
+            var reque = _context.RequestWiseFiles.Where(u => u.RequestId == id && u.IsDeleted != bits).ToList();
+
             var result = new ViewDoc
             {
                 requestwisefile = reque,
@@ -223,20 +232,24 @@ namespace HelloDoc.Controllers
         public IActionResult uploadfile(int reqid)
         {
             var file = Request.Form.Files["file"];
-            string path = Path.Combine(_environment.WebRootPath, "Files");
-            _files.AddFile(file, path);
+            var uniquefilesavetoken = Guid.NewGuid().ToString();
 
-            _patient.RequestWiseFile(file.FileName, reqid);
+            string fileName = Path.GetFileName(file.FileName);
+            fileName = $"{uniquefilesavetoken}_{fileName}";
+            string path = Path.Combine(_environment.WebRootPath, "Files");
+            _files.AddFile(file, path, fileName);
+
+            _patient.RequestWiseFile(fileName, reqid);
             return RedirectToAction("ViewUpload", new { id = reqid });
 
         }
 
-        
-        public IActionResult deletefile(int reqid,string name) 
+
+        public IActionResult deletefile(int reqid, string name)
         {
 
-            string path = Path.Combine(_environment.WebRootPath, "Files",name);
-            _files.RemoveFile(path);
+            string path = Path.Combine(_environment.WebRootPath, "Files", name);
+           // _files.RemoveFile(path);
 
             RequestWiseFile reqFile = _context.RequestWiseFiles.Where(x => x.FileName == name).FirstOrDefault();
             if (reqFile != null)
@@ -247,6 +260,68 @@ namespace HelloDoc.Controllers
                 _context.Update(reqFile);
                 _context.SaveChanges();
             }
-                return RedirectToAction("ViewUpload", new { id = reqid });
+            return RedirectToAction("ViewUpload", new { id = reqid });
+        }
+        //---------------------------DeleteSelectedFiles----------------------
+
+        [HttpPost]
+        public IActionResult DeleteSelectedFiles(List<string> filenames)
+        {
+          
+            try
+            {
+                foreach (var filename in filenames)
+                {
+                    var file = _context.RequestWiseFiles.FirstOrDefault(item => item.FileName == filename);
+
+                    if (file != null)
+                    {
+                        file.IsDeleted = new BitArray(new[] { true });
+                        _context.SaveChanges();
+                    }
+                }
+
+                return Ok(new { message = "Files delete successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error deleting files: {ex.Message}" });
+            }
+        }
+        //---------------------------DeleteSelectedFiles----------------------
+
+
+        [HttpPost]
+        public IActionResult SendFiles(List<string> filenames, int id)
+        {
+
+            try
+            {
+
+                List<Attachment> files = new List<Attachment>();
+
+                if (filenames != null)
+                {
+                    foreach (var filename in filenames)
+                    {
+                        string path = Path.Combine(_environment.WebRootPath, "Files", filename);
+                        var attach = new Attachment(path);
+                        files.Add(attach);
+                    }
+                    var req = _context.Requests.FirstOrDefault(s => s.RequestId == id);
+
+                    var subject = "Uploaded Documents";
+                    var body = "Docs";
+
+                    _emailService.SendEmail("munavvarpopatiya777@gmail.com", subject, body, files);
+                }
+
+                return Ok(new { message = "Files Send successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error Sending  files: {ex.Message}" });
+            }
+        }
     }
 }

@@ -51,8 +51,8 @@
                             id="DeleteAll">
                         Delete All
                     </button>
-                    <button type="button" class="btn btn-primary btn mx-2 border border-info bg-white text-info shadow-none  text-decoration-none mb-3"
-                            id=" SendMail">
+                    <button type="button" data-id="@Model.requestid" class="btn btn-primary btn mx-2 border border-info bg-white text-info shadow-none  text-decoration-none mb-3"
+                            id="SendMail">
                         Send Mail
                     </button>
                 </div>
@@ -78,7 +78,7 @@
                         
                             <td>
 
-                                <a href="/Files/@item.FileName" download>
+                                <a href="~/Files/@item.FileName" download>
                                     <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none text-decoration-none ">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="24"
@@ -118,8 +118,10 @@
 
 <script>
 
-
+    
     document.getElementById("chkbox").addEventListener("change", function () {
+
+     
         // Toggle all checkboxes based on the state of the "Select All" checkbox
         let checkboxes = document.querySelectorAll(".chkboxind");
         checkboxes.forEach(function (checkbox) {
@@ -146,4 +148,64 @@
             document.body.removeChild(link);
         });
     });
+
+
+   // ----------------------------
+    document.getElementById("DeleteAll").addEventListener("click", function () {
+        console.log("gbg")
+        let selectedFiles = [];
+        let checkboxes = document.querySelectorAll(".chkboxind:checked");
+        checkboxes.forEach(function (checkbox) {
+            selectedFiles.push(checkbox.dataset.filename);
+        });
+        if (selectedFiles.length > 0) {
+            $.ajax({
+                method: 'POST',
+                url: '/Admin_Dash/DeleteSelectedFiles',
+                data: { filenames: selectedFiles },
+                success: function (result) {
+                    window.location.href = '/Admin_Dash/ViewUpload/' + @Model.requestid;
+                },
+
+
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        } else {
+            alert("Please select files to delete.");
+        }
+    });
+ // ----------------------------
+
+
+    // ----------------------------
+    document.getElementById("SendMail").addEventListener("click", function () {
+        var id = @Model.requestid;
+        
+        console.log("gbg")
+        let selectedFiles = [];
+        let checkboxes = document.querySelectorAll(".chkboxind:checked");
+        checkboxes.forEach(function (checkbox) {
+            selectedFiles.push(checkbox.dataset.filename);
+        });
+        if (selectedFiles.length > 0) {
+            $.ajax({
+                method: 'POST',
+                url: '/Admin_Dash/SendFiles',
+                data: { filenames: selectedFiles,id:id },
+                success: function (result) {
+                    window.location.href = '/Admin_Dash/ViewUpload/' + @Model.requestid;
+                },
+
+
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        } else {
+            alert("Please select files to sendmail.");
+        }
+    });
+    // ----------------------------
 </script> 
