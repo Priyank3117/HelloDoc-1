@@ -10,6 +10,8 @@ namespace HelloDoc.Controllers
    
     public class LoginController : Controller
     {
+
+
         private readonly ApplicationDbContext _context;
      
         private readonly IEmailService _emailService;
@@ -36,7 +38,8 @@ namespace HelloDoc.Controllers
             var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
             var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
             bool verifiedpassword = result == PasswordVerificationResult.Success;
-       
+            var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
+            var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name;
 
 
             if (ModelState.IsValid)
@@ -44,7 +47,9 @@ namespace HelloDoc.Controllers
 
                 if (Email != null && verifiedpassword)
                 {
+
                     HttpContext.Session.SetString("Email",patient.Email);
+                    HttpContext.Session.SetString("Role", role);
                     return RedirectToAction("Index", "DashBoard");
                 } 
             }

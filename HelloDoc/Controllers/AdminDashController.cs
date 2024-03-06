@@ -4,21 +4,17 @@ using DAL.DataContext;
 using DAL.ViewModel;
 using DAL.DataModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 using System.Collections;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-using System.Net.NetworkInformation;
-using Microsoft.AspNetCore.Http.Extensions;
 using System.Net.Mail;
+
+
 
 namespace HelloDoc.Controllers
 {
+  
     public class AdminDashController : Controller
     {
-
-
         private readonly ApplicationDbContext _context;
         private readonly IAdminDashBoard _AdminDashboard;
         private readonly IHostingEnvironment _environment;

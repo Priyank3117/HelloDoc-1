@@ -4,10 +4,13 @@ using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.NetworkInformation;
+using static BAL.Repository.Authorizationrepo;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HelloDoc.Controllers
 {
+
+    [CustomAuthorize("Patient")]
     public class DashBoardController : Controller
     {
 
