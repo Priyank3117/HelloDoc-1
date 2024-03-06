@@ -1,6 +1,7 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModel;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,12 @@ namespace HelloDoc.Controllers
         private readonly ApplicationDbContext _context;
      
         private readonly IEmailService _emailService;
-        public LoginController(ApplicationDbContext context, IEmailService emailService)
+        private readonly IPasswordHasher<Patient_login> _passwordHasher;
+        public LoginController(ApplicationDbContext context, IEmailService emailService,IPasswordHasher<Patient_login> passwordHasher)
         {
             _context = context;
             _emailService = emailService;
+            _passwordHasher = passwordHasher;
         }
         public IActionResult Patient_login()
 
@@ -31,18 +34,18 @@ namespace HelloDoc.Controllers
         {
            
             var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
-            var pwd = _context.AspNetUsers.FirstOrDefault(m => m.PasswordHash == patient.PasswordHash);
-
+            var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
+            bool verifiedpassword = result == PasswordVerificationResult.Success;
+       
 
 
             if (ModelState.IsValid)
             {
 
-                if (Email != null && Email.PasswordHash == patient.PasswordHash )
+                if (Email != null && verifiedpassword)
                 {
                     HttpContext.Session.SetString("Email",patient.Email);
                     return RedirectToAction("Index", "DashBoard");
-
                 } 
             }
             return View(patient);

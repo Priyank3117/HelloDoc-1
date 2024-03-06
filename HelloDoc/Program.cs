@@ -1,7 +1,10 @@
 using BAL.Interface;
 using BAL.Repository;
 using DAL.DataContext;
+using DAL.ViewModel;
+using DAL.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGeneration.Design;
 using System.Text;
@@ -25,8 +28,10 @@ builder.Services.AddScoped<IFamily_Request,Family_Requestrepo>();
 builder.Services.AddScoped<IConcierge_Request,Concierge_Requestrepo>();
 builder.Services.AddScoped<IBusiness_Request,Business_Requestrepo>();
 builder.Services.AddScoped<IAddFile,AddFilerepo>();
-builder.Services.AddScoped<IAdmin_DashBoard,Admin_DashBoardrepo>();
+builder.Services.AddScoped<IAdminDashBoard,AdminDashBoardrepo>();
 builder.Services.AddScoped<IEmailService, EmailServicerepo>();
+builder.Services.AddScoped<IPasswordHasher<Patient>,PasswordHasher<Patient>>();
+builder.Services.AddScoped<IPasswordHasher<Patient_login>,PasswordHasher<Patient_login>>();
 
 //Jwt configuration starts here
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BAL.Interface
 {
-    public interface IAdmin_DashBoard
+    public interface IAdminDashBoard
     {
         public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect, string selectvalue, string partialName, int[] currentstatus);  
         public IQueryable<Admin_DashBoard> getregionwise();

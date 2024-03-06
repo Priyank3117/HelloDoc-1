@@ -259,13 +259,13 @@
                 var formData = $(this).serialize();
                 console.log(formData);
                 $.ajax({
-                    url: '/Admin_Dash/CancelCase',
+                    url: '/AdminDash/CancelCase',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
 
                         $('#modalForm').modal('hide');
-                        window.location.href = "/Admin_Dash/Admin_Dash";
+                        window.location.href = "/AdminDash/AdminDash";
                     },
                     error: function (xhr, status, error) {
 

@@ -15,19 +15,19 @@ using System.Net.Mail;
 
 namespace HelloDoc.Controllers
 {
-    public class Admin_DashController : Controller
+    public class AdminDashController : Controller
     {
 
 
         private readonly ApplicationDbContext _context;
-        private readonly IAdmin_DashBoard _AdminDashboard;
+        private readonly IAdminDashBoard _AdminDashboard;
         private readonly IHostingEnvironment _environment;
         private readonly IAddFile _files;
         private readonly IPatient_Request _patient;
         private readonly IEmailService _emailService;
 
 
-        public Admin_DashController(ApplicationDbContext context, IAdmin_DashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService)
+        public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
@@ -36,7 +36,7 @@ namespace HelloDoc.Controllers
             _patient = patient;
             _emailService = emailService;   
         }
-        public IActionResult Admin_Dash()
+        public IActionResult AdminDash()
         {
             var DashData = _AdminDashboard.GetList();
 
@@ -126,7 +126,7 @@ namespace HelloDoc.Controllers
                 _context.Update(user);
                 _context.SaveChanges();
 
-                return RedirectToAction("Admin_Dash");
+                return RedirectToAction("AdminDash");
 
 
             }
@@ -245,7 +245,7 @@ namespace HelloDoc.Controllers
         }
 
 
-        public IActionResult deletefile(int reqid, string name)
+        public IActionResult DeleteFile(int reqid, string name)
         {
 
             string path = Path.Combine(_environment.WebRootPath, "Files", name);
@@ -313,7 +313,7 @@ namespace HelloDoc.Controllers
                     var subject = "Uploaded Documents";
                     var body = "Docs";
 
-                    _emailService.SendEmail("munavvarpopatiya777@gmail.com", subject, body, files);
+                    _emailService.SendEmail("patelpriyank3112002@gmail.com", subject, body, files);
                 }
 
                 return Ok(new { message = "Files Send successfully" });

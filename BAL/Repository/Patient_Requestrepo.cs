@@ -2,24 +2,19 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace BAL.Repository
 {
     public class Patient_Requestrepo : IPatient_Request
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPasswordHasher<Patient> _passwordHasher;
 
-        public Patient_Requestrepo(ApplicationDbContext context)
+        public Patient_Requestrepo(ApplicationDbContext context,IPasswordHasher<Patient> passwordHasher)
         {
                    _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         public void AddPatient(Patient patient)
@@ -43,7 +38,7 @@ namespace BAL.Repository
 
                 aspnetUser.UserName = String.Concat(patient.FirstName, ' ' ,patient.LastName);
                 aspnetUser.Email = patient.Email;
-                aspnetUser.PasswordHash = patient.PasswordHash;
+                aspnetUser.PasswordHash = _passwordHasher.HashPassword(null, patient.PasswordHash);
                 aspnetUser.PhoneNumber = patient.PhoneNumber;
                 aspnetUser.CreatedDate = DateTime.Now;
 

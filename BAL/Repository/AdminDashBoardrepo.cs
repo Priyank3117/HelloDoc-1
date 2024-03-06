@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace BAL.Repository
 {
-    public class Admin_DashBoardrepo : IAdmin_DashBoard
+    public class AdminDashBoardrepo : IAdminDashBoard
     {
 
         private readonly ApplicationDbContext _context;
 
-        public Admin_DashBoardrepo(ApplicationDbContext context)
+        public AdminDashBoardrepo(ApplicationDbContext context)
         {
             _context = context;
         }

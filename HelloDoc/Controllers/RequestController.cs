@@ -68,8 +68,8 @@ namespace HelloDoc.Controllers
                     var uniquefilesavetoken = new Guid().ToString();
 
                     string fileName = Path.GetFileName(patient.Filedata.FileName);
-                    fileName = $"{fileName}_{uniquefilesavetoken}";
-                    _file.AddFile(patient.Filedata, fileName, path);
+                    fileName = $"{uniquefilesavetoken}_{fileName}";
+                    _file.AddFile(patient.Filedata,path,fileName);
                      
 
                     var Request = _request.GetUserByEmail(patient.Email);

@@ -1,8 +1,8 @@
 ﻿@model List<DAL.ViewModel.Admin_DashBoard>
 
 @{
-    ViewData["Title"] = "Admin_Dash";
-    Layout = "~/Views/Shared/_Admin_Dash.cshtml";
+    ViewData["Title"] = "AdminDash";
+    Layout = "~/Views/Shared/_AdminDash.cshtml";
     int i = 0;
     int j = 0;
    
@@ -356,12 +356,12 @@
         @* -------------------------------Search--------------------------------------------- *@
 
  <div id="PartialViews">
-    <partial name="Admin_TableNew" model="@Model"></partial>
-     <partial name="Admin_TablePending" model="@Model"></partial>
-    <partial name="Admin_TableActive" model="@Model"></partial>
-    <partial name="Admin_TableConclude" model="@Model"></partial>
-    <partial name="Admin_TableToClose" model="@Model"></partial>
-    <partial name="Admin_TableUnPaid" model="@Model"></partial> 
+    <partial name="AdminTableNew" model="@Model"></partial>
+     <partial name="AdminTablePending" model="@Model"></partial>
+    <partial name="AdminTableActive" model="@Model"></partial>
+    <partial name="AdminTableConclude" model="@Model"></partial>
+    <partial name="AdminTableToClose" model="@Model"></partial>
+    <partial name="AdminTableUnPaid" model="@Model"></partial> 
  </div>
 
 

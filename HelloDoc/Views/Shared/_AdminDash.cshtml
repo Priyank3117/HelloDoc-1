@@ -102,7 +102,7 @@
 
         $(document).ready(function () {
 
-            var currentPartialview = "Admin_TableNew"
+            var currentPartialview = "AdminTableNew"
 
             var currentstatus = [1];
 
@@ -111,11 +111,11 @@
 
 
             filtertable(currentPartialview, currentstatus);
-            $('Admin_TablePending').hide();
-            $('Admin_TableActive').hide();
-            $('Admin_TableConclude').hide();
-            $('Admin_TableToClose').hide();
-            $('Admin_TableUnPaid').hide();
+            $('AdminTablePending').hide();
+            $('AdminTableActive').hide();
+            $('AdminTableConclude').hide();
+            $('AdminTableToClose').hide();
+            $('AdminTableUnPaid').hide();
 
 
 
@@ -161,7 +161,7 @@
 
             $("#New").click(function () {
                 currentstatus = [1];
-                currentPartialview = "Admin_TableNew"
+                currentPartialview = "AdminTableNew"
                 filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(new)');
                 $('.triangle').css('display', 'none');
@@ -170,7 +170,7 @@
 
 
             $("#Pending").click(function () {
-                currentPartialview = "Admin_TablePending"
+                currentPartialview = "AdminTablePending"
                 currentstatus = [2]
                 filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(pending)');
@@ -180,7 +180,7 @@
             });
 
             $("#Active").click(function () {
-                currentPartialview = "Admin_TableActive"
+                currentPartialview = "AdminTableActive"
                 currentstatus = [4, 5]
                 filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(Active)');
@@ -190,7 +190,7 @@
 
 
             $("#Conclude").click(function () {
-                currentPartialview = "Admin_TableConclude"
+                currentPartialview = "AdminTableConclude"
                 currentstatus = [6]
                 filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(Conclude)');
@@ -199,7 +199,7 @@
             });
 
             $("#ToClose").click(function () {
-                currentPartialview = "Admin_TableToClose"
+                currentPartialview = "AdminTableToClose"
                 currentstatus = [3, 7, 8]
                 filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(To Close)');
@@ -208,7 +208,7 @@
             });
 
             $("#UnPaid").click(function () {
-                currentPartialview = "Admin_TableUnPaid"
+                currentPartialview = "AdminTableUnPaid"
                 currentstatus = [9];
                 filtertable(currentPartialview, currentstatus);
                 $('#textspan').text('(Unpaid)');
@@ -264,7 +264,7 @@
                 else {
                     $.ajax({
                         type: "GET",
-                        url: '@Url.Action("SearchPatient", "Admin_Dash")',
+                        url: '@Url.Action("SearchPatient", "AdminDash")',
                         traditional: true,
                         data: {
                             SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
@@ -292,13 +292,13 @@
                 var formData = $(this).serialize();
                 console.log(formData);
                 $.ajax({
-                    url: '/Admin_Dash/CancelCase',
+                    url: '/AdminDash/CancelCase',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
 
                         $('#modalForm').modal('hide');
-                        window.location.href = "/Admin_Dash/Admin_Dash";
+                        window.location.href = "/AdminDash/AdminDash";
                     },
                     error: function (xhr, status, error) {
 
@@ -318,13 +318,13 @@
                 var formData = $(this).serialize();
                 console.log(formData);
                 $.ajax({
-                    url: '/Admin_Dash/AssignCase',
+                    url: '/AdminDash/AssignCase',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
 
                         $('#AssignCaseModalsubmit').modal('hide');
-                        window.location.href = "/Admin_Dash/Admin_Dash";
+                        window.location.href = "/AdminDash/AdminDash";
                     },
                     error: function (xhr, status, error) {
 
@@ -350,7 +350,7 @@
                 if (regionid != 0) {
                     $.ajax({
                         type: "GET",
-                        url: "/Admin_Dash/GetPhysician", // Controller action to fetch models based on brand ID
+                        url: "/AdminDash/GetPhysician", // Controller action to fetch models based on brand ID
                         data: { regionid: regionid },
                         success: function (response) {
                             // Clear existing options
@@ -372,13 +372,13 @@
                 var formData = $(this).serialize();
                 console.log(formData);
                 $.ajax({
-                    url: '/Admin_Dash/BlockCase',
+                    url: '/AdminDash/BlockCase',
                     type: 'POST',
                     data: formData,
                     success: function (response) {
 
                         $('#BlockCaseModalsubmit').modal('hide');
-                        window.location.href = "/Admin_Dash/Admin_Dash";
+                        window.location.href = "/AdminDash/AdminDash";
                     },
                     error: function (xhr, status, error) {
 
