@@ -32,6 +32,7 @@ builder.Services.AddScoped<IAdminDashBoard,AdminDashBoardrepo>();
 builder.Services.AddScoped<IEmailService, EmailServicerepo>();
 builder.Services.AddScoped<IPasswordHasher<Patient>,PasswordHasher<Patient>>();
 builder.Services.AddScoped<IPasswordHasher<Patient_login>,PasswordHasher<Patient_login>>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 //Jwt configuration starts here
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
@@ -69,7 +70,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 

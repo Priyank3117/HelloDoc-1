@@ -27,7 +27,7 @@ namespace HelloDoc.Controllers
             _patient = patient;
         }
         public IActionResult Index()
-        {
+                {
             
             var Email = HttpContext.Session.GetString("Email");
             var mail = _context.Users.FirstOrDefault(u => u.Email == Email);

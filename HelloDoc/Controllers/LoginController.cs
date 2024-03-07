@@ -16,11 +16,13 @@ namespace HelloDoc.Controllers
      
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<Patient_login> _passwordHasher;
-        public LoginController(ApplicationDbContext context, IEmailService emailService,IPasswordHasher<Patient_login> passwordHasher)
+        private readonly IJwtService _jwtService;
+        public LoginController(ApplicationDbContext context, IEmailService emailService,IPasswordHasher<Patient_login> passwordHasher, IJwtService jwtService)
         {
             _context = context;
             _emailService = emailService;
             _passwordHasher = passwordHasher;
+            _jwtService = jwtService;   
         }
         public IActionResult Patient_login()
 
@@ -33,13 +35,13 @@ namespace HelloDoc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Patient_login(Patient_login patient)
-        {
+            {
            
             var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
             var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
             bool verifiedpassword = result == PasswordVerificationResult.Success;
             var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
-            var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name;
+            var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name.Trim();
 
 
             if (ModelState.IsValid)
@@ -50,15 +52,25 @@ namespace HelloDoc.Controllers
 
                     HttpContext.Session.SetString("Email",patient.Email);
                     HttpContext.Session.SetString("Role", role);
-                    return RedirectToAction("Index", "DashBoard");
+                    var jwt = _jwtService.Generatetoken(patient.Email, role);
+                    Response.Cookies.Append("jwt", jwt);
+                     if(role == "Patient")
+                    {
+                        return RedirectToAction("Index", "DashBoard");
+                    }
+                    else if(role == "Admin")
+                    {
+                        return RedirectToAction("AdminDash", "AdminDash");
+                    }
                 } 
             }
             return View(patient);
         }
 
         public IActionResult Logout() 
-        { 
-            HttpContext.Session.Remove("Email");
+            { 
+            HttpContext.Session.Clear();
+            Response.Cookies.Delete("jwt");
             return RedirectToAction("Patient_login");
         }
 

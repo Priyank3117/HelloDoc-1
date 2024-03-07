@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Net.Mail;
+using static BAL.Repository.Authorizationrepo;
 
 
 
 namespace HelloDoc.Controllers
 {
-  
+
+    [CustomAuthorize("Admin")]
     public class AdminDashController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -318,6 +320,25 @@ namespace HelloDoc.Controllers
             {
                 return StatusCode(500, new { message = $"Error Sending  files: {ex.Message}" });
             }
+        }
+
+        public JsonResult CheckSession()
+        {
+            var request = HttpContext.Request;
+            var token = request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return Json(new{sessionExists = false });
+            }
+            else
+            {
+                return Json(new{sessionExists = true});
+            }
+        }
+
+        public IActionResult SendOrder()
+        {
+            return View();  
         }
     }
 }

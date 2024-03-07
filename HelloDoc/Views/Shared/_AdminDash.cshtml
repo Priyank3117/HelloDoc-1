@@ -25,7 +25,7 @@
                     </div>
                     <div class=" float-end ">
                         <span class="fw-bold me-2"> Welcome:@ViewBag.username</span>
-                        <a asp-action="" asp-controller="">
+                        <a asp-action="Logout" asp-controller="Login">
                             <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"
                                     style="height:3rem">
                                 logout
@@ -245,41 +245,53 @@
 
             // --------------LoadPartialView end---------------
 
+            
+
             function filtertable(partialName, currentstatus) {
-
-                var SearchValue = $("#Search").val();
-                var Filterselect = $('.filter-btn.active').data('value');
-
-                console.log(Filterselect);
-                var selectopt = $(".form-select").find(':selected');
-                var selectvalue = selectopt.data('value');
-
-                var region = $("#Region").val();
+                $.get('/AdminDash/CheckSession', function (session) {
 
 
-                if (SearchValue == "" && Filterselect == " " ) {
-                    filtertable(currentPartialview, currentstatus);
-                }
+                    if (session.sessionExists) {
+                        var SearchValue = $("#Search").val();
+                        var Filterselect = $('.filter-btn.active').data('value');
 
-                else {
-                    $.ajax({
-                        type: "GET",
-                        url: '@Url.Action("SearchPatient", "AdminDash")',
-                        traditional: true,
-                        data: {
-                            SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
-                            , partialName: partialName, currentstatus: currentstatus
-                        },
-                        success: function (data) {
-                            $('#PartialViews').html(data);
-                            console.log(data)
-                        },
+                        console.log(Filterselect);
+                        var selectopt = $(".form-select").find(':selected');
+                        var selectvalue = selectopt.data('value');
 
-                        error: function (error) {
-                            console.error(" ", error);
+                        var region = $("#Region").val();
+
+
+                        if (SearchValue == "" && Filterselect == " ") {
+                            filtertable(currentPartialview, currentstatus);
                         }
-                    });
-                }
+
+                        else {
+                            $.ajax({
+                                type: "GET",
+                                url: '@Url.Action("SearchPatient", "AdminDash")',
+                                traditional: true,
+                                data: {
+                                    SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
+                                    , partialName: partialName, currentstatus: currentstatus
+                                },
+                                success: function (data) {
+                                    $('#PartialViews').html(data);
+                                    console.log(data)
+                                },
+
+                                error: function (error) {
+                                    console.error(" ", error);
+                                }
+                            });
+                        }
+                    }
+
+                    else {
+                        window.location.href = '/Login/Patient_login';
+                    }
+                });
+                
             }
 
 
