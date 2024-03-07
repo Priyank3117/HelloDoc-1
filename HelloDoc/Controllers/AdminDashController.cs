@@ -338,7 +338,29 @@ namespace HelloDoc.Controllers
 
         public IActionResult SendOrder()
         {
-            return View();  
+            var  Profession = _context.HealthProfessionalTypes.ToList();
+
+            SendOrder obj = new SendOrder();
+
+            obj.ProfessionName = Profession;
+            return View(obj);  
         }
+
+        public IActionResult GetBusinessName(string professionId)
+        {
+            var result = _context.HealthProfessionals.Where(r => r.Profession == int.Parse(professionId)).ToList();
+            return Json(result);
+        }
+        
+        public IActionResult GetBusinessData(string vendorId)
+        {
+            var result = _context.HealthProfessionals.Where(r => r.VendorId == int.Parse(vendorId)).FirstOrDefault();
+            var Profession = _context.HealthProfessionalTypes.ToList();
+            SendOrder obj = new SendOrder();
+            obj.FaxNum = result.FaxNumber;
+            obj.ProfessionName = Profession;
+            return View(obj);
+        }
+
     }
 }

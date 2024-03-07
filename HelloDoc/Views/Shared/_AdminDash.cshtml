@@ -346,10 +346,49 @@
             });
             $('#AssignCaseModal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
-            }); 
-            
-            
-            
+            });
+
+
+
+            $('#ProfessionNameDropDown').change(function () {
+                var professionId = $(this).val();
+
+                if (professionId != 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/AdminDash/GetBusinessName", // Controller action to fetch models based on brand ID
+                        data: { professionId: professionId },
+                        success: function (response) {
+                            // Clear existing options
+                            $('#BusinessDropDown').empty();
+                            $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value',0));
+                            console.log("kpodkcosdk");
+                            $.each(response, function (index, item) {
+
+                                $('#BusinessDropDown').append($('<option>').text(item.vendorName).attr('value', item.vendorId));
+                            });
+
+                        }
+                    });
+                }
+            });
+
+            $('#BusinessDropDown').change(function () {
+                var vendorId = $(this).val();
+
+                if (vendorId != 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/AdminDash/GetBusinessData", // Controller action to fetch models based on brand ID
+                        data: { vendorId: vendorId },
+                        success: function (response) {
+                            // Clear existing options
+                          console.log("succesful")
+
+                        }
+                    });
+                }
+            });
           
 
 

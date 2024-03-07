@@ -21,6 +21,9 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Set your desired timeout
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+  
+
 });
 
 builder.Services.AddScoped<IPatient_Request, Patient_Requestrepo>();
