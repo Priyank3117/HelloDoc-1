@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
-  
+
 </head>
 <body>
     <header>
@@ -53,7 +53,7 @@
                 <li class="nav-item text-info">
                     <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Index" ? "active" : "")">Dashboard</a>
                 </li>
-                <li class="nav-item " >
+                <li class="nav-item ">
                     <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
                 </li>
                 <li class="nav-item">
@@ -72,7 +72,7 @@
             </ul>
 
         </div>
-     
+
     </header>
     <div class="container-fluid ">
         <main role="main">
@@ -87,7 +87,7 @@
     </footer>
 
 
-    
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Patient_request.js" asp-append-version="true"></script>
 
@@ -117,41 +117,32 @@
             $('AdminTableToClose').hide();
             $('AdminTableUnPaid').hide();
 
-
-
-
-
             // ---------------hover----------------------
-            $("#divnew").hover(function () {
-                $(this).css("background-color", "#203f9a").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e9eaef").css("color", "black");
+            $("#divnew").click(function () {
+                $(".status").removeClass("active");
+                $("#divnew").addClass("active")
             });
 
-            $("#divpen").hover(function () {
-                $(this).css("background-color", "#0dcaf0").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e5f2f8").css("color", "#0dcaf0");
+            $("#divpen").click(function () {
+                $(".status").removeClass("active");
+                $("#divpen").addClass("active")
+             
             });
-            $("#divact").hover(function () {
-                $(this).css("background-color", "#228c20").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e9f0e8").css("color", "black");
+            $("#divact").click(function () {
+                $(".status").removeClass("active");
+                $("#divact").addClass("active")
             });
-            $("#divcon").hover(function () {
-                $(this).css("background-color", "#da0f82").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#f7e6ee").css("color", "black");
+            $("#divcon").click(function () {
+                $(".status").removeClass("active");
+                $("#divcon").addClass("active")
             });
-            $("#divclo").hover(function () {
-                $(this).css("background-color", "#0370d7").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#e5eef5").css("color", "black");
+            $("#divclo").click(function () {
+                $(".status").removeClass("active");
+                $("#divclo").addClass("active")
             });
-            $("#divun").hover(function () {
-                $(this).css("background-color", "#9966cd").css("color", "white");
-            }, function () {
-                $(this).css("background-color", "#efeef4").css("color", "#0dcaf0");
+            $("#divun").click(function () {
+                $(".status").removeClass("active");
+                $("#divun").addClass("active")
             });
 
 
@@ -245,7 +236,7 @@
 
             // --------------LoadPartialView end---------------
 
-            
+
 
             function filtertable(partialName, currentstatus) {
                 $.get('/AdminDash/CheckSession', function (session) {
@@ -291,13 +282,14 @@
                         window.location.href = '/Login/Patient_login';
                     }
                 });
-                
+
             }
 
+            // -------------------------------------------------------------
 
-
-
-
+            // -------------------------------------------------------------
+           
+            // -------------------------------------------------------------
             $('#ModalFormsubmit').submit(function (event) {
                 event.preventDefault();
 
@@ -321,9 +313,11 @@
             $('#modalForm').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
             });
-            
-            
-            
+
+            // -------------------------------------------------------------
+
+            // -------------------------------------------------------------
+
             $('#AssignCaseModalsubmit').submit(function (event) {
                 event.preventDefault();
 
@@ -347,8 +341,55 @@
             $('#AssignCaseModal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
             });
+            // -------------------------------------------------------------
+            $('#TransferModalSubmit').submit(function (event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+                console.log(formData);
+                $.ajax({
+                    url: '/AdminDash/TransferCase',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+
+                        $('#TransferModalSubmit').modal('hide');
+                        window.location.href = "/AdminDash/AdminDash";
+                    },
+                    error: function (xhr, status, error) {
+
+                        console.error('Error submitting form:', error);
+                    }
+                });
+            });
+            $('#TransferModal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+
+            // -------------------
+            $('#regiondropdownoftra').change(function () {
 
 
+                var regionid = $(this).val();
+
+                if (regionid != 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/AdminDash/GetPhysicianForTransfer", // Controller action to fetch models based on brand ID
+                        data: { regionid: regionid },
+                        success: function (response) {
+                            // Clear existing options
+                            $('#physiciandropdownoftra').empty();
+                            console.log(response.FirstName)
+                            $.each(response, function (index, item) {
+                                $('#physiciandropdownoftra').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                            });
+
+                        }
+                    });
+                }
+            });
+            // -------------------------------------------------------------
 
             $('#ProfessionNameDropDown').change(function () {
                 var professionId = $(this).val();
@@ -389,12 +430,12 @@
                         url: "/AdminDash/GetBusinessData", // Controller action to fetch models based on brand ID
                         data: { vendorId: vendorId },
                         success: function (response) {
-                            console.log(response); 
+                            console.log(response);
                             console.log(response.faxNumber);
-                                $('#Contact').val(response.phoneNumber);
-                                $('#Email').val(response.email);
-                                $('#Fax').val(response.faxNumber);
-                            
+                            $('#Contact').val(response.phoneNumber);
+                            $('#Email').val(response.email);
+                            $('#Fax').val(response.faxNumber);
+
                         }
                     });
 
@@ -406,8 +447,11 @@
                     $('#Fax').val("");
                 }
             });
-          
 
+            // -------------------------------------------------------------
+            // -------------------------------------------------------------
+
+            // -------------------------------------------------------------
 
             // ------------------
             $('#regiondropdown').change(function () {
@@ -433,7 +477,7 @@
                 }
             });
 
-
+            // -------------------------------------------------------------
             $('#BlockCaseModalsubmit').submit(function (event) {
                 event.preventDefault();
 
@@ -457,7 +501,7 @@
             $('#BlockCaseModal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
             });
-
+            // -------------------------------------------------------------
         });
 
     </script>

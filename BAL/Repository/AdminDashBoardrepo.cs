@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,9 @@ namespace BAL.Repository
         {
             _context = context;
         }
-        
 
-       
+
+
         public IQueryable<Admin_DashBoard> GetList()
         {
 
@@ -48,17 +49,18 @@ namespace BAL.Repository
                                 region = _context.Regions.ToList(),
 
 
-                            }) ;
+                            });
 
             return DashData;
         }
 
-        public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect, string selectvalue, string partialName, int[] currentstatus)
+        public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect,
+            string selectvalue, string partialName, int[] currentstatus)
         {
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
-                            
+
 
                             select new Admin_DashBoard()
                             {
@@ -74,8 +76,8 @@ namespace BAL.Repository
                                 Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
                                 status = req.Status,
                                 reqclientid = reqclient.RequestClientId,
-                                 Email = reqclient.Email,
-                                 Notes = reqclient.Notes,
+                                Email = reqclient.Email,
+                                Notes = reqclient.Notes,
                                 confirmationnum = req.ConfirmationNumber,
                                 requestid = reqclient.RequestId
 
@@ -83,12 +85,12 @@ namespace BAL.Repository
                             }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
                               (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
                               (string.IsNullOrEmpty(selectvalue) || item.regionid == int.Parse(selectvalue)) &&
-                               currentstatus.Any(status => item.status == status)).ToList(); 
+                               currentstatus.Any(status => item.status == status)).ToList();
 
             return DashData;
 
-        } 
-        
+        }
+
         public IQueryable<Admin_DashBoard> getregionwise()
         {
             var DashData = (from req in _context.Requests
@@ -110,10 +112,10 @@ namespace BAL.Repository
                                 Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
                                 status = req.Status,
                                 reqclientid = reqclient.RequestClientId,
-                                 Email = reqclient.Email,
-                                 Notes = reqclient.Notes,
-                                 regionname = region.Name,
-                                 confirmationnum = req.ConfirmationNumber,
+                                Email = reqclient.Email,
+                                Notes = reqclient.Notes,
+                                regionname = region.Name,
+                                confirmationnum = req.ConfirmationNumber,
                                 requestid = reqclient.RequestId
 
                             });
@@ -139,6 +141,58 @@ namespace BAL.Repository
                           });
 
             return result;
+        }
+
+        public ViewCase ViewCase(int id, int status)
+        {
+            var patientdata = getregionwise().Where(s => s.reqclientid == id).FirstOrDefault();
+            ViewCase viewCase = new ViewCase();
+            viewCase.FirstName = patientdata.Name;
+            viewCase.LastName = patientdata.LastName;
+            viewCase.DateOfBirth = DateTime.Parse(patientdata.BirthDate);
+            viewCase.Phone = patientdata.PhoneNumber_P;
+            viewCase.Email = patientdata.Email;
+            viewCase.Notes = patientdata.Notes;
+            viewCase.region = patientdata.regionname;
+            viewCase.address = patientdata.Address;
+            viewCase.ConfirmationNumber = patientdata.confirmationnum;
+            viewCase.status = status;
+            viewCase.requestid = patientdata.requestid;
+            viewCase.cases = _context.CaseTags.ToList();
+
+            return viewCase;
+        }
+
+        public bool CancelCase(int Requestid, string Reason, string Notes)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == Requestid);
+
+
+            if (user != null)
+            {
+                user.Status = 3;
+                user.CaseTag = Reason;
+
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = Requestid;
+                requeststatuslog.Notes = Notes;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 3;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                return true;
+            }
+
+            else
+            { return false; }
+
         }
     }
 }

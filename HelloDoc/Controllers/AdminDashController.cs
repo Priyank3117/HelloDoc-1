@@ -32,7 +32,7 @@ namespace HelloDoc.Controllers
             _environment = environment;
             _files = files;
             _patient = patient;
-            _emailService = emailService;   
+            _emailService = emailService;
         }
         public IActionResult AdminDash()
         {
@@ -55,14 +55,12 @@ namespace HelloDoc.Controllers
 
             return View(DashData.ToList());
         }
-
-
-
-        public IActionResult SearchPatient(string SearchValue, string Filterselect, string selectvalue, string partialName, int[] currentstatus)
+        public IActionResult SearchPatient(string SearchValue, string Filterselect,
+            string selectvalue, string partialName, int[] currentstatus)
         {
 
-            var FilterData = _AdminDashboard.GetRequestData(SearchValue, Filterselect, selectvalue, partialName, currentstatus).ToList();
-
+            var FilterData = _AdminDashboard.GetRequestData(SearchValue, Filterselect, selectvalue,
+                partialName, currentstatus).ToList();
 
             return PartialView(partialName, FilterData);
 
@@ -70,25 +68,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult ViewCase(int id, int status)
         {
-            var patientdata = _AdminDashboard.getregionwise().Where(s => s.reqclientid == id).FirstOrDefault();
-
-            ViewCase viewCase = new ViewCase();
-
-            viewCase.FirstName = patientdata.Name;
-            viewCase.LastName = patientdata.LastName;
-            viewCase.DateOfBirth = DateTime.Parse(patientdata.BirthDate);
-            viewCase.Phone = patientdata.PhoneNumber_P;
-            viewCase.Email = patientdata.Email;
-            viewCase.Notes = patientdata.Notes;
-            viewCase.region = patientdata.regionname;
-            viewCase.address = patientdata.Address;
-            viewCase.ConfirmationNumber = patientdata.confirmationnum;
-            viewCase.status = status;
-            viewCase.requestid = patientdata.requestid;
-            viewCase.cases = _context.CaseTags.ToList();
-
-
-
+            var viewCase = _AdminDashboard.ViewCase(id, status);
             return View(viewCase);
         }
 
@@ -102,35 +82,11 @@ namespace HelloDoc.Controllers
         }
         public ActionResult CancelCase(int Requestid, string Reason, string Notes)
         {
-            var user = _context.Requests.FirstOrDefault(h => h.RequestId == Requestid);
-
-
-            if (user != null)
+           if (_AdminDashboard.CancelCase(Requestid, Reason, Notes))
             {
-                user.Status = 3;
-                user.CaseTag = Reason;
-
-
-                RequestStatusLog requeststatuslog = new RequestStatusLog();
-
-                requeststatuslog.RequestId = Requestid;
-                requeststatuslog.Notes = Notes;
-                requeststatuslog.CreatedDate = DateTime.Now;
-                requeststatuslog.Status = 3;
-
-                _context.Add(requeststatuslog);
-                _context.SaveChanges();
-
-                _context.Update(user);
-                _context.SaveChanges();
-
                 return RedirectToAction("AdminDash");
-
-
             }
-
             return Ok();
-
         }
 
         public IActionResult GetPhysician(string regionid)
@@ -172,6 +128,42 @@ namespace HelloDoc.Controllers
             return Ok();
         }
 
+        public IActionResult TransferCase(int transferid, string Descriptionoftra, string phyidtra)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == transferid);
+
+            if (user != null)
+            {
+                user.Status = 2;
+                user.ModifiedDate = DateTime.Now;
+                user.PhysicianId = int.Parse(phyidtra);
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = transferid;
+                requeststatuslog.Notes = Descriptionoftra;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 2;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+
+            return Ok();
+        }
+        public IActionResult GetPhysicianForTransfer(string regionid)
+        {
+            var result = (from physician in _context.Physicians
+                          join
+                           region in _context.PhysicianRegions on
+                           physician.PhysicianId equals region.PhysicianId into phy
+                          select physician).Where(s => s.RegionId == int.Parse(regionid)).ToList();
+            return Json(result);
+        }
 
         public IActionResult BlockCase(int blocknameid, string blocknotes)
         {
@@ -247,7 +239,7 @@ namespace HelloDoc.Controllers
         {
 
             string path = Path.Combine(_environment.WebRootPath, "Files", name);
-           // _files.RemoveFile(path);
+            // _files.RemoveFile(path);
 
             RequestWiseFile reqFile = _context.RequestWiseFiles.Where(x => x.FileName == name).FirstOrDefault();
             if (reqFile != null)
@@ -265,7 +257,7 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult DeleteSelectedFiles(List<string> filenames)
         {
-          
+
             try
             {
                 foreach (var filename in filenames)
@@ -328,42 +320,42 @@ namespace HelloDoc.Controllers
             var token = request.Cookies["jwt"];
             if (string.IsNullOrEmpty(token))
             {
-                return Json(new{sessionExists = false });
+                return Json(new { sessionExists = false });
             }
             else
             {
-                return Json(new{sessionExists = true});
+                return Json(new { sessionExists = true });
             }
         }
 
         public IActionResult SendOrder(int id)
         {
-            var  Profession = _context.HealthProfessionalTypes.ToList();
+            var Profession = _context.HealthProfessionalTypes.ToList();
 
             SendOrder sendOrder = new SendOrder();
 
             sendOrder.ProfessionName = Profession;
             sendOrder.requestid = id;
-            return View(sendOrder);  
+            return View(sendOrder);
         }
 
         [HttpPost]
         public IActionResult SendOrder(SendOrder sendOrder)
         {
-            
+
             OrderDetail orderDetail = new OrderDetail();
 
             orderDetail.RequestId = sendOrder.requestid;
             orderDetail.VendorId = sendOrder.vendorId;
             orderDetail.FaxNumber = sendOrder.FaxNum;
-            orderDetail.Email = sendOrder.Email;    
-            orderDetail.BusinessContact= sendOrder.BusinessContact;
+            orderDetail.Email = sendOrder.Email;
+            orderDetail.BusinessContact = sendOrder.BusinessContact;
             orderDetail.Prescription = sendOrder.Disciription;
             orderDetail.CreatedDate = DateTime.Now;
 
             _context.Add(orderDetail);
             _context.SaveChanges();
-            return RedirectToAction("SendOrder",new{id = sendOrder.requestid });
+            return RedirectToAction("SendOrder", new { id = sendOrder.requestid });
         }
 
         public IActionResult GetBusinessName(string professionId)
@@ -371,7 +363,7 @@ namespace HelloDoc.Controllers
             var result = _context.HealthProfessionals.Where(r => r.Profession == int.Parse(professionId)).ToList();
             return Json(result);
         }
-        
+
         public IActionResult GetBusinessData(string vendorId)
         {
             var result = _context.HealthProfessionals.Where(r => r.VendorId == int.Parse(vendorId)).FirstOrDefault();
