@@ -336,14 +336,34 @@ namespace HelloDoc.Controllers
             }
         }
 
-        public IActionResult SendOrder()
+        public IActionResult SendOrder(int id)
         {
             var  Profession = _context.HealthProfessionalTypes.ToList();
 
-            SendOrder obj = new SendOrder();
+            SendOrder sendOrder = new SendOrder();
 
-            obj.ProfessionName = Profession;
-            return View(obj);  
+            sendOrder.ProfessionName = Profession;
+            sendOrder.requestid = id;
+            return View(sendOrder);  
+        }
+
+        [HttpPost]
+        public IActionResult SendOrder(SendOrder sendOrder)
+        {
+            
+            OrderDetail orderDetail = new OrderDetail();
+
+            orderDetail.RequestId = sendOrder.requestid;
+            orderDetail.VendorId = sendOrder.vendorId;
+            orderDetail.FaxNumber = sendOrder.FaxNum;
+            orderDetail.Email = sendOrder.Email;    
+            orderDetail.BusinessContact= sendOrder.BusinessContact;
+            orderDetail.Prescription = sendOrder.Disciription;
+            orderDetail.CreatedDate = DateTime.Now;
+
+            _context.Add(orderDetail);
+            _context.SaveChanges();
+            return RedirectToAction("SendOrder",new{id = sendOrder.requestid });
         }
 
         public IActionResult GetBusinessName(string professionId)
@@ -355,12 +375,10 @@ namespace HelloDoc.Controllers
         public IActionResult GetBusinessData(string vendorId)
         {
             var result = _context.HealthProfessionals.Where(r => r.VendorId == int.Parse(vendorId)).FirstOrDefault();
-            var Profession = _context.HealthProfessionalTypes.ToList();
-            SendOrder obj = new SendOrder();
-            obj.FaxNum = result.FaxNumber;
-            obj.ProfessionName = Profession;
-            return View(obj);
+            return Json(result);
+
         }
+
 
     }
 }

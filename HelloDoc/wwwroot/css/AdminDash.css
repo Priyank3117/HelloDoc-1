@@ -2,9 +2,6 @@
     display:none
 }
 
-
-
-
 @media only screen and (max-width:950px) {
     
 
@@ -12,9 +9,8 @@
     {
         display:none
     }
-
-    #accordionExample
-    {
-        display:block
+    
+    #accordionExample {
+        display: block
     }
 }

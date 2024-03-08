@@ -361,7 +361,7 @@
                         success: function (response) {
                             // Clear existing options
                             $('#BusinessDropDown').empty();
-                            $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value',0));
+                            $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value', 0));
                             console.log("kpodkcosdk");
                             $.each(response, function (index, item) {
 
@@ -370,6 +370,13 @@
 
                         }
                     });
+                }
+                else {
+                    $('#BusinessDropDown').empty();
+                    $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value', 0));
+                    $('#Contact').val("");
+                    $('#Email').val("");
+                    $('#Fax').val("");
                 }
             });
 
@@ -382,11 +389,21 @@
                         url: "/AdminDash/GetBusinessData", // Controller action to fetch models based on brand ID
                         data: { vendorId: vendorId },
                         success: function (response) {
-                            // Clear existing options
-                          console.log("succesful")
-
+                            console.log(response); 
+                            console.log(response.faxNumber);
+                                $('#Contact').val(response.phoneNumber);
+                                $('#Email').val(response.email);
+                                $('#Fax').val(response.faxNumber);
+                            
                         }
                     });
+
+                }
+                else {
+                    console.log("gbdjsd")
+                    $('#Contact').val("");
+                    $('#Email').val("");
+                    $('#Fax').val("");
                 }
             });
           
