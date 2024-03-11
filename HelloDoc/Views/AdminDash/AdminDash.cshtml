@@ -133,7 +133,7 @@
             <span class="d-none d-xl-inline ">Export</span>
         </button>
             <button type="button" class="btn btn-info  text-white me-2">
-            <i class="bi bi-box-arrow-up-right "></i><span class="d-none d-xl-inline">
+            <i class="bi bi-box-arrow-up-right"></i><span class="d-none d-xl-inline">
                 Export
                 All
             </span>
@@ -168,14 +168,14 @@
                 </svg>
                 <select class="form-select border-0 form-select" aria-label="Default select example" >
                     <option selected >All Regions</option>
-                    <option  data-value="1">One</option>
-                    <option data-value="2">Two</option>
-                    <option  data-value="3">Three</option>
-                    <option  data-value="4">four</option>
+                    <option  data-value="1">Maryland</option>
+                    <option data-value="2">Virginia</option>
+                    <option  data-value="3">NewYork</option>
+                    <option  data-value="4">Alaska</option>
                 </select>
             </div>
         </div>
-        <div class="d-flex flex-wrap col-xl-6  col-sm-12 justify-content-end   ">
+        <div class="d-flex flex-wrap col-xl-6  col-sm-12 justify-content-end">
             <button class="active-filter filter-options d-flex align-items-center  px-3 py-1 rounded btn filter-btn" data-value="">
                 <span>All</span>
             </button>
@@ -226,7 +226,7 @@
                 </div>
                 <form id="ModalFormsubmit">
                     <div class="modal-body">
-                        <p> Patient Name : <span id="text"></span></p>
+                        <p> Patient Name : ><span id="text"</span></p>
                         <select class="form-select" aria-label="Default select example" name="Reason">
 
                             
@@ -399,6 +399,80 @@
         </div>
     </div>
     @* -----------TransferCase Modal  --------------------------- *@
+    @* -----------ClearCase  Modal  --------------------------- *@
+    <div class="modal " tabindex="-1" id="ClearCaseModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <form id="ClearCaseModalSubmit">
+                <div class="text-center text-white rounded-circle mt-4 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-exclamation-circle-fill bg-warning rounded-circle " viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                    </svg>
+                </div>
+                    <input id="clearcase" name="clearcaseid" hidden />
+                <div class="text-center container ">
+                    <h4 class="mt-2 mb-3 fw-4"> Confirmation for clear case</h4>
+                    <span style="font-size: 14px;">
+                        Are you sure you want to clear this request? Once clear this request you are not able to see this request.
+                    </span>
+                </div>
+                <div class="text-center p-3 mt-4 ">
+                    <button type="submit" class="btn btn-secondary bg-info border border-info" >Clear</button> 
+                    <button type="button" class="btn  border border-info text-info" data-bs-dismiss="modal">Cancel</button>
+               </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @* -----------ClearCase Modal  --------------------------- *@
+    @* -----------SendAgreement Modal  --------------------------- *@
+    <div class="modal" id="SendAgreementModal" tabindex="-1" role="dialog" aria-labelledby="SendAgreementCase" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Send Agreement</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="SendAgreementModalSubmit">
+                    <input type="hidden" />
+                    <div class="modal-body">
+                        <div class="d-flex flex-column">
+                            <div>
+                                <svg height="15" width="15" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <circle fill="#5fbc61" r="45" cx="50" cy="50" stroke="grey" stroke-width="3" />
+                                </svg>
+                                <span class="ms-2">Patient</span>
+                            </div>
+                            <div class="mt-2">
+                                <p >To Send Agrrement Papers Make Sure yor are updating the correct contact information Below for the responsiblelity party</p>
+                            </div>
+                            <div class="mb-3  text-muted">
+
+
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" placeholder="Leave a comment here" id="agreementemail" name="blockreason">
+                                    <label for="floatingTextarea2" class="text-muted">Email</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" placeholder="Leave a comment here" id="agreementphone" name="blockreason">
+                                    <label for="floatingTextarea2" class="text-muted">Phone No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn bg-info text-white" id="SendAgreementBtn">Confirm</button>
+                            <button type="button" class="btn  border border-info text-info" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    @* -----------SendAgreement Modal  --------------------------- *@
     @* -------------------------------Modal--------------------------------------------- *@
        
         @* -------------------------------Search--------------------------------------------- *@

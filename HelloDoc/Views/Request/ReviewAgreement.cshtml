@@ -1,0 +1,49 @@
+﻿
+
+@* asp-action="Agree" asp-controller="Request" method="post" asp-route-id="@Model.RequestId" *@
+
+@{
+    ViewData["Title"] = "ReviewAgreement";
+    Layout = "~/Views/Shared/_Layout-1.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HelloDoc</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HelloDoc.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Patient_Request.css" />
+</head>
+
+<body>
+    
+   
+            <!-- -----------------form-------------------------- -->
+            <div class="container mt-4 ">
+                <section>To Provide best medical service, we cannot determine the cost right away. If you agree to our service, so we will provide care and follow-up untill all care is completed. So with this points,if you like us to provide care to you click "Agree" and we'll get started immediately, if you do not agree simply click "Cancel"'</section>
+                <div class="row mt-5">
+                    <div class="col-6 text-center">
+                        <form>
+                            <button class="btn btn-success text-center text-white" type="submit">IAgree</button>
+                        </form>
+                    </div>
+                    <div class="col-6 text-center">
+                        <button class="btn btn-danger text-center text-white" data-bs-toggle="modal" data-bs-target="#cancelagreementmodal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+         
+   
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/Patient_request.js" asp-append-version="true"></script>
+</body>
+
+</html>

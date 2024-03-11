@@ -18,6 +18,7 @@ namespace DAL.ViewModel
         public string? BirthDate { get; set;}
 
         public string? Email { get; set; }
+       
 
         public string? Requestor { get; set; }
 

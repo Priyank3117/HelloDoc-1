@@ -11,6 +11,7 @@ using static BAL.Repository.Authorizationrepo;
 
 
 
+
 namespace HelloDoc.Controllers
 {
 
@@ -368,6 +369,31 @@ namespace HelloDoc.Controllers
         {
             var result = _context.HealthProfessionals.Where(r => r.VendorId == int.Parse(vendorId)).FirstOrDefault();
             return Json(result);
+
+        }
+
+        public IActionResult ClearCase(int clearcaseid)
+        {
+          var request = _context.Requests.FirstOrDefault(s => s.RequestId == clearcaseid);
+
+            if(request != null)
+            {
+                request.Status = 10;
+
+                _context.Update(request);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = clearcaseid;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 10;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+            return Ok();
 
         }
 

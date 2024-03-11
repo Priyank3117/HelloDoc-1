@@ -38,6 +38,7 @@ namespace BAL.Repository
                                 Requestor = req.FirstName,
                                 BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
                                 RequestedDate = req.CreatedDate,
+                                Email = reqclient.Email,
                                 PhoneNumber = req.PhoneNumber,
                                 requesttypeid = req.RequestTypeId,
                                 PhoneNumber_P = reqclient.PhoneNumber,

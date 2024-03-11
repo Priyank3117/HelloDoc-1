@@ -146,6 +146,10 @@ namespace HelloDoc.Controllers
             return View();
         }
 
+        public IActionResult ReviewAgreement()
+        {
+            return View();
+        }
         
         //--------------------Business Request---------------------------------------
     }

@@ -501,6 +501,33 @@
             $('#BlockCaseModal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
             });
+            // ------------------------------------------------------------- 
+            
+            
+             // -------------------------------------------------------------
+            $('#ClearCaseModalSubmit').submit(function (event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+                console.log(formData);
+                $.ajax({
+                    url: '/AdminDash/ClearCase',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+
+                        $('#ClearCaseModalSubmit').modal('hide');
+                        window.location.href = "/AdminDash/AdminDash";
+                    },
+                    error: function (xhr, status, error) {
+
+                        console.error('Error submitting form:', error);
+                    }
+                });
+            });
+            $('#ClearCaseModal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
             // -------------------------------------------------------------
         });
 
