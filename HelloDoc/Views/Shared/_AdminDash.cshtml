@@ -367,6 +367,34 @@
             });
 
             // -------------------
+            // -------------------
+            $('#SendAgreementModalSubmit').submit(function (event) {
+                event.preventDefault();
+
+                console.log("jk")
+
+                var formData = $(this).serialize();
+                console.log(formData);
+                $.ajax({
+                    url: '/AdminDash/SendAgreement',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+
+                        $('#SendAgreementModalSubmit').modal('hide');
+                        window.location.href = "/AdminDash/AdminDash";
+                    },
+                    error: function (xhr, status, error) {
+
+                        console.error('Error submitting form:', error);
+                    }
+                });
+            });
+            $('#SendAgreementModal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+
+            // -------------------
             $('#regiondropdownoftra').change(function () {
 
 

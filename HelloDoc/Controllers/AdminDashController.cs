@@ -397,6 +397,22 @@ namespace HelloDoc.Controllers
 
         }
 
+        [HttpPost]
+        public IActionResult SendAgreement(int sendagreementid)
+        {
+            var agreementLink = Url.Action("ReviewAgreement", "Request", new { requestid = sendagreementid }, protocol: HttpContext.Request.Scheme);
+            var subject = "Acceptance of the agreement";
+
+            if(agreementLink != null)
+            {
+                _emailService.SendEmail("patelpriyank3112002@gmail.com", subject, 
+                    $"<a href='{agreementLink}'>Click here </a> for further procedure");
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
 
     }
 }

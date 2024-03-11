@@ -146,11 +146,68 @@ namespace HelloDoc.Controllers
             return View();
         }
 
-        public IActionResult ReviewAgreement()
+       
+        public IActionResult ReviewAgreement(int requestid)
         {
-            return View();
+
+            var request = _context.Requests.FirstOrDefault(s => s.RequestId == requestid);
+            var name = _context.RequestClients.FirstOrDefault(s => s.RequestId == requestid);
+
+
+            ViewBag.requestid = requestid;
+            ViewBag.name = name.FirstName +" "+name.LastName;
+
+            if(request.Status == 2) 
+            { 
+              return View();
+            }
+            else
+            {
+                RedirectToAction("Patient_login", "Login");
+            }
+          return BadRequest();
         }
-        
+
+        public IActionResult Agree(int id)
+        {
+            var request = _context.Requests.FirstOrDefault(s => s.RequestId == id);
+
+            if(request != null)
+            {
+                request.Status = 4;
+                request.ModifiedDate = DateTime.Now;
+
+                _context.Update(request);
+                _context.SaveChanges();
+            }
+            return View("ReviewAgreement");
+        }
+
+        public IActionResult CancelAgreement(string Notes,int id)
+        {
+            var req = _context.Requests.FirstOrDefault(s => s.RequestId == id);
+
+            if(req != null)
+            {
+                req.Status = 7;
+                req.ModifiedDate = DateTime.Now;
+                _context.Update(req);
+                _context.SaveChanges();
+
+                RequestStatusLog requestStatusLog  = new RequestStatusLog();
+                requestStatusLog.Notes = Notes;
+                requestStatusLog.RequestId = id;
+                requestStatusLog.CreatedDate = DateTime.Now;
+                requestStatusLog.Status = 7;
+                _context.Add(requestStatusLog);
+                _context.SaveChanges();
+
+                return RedirectToAction("Patient_login", "Login");
+             
+            }
+            return BadRequest();
+        }
+
         //--------------------Business Request---------------------------------------
     }
 }

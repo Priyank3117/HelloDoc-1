@@ -436,7 +436,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="SendAgreementModalSubmit">
-                    <input type="hidden" />
                     <div class="modal-body">
                         <div class="d-flex flex-column">
                             <div>
@@ -445,6 +444,7 @@
                                 </svg>
                                 <span class="ms-2">Patient</span>
                             </div>
+                    <input type="hidden" id="sendagreementid" name="sendagreementid" />
                             <div class="mt-2">
                                 <p >To Send Agrrement Papers Make Sure yor are updating the correct contact information Below for the responsiblelity party</p>
                             </div>
@@ -462,7 +462,7 @@
                             </div>
                         </div>
                         <div class="modal-footer border-0">
-                            <button type="button" class="btn bg-info text-white" id="SendAgreementBtn">Confirm</button>
+                            <button type="submit" class="btn bg-info text-white" id="SendAgreementBtn">Confirm</button>
                             <button type="button" class="btn  border border-info text-info" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </div>

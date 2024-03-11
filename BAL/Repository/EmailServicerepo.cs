@@ -25,6 +25,7 @@ namespace BAL.Repository
 
             // Create the MailMessage object
             MailMessage mail = new MailMessage("tatva.dotnet.priyankpatel@outlook.com", email, subject, message);
+            mail.IsBodyHtml = true;
             attachments?.ForEach(attachment => mail.Attachments.Add(attachment));
 
             try
