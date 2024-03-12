@@ -80,7 +80,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted ">
+    <footer class="border-top footer text-muted mt-3">
         <div class="d-flex flex-row justify-content-end align-items-center bg-dark text-white pe-3 footer position-absolute bottom-0 w-100">
             <span>Terms Of Condition | Privacy Policy</span>
         </div>
@@ -99,15 +99,56 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script>
-
         $(document).ready(function () {
+       
 
-            var currentPartialview = "AdminTableNew"
+           
+            // Function to retrieve data from local storage
+            function getDataFromLocalStorage(key) {
+                return localStorage.getItem(key);
+            }
 
-            var currentstatus = [1];
+            // Function to store data in local storage
+            function setDataInLocalStorage(key, value) {
+                localStorage.setItem(key, value);
+            }
+
+            function setStylesFromLocalStorage() {
+                
+                // Get the stored state from local storage
+                var textSpanState = localStorage.getItem('textspanState');
+                var triangleDisplayState = localStorage.getItem('triangleDisplayState');
+                var DisplayState = localStorage.getItem('DisplayState');
+                var BorderStyle = localStorage.getItem('BorderStyle');
+                var ida = localStorage.getItem('id');
+
+                // Set the text and styles based on the stored state
+                if (textSpanState) {
+                    $('#textspan').text(textSpanState);
+                }
+                if (triangleDisplayState) {
+                    $('.triangle').css('display', triangleDisplayState);
+                }
+                if (DisplayState) {
+                 
+                    $(ida).css('display', DisplayState);
+                
+                }
+                if (BorderStyle) {
+                    $(ida).css('border-top',BorderStyle);
+                }
+            }
+
+            // Initialize variables with default values or retrieve from local storage
+            var currentPartialview = getDataFromLocalStorage("currentPartialview") || "AdminTableNew";
+            var currentstatus = JSON.parse(getDataFromLocalStorage("currentstatus")) || [1];
+
+            // Set initial values in local storage
+            setDataInLocalStorage("currentPartialview", currentPartialview);
+            setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
 
             $('.triangle').css('display', 'none');
-            $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+            //  $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
 
 
             filtertable(currentPartialview, currentstatus);
@@ -117,96 +158,159 @@
             $('AdminTableToClose').hide();
             $('AdminTableUnPaid').hide();
 
-            // ---------------hover----------------------
-            $("#divnew").click(function () {
+            
+            function updateActiveElement(id) {
                 $(".status").removeClass("active");
-                $("#divnew").addClass("active")
+                $(id).addClass("active");
+                localStorage.setItem('activeElement', id); // Save active element to local storage
+            }
+
+            // Click event handlers
+            $("#divnew").click(function () {
+                updateActiveElement("#divnew");
             });
 
             $("#divpen").click(function () {
-                $(".status").removeClass("active");
-                $("#divpen").addClass("active")
-             
-            });
-            $("#divact").click(function () {
-                $(".status").removeClass("active");
-                $("#divact").addClass("active")
-            });
-            $("#divcon").click(function () {
-                $(".status").removeClass("active");
-                $("#divcon").addClass("active")
-            });
-            $("#divclo").click(function () {
-                $(".status").removeClass("active");
-                $("#divclo").addClass("active")
-            });
-            $("#divun").click(function () {
-                $(".status").removeClass("active");
-                $("#divun").addClass("active")
+                updateActiveElement("#divpen");
             });
 
+            $("#divact").click(function () {
+                updateActiveElement("#divact");
+            });
+
+            $("#divcon").click(function () {
+                updateActiveElement("#divcon");
+            });
+
+            $("#divclo").click(function () {
+                updateActiveElement("#divclo");
+            });
+
+            $("#divun").click(function () {
+                updateActiveElement("#divun");
+            });
+
+            // On page load, check if there's a previously active element in local storage and set i
+            var activeElement = localStorage.getItem('activeElement');
+            if (activeElement) {
+                $(activeElement).addClass("active");
+            }
+
+
+          
 
             // -------------hover  end---------------------
 
             //-------------------on click functionality------------------------------
-
+        
             $("#New").click(function () {
                 currentstatus = [1];
-                currentPartialview = "AdminTableNew"
+                currentPartialview = "AdminTableNew";
+                setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
+                setDataInLocalStorage("currentPartialview", currentPartialview);
                 filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(new)');
-                $('.triangle').css('display', 'none');
-                $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+                // $('#textspan').text('(new)');
+                // $('.triangle').css('display', 'none');
+                // $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+
+                localStorage.setItem('textspanState', '(new)');
+                localStorage.setItem('triangleDisplayState','none');
+                localStorage.setItem('DisplayState', 'block');
+                localStorage.setItem('BorderStyle', '20px solid #203f9a');
+                localStorage.setItem('id','#tranew');
+                setStylesFromLocalStorage();
             });
 
 
             $("#Pending").click(function () {
-                currentPartialview = "AdminTablePending"
-                currentstatus = [2]
+                currentPartialview = "AdminTablePending";
+                currentstatus = [2];
+                setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
+                setDataInLocalStorage("currentPartialview", currentPartialview);
                 filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(pending)');
-                $('.triangle').css('display', 'none');
-                $('#trapending').css('display', 'block').css('border-top', '20px solid  #0dcaf0');
+                // $('#textspan').text('(pending)');
+                // $('.triangle').css('display', 'none');
+                // $('#trapending').css('display', 'block').css('border-top', '20px solid  #0dcaf0');
 
+                localStorage.setItem('textspanState', '(pending)');
+                localStorage.setItem('triangleDisplayState', 'none');
+                localStorage.setItem('DisplayState', 'block');
+                localStorage.setItem('BorderStyle', '20px solid #0dcaf0');
+                localStorage.setItem('id','#trapending');
+
+                setStylesFromLocalStorage();
             });
 
             $("#Active").click(function () {
-                currentPartialview = "AdminTableActive"
-                currentstatus = [4, 5]
+                currentPartialview = "AdminTableActive";
+                currentstatus = [4,5];
+                setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
+                setDataInLocalStorage("currentPartialview", currentPartialview);
                 filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(Active)');
-                $('.triangle').css('display', 'none');
-                $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
+                // $('#textspan').text('(Active)');
+                // $('.triangle').css('display', 'none');
+                // $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
+
+                localStorage.setItem('textspanState', '(active)');
+                localStorage.setItem('triangleDisplayState', 'none');
+                localStorage.setItem('DisplayState', 'block');
+                localStorage.setItem('BorderStyle', '20px solid #228c20');
+                localStorage.setItem('id', '#traact');
+                setStylesFromLocalStorage();
             });
 
 
             $("#Conclude").click(function () {
-                currentPartialview = "AdminTableConclude"
-                currentstatus = [6]
+                currentPartialview = "AdminTableConclude";
+                currentstatus = [6];
+                setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
+                setDataInLocalStorage("currentPartialview", currentPartialview);
                 filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(Conclude)');
-                $('.triangle').css('display', 'none');
-                $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
+                // $('#textspan').text('(Conclude)');
+                // $('.triangle').css('display', 'none');
+                // $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
+                localStorage.setItem('textspanState', '(Conclude)');
+                localStorage.setItem('triangleDisplayState', 'none');
+                localStorage.setItem('DisplayState', 'block');
+                localStorage.setItem('BorderStyle', '20px solid #da0f82');
+                localStorage.setItem('id', '#tracon');
+                setStylesFromLocalStorage();
             });
 
             $("#ToClose").click(function () {
-                currentPartialview = "AdminTableToClose"
-                currentstatus = [3, 7, 8]
+                currentPartialview = "AdminTableToClose";
+                currentstatus = [3, 7, 8];
+                setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
+                setDataInLocalStorage("currentPartialview", currentPartialview);
                 filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(To Close)');
-                $('.triangle').css('display', 'none');
-                $('#traclo').css('display', 'block').css('border-top', '20px solid #0370d7').css('color', 'white');
+                // $('#textspan').text('(To Close)');
+                // $('.triangle').css('display', 'none');
+                // $('#traclo').css('display', 'block').css('border-top', '20px solid #0370d7').css('color', 'white');
+                localStorage.setItem('textspanState', '(To Close)');
+                localStorage.setItem('triangleDisplayState', 'none');
+                localStorage.setItem('DisplayState', 'block');
+                localStorage.setItem('BorderStyle', '20px solid #0370d7');
+                localStorage.setItem('id', '#traclo');
+                setStylesFromLocalStorage();
             });
 
             $("#UnPaid").click(function () {
-                currentPartialview = "AdminTableUnPaid"
+                currentPartialview = "AdminTableUnPaid";
                 currentstatus = [9];
+                setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
+                setDataInLocalStorage("currentPartialview", currentPartialview);
                 filtertable(currentPartialview, currentstatus);
-                $('#textspan').text('(Unpaid)');
-                $('.triangle').css('display', 'none');
-                $('#traun').css('display', 'block').css('border-top', '20px solid #9966cd').css('color', 'white');
+                // $('#textspan').text('(Unpaid)');
+                // $('.triangle').css('display', 'none');
+                // $('#traun').css('display', 'block').css('border-top', '20px solid #9966cd').css('color', 'white');
+                localStorage.setItem('textspanState', '(Unpaid)');
+                localStorage.setItem('triangleDisplayState', 'none');
+                localStorage.setItem('DisplayState', 'block');
+                localStorage.setItem('BorderStyle', '20px solid #9966cd');
+                localStorage.setItem('id', '#traun');
+                setStylesFromLocalStorage();
             });
-
+            setStylesFromLocalStorage();
             //-------------------on click functionality end------------------------------
 
             $('.form-select').on("change", function () {

@@ -3,11 +3,10 @@ using DAL.DataContext;
 using DAL.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HelloDoc.Controllers
 {
-   
+
     public class LoginController : Controller
     {
 
@@ -56,10 +55,12 @@ namespace HelloDoc.Controllers
                     Response.Cookies.Append("jwt", jwt);
                      if(role == "Patient")
                     {
+                       
                         return RedirectToAction("Index", "DashBoard");
                     }
                     else if(role == "Admin")
                     {
+                        //TempData["SweetAlertMessage"] = new SweetAlertMessage("Login Successful!", "You are now logged in.", SweetAlertMessageType.Success);
                         return RedirectToAction("AdminDash", "AdminDash");
                     }
                 } 
@@ -68,7 +69,7 @@ namespace HelloDoc.Controllers
         }
 
         public IActionResult Logout() 
-            { 
+        { 
             HttpContext.Session.Clear();
             Response.Cookies.Delete("jwt");
             return RedirectToAction("Patient_login");

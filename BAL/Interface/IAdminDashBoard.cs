@@ -22,7 +22,15 @@ namespace BAL.Interface
 
         public bool CancelCase(int Requestid, string Reason, string Notes);
 
+        public void AssignCase(int req, string Description, string phyid);
 
+        public void TransferCase(int transferid, string Descriptionoftra, string phyidtra);
+
+        public void BlockCase(int blocknameid, string blocknotes);
+
+        public void ClearCase(int clearcaseid);
+
+        public void SendOrder(SendOrder sendOrder);
 
     }
 }

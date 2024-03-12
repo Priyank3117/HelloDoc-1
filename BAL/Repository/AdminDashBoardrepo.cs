@@ -195,6 +195,130 @@ namespace BAL.Repository
             { return false; }
 
         }
+
+        public void AssignCase(int req, string Description, string phyid)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == req);
+
+            if (user != null)
+            {
+                user.Status = 2;
+                user.ModifiedDate = DateTime.Now;
+                user.PhysicianId = int.Parse(phyid);
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = req;
+                requeststatuslog.Notes = Description;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 2;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+        }
+
+        public void TransferCase(int transferid, string Descriptionoftra, string phyidtra)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == transferid);
+
+            if (user != null)
+            {
+                user.Status = 2;
+                user.ModifiedDate = DateTime.Now;
+                user.PhysicianId = int.Parse(phyidtra);
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = transferid;
+                requeststatuslog.Notes = Descriptionoftra;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 2;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+        }
+
+        public void BlockCase(int blocknameid, string blocknotes)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == blocknameid);
+
+            if (user != null)
+            {
+                user.Status = 11;
+
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = blocknameid;
+                requeststatuslog.Notes = blocknotes ?? "--";
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 11;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+                BlockRequest blockRequest = new BlockRequest();
+
+                blockRequest.RequestId = blocknameid.ToString();
+                blockRequest.CreatedDate = DateTime.Now;
+                blockRequest.Email = user.Email;
+                blockRequest.PhoneNumber = user.PhoneNumber;
+                blockRequest.Reason = blocknotes ?? "--";
+
+            }
+        }
+
+        public void ClearCase(int clearcaseid)
+        {
+            var request = _context.Requests.FirstOrDefault(s => s.RequestId == clearcaseid);
+
+            if (request != null)
+            {
+                request.Status = 10;
+
+                _context.Update(request);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = clearcaseid;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 10;
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+        }
+
+        public void SendOrder(SendOrder sendOrder)
+        {
+            OrderDetail orderDetail = new OrderDetail();
+
+            orderDetail.RequestId = sendOrder.requestid;
+            orderDetail.VendorId = sendOrder.vendorId;
+            orderDetail.FaxNumber = sendOrder.FaxNum;
+            orderDetail.Email = sendOrder.Email;
+            orderDetail.BusinessContact = sendOrder.BusinessContact;
+            orderDetail.Prescription = sendOrder.Disciription;
+            orderDetail.CreatedDate = DateTime.Now;
+
+            _context.Add(orderDetail);
+            _context.SaveChanges();
+        }
     }
 }
 

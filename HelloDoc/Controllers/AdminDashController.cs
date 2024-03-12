@@ -8,6 +8,8 @@ using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Net.Mail;
 using static BAL.Repository.Authorizationrepo;
+using System.Net;
+
 
 
 
@@ -103,57 +105,13 @@ namespace HelloDoc.Controllers
 
         public IActionResult AssignCase(int req, string Description, string phyid)
         {
-            var user = _context.Requests.FirstOrDefault(h => h.RequestId == req);
-
-            if (user != null)
-            {
-                user.Status = 2;
-                user.ModifiedDate = DateTime.Now;
-                user.PhysicianId = int.Parse(phyid);
-
-                _context.Update(user);
-                _context.SaveChanges();
-
-                RequestStatusLog requeststatuslog = new RequestStatusLog();
-
-                requeststatuslog.RequestId = req;
-                requeststatuslog.Notes = Description;
-                requeststatuslog.CreatedDate = DateTime.Now;
-                requeststatuslog.Status = 2;
-
-                _context.Add(requeststatuslog);
-                _context.SaveChanges();
-
-            }
-
-            return Ok();
+              _AdminDashboard.AssignCase(req, Description, phyid);
+              return Ok();
         }
 
         public IActionResult TransferCase(int transferid, string Descriptionoftra, string phyidtra)
         {
-            var user = _context.Requests.FirstOrDefault(h => h.RequestId == transferid);
-
-            if (user != null)
-            {
-                user.Status = 2;
-                user.ModifiedDate = DateTime.Now;
-                user.PhysicianId = int.Parse(phyidtra);
-
-                _context.Update(user);
-                _context.SaveChanges();
-
-                RequestStatusLog requeststatuslog = new RequestStatusLog();
-
-                requeststatuslog.RequestId = transferid;
-                requeststatuslog.Notes = Descriptionoftra;
-                requeststatuslog.CreatedDate = DateTime.Now;
-                requeststatuslog.Status = 2;
-
-                _context.Add(requeststatuslog);
-                _context.SaveChanges();
-
-            }
-
+            _AdminDashboard.TransferCase(transferid, Descriptionoftra, phyidtra);
             return Ok();
         }
         public IActionResult GetPhysicianForTransfer(string regionid)
@@ -168,37 +126,8 @@ namespace HelloDoc.Controllers
 
         public IActionResult BlockCase(int blocknameid, string blocknotes)
         {
-            var user = _context.Requests.FirstOrDefault(h => h.RequestId == blocknameid);
-
-            if (user != null)
-            {
-                user.Status = 11;
-
-
-                _context.Update(user);
-                _context.SaveChanges();
-
-                RequestStatusLog requeststatuslog = new RequestStatusLog();
-
-                requeststatuslog.RequestId = blocknameid;
-                requeststatuslog.Notes = blocknotes ?? "--";
-                requeststatuslog.CreatedDate = DateTime.Now;
-                requeststatuslog.Status = 11;
-
-                _context.Add(requeststatuslog);
-                _context.SaveChanges();
-
-                BlockRequest blockRequest = new BlockRequest();
-
-                blockRequest.RequestId = blocknameid.ToString();
-                blockRequest.CreatedDate = DateTime.Now;
-                blockRequest.Email = user.Email;
-                blockRequest.PhoneNumber = user.PhoneNumber;
-                blockRequest.Reason = blocknotes ?? "--";
-
-            }
-
-            return Ok();
+             _AdminDashboard.BlockCase(blocknameid, blocknotes);
+              return Ok();
         }
 
         public IActionResult ViewUpload(int id)
@@ -344,18 +273,7 @@ namespace HelloDoc.Controllers
         public IActionResult SendOrder(SendOrder sendOrder)
         {
 
-            OrderDetail orderDetail = new OrderDetail();
-
-            orderDetail.RequestId = sendOrder.requestid;
-            orderDetail.VendorId = sendOrder.vendorId;
-            orderDetail.FaxNumber = sendOrder.FaxNum;
-            orderDetail.Email = sendOrder.Email;
-            orderDetail.BusinessContact = sendOrder.BusinessContact;
-            orderDetail.Prescription = sendOrder.Disciription;
-            orderDetail.CreatedDate = DateTime.Now;
-
-            _context.Add(orderDetail);
-            _context.SaveChanges();
+             _AdminDashboard.SendOrder(sendOrder);
             return RedirectToAction("SendOrder", new { id = sendOrder.requestid });
         }
 
@@ -374,27 +292,8 @@ namespace HelloDoc.Controllers
 
         public IActionResult ClearCase(int clearcaseid)
         {
-          var request = _context.Requests.FirstOrDefault(s => s.RequestId == clearcaseid);
-
-            if(request != null)
-            {
-                request.Status = 10;
-
-                _context.Update(request);
-                _context.SaveChanges();
-
-                RequestStatusLog requeststatuslog = new RequestStatusLog();
-
-                requeststatuslog.RequestId = clearcaseid;
-                requeststatuslog.CreatedDate = DateTime.Now;
-                requeststatuslog.Status = 10;
-
-                _context.Add(requeststatuslog);
-                _context.SaveChanges();
-
-            }
+           _AdminDashboard.ClearCase(clearcaseid);
             return Ok();
-
         }
 
         [HttpPost]
@@ -413,6 +312,81 @@ namespace HelloDoc.Controllers
             return BadRequest();
         }
 
+        public IActionResult EncounterForm()
+        {
+            return View();
+        }
+
+        public IActionResult CloseCase(int requestid)
+        {
+            var requestClient = _context.RequestClients.FirstOrDefault(s => s.RequestId == requestid);
+            var docData = _context.RequestWiseFiles.Where(s => s.RequestId == requestid).ToList();
+            var Confirmationnum = _context.Requests.FirstOrDefault(s => s.RequestId == requestid).ConfirmationNumber;
+
+            if (docData != null && requestClient != null)
+            {
+                CloseCase closeCase = new CloseCase();
+                closeCase.FirstName = requestClient.FirstName;
+                closeCase.LastName = requestClient.LastName;
+                closeCase.Email = requestClient.Email;
+                closeCase.Phonenum = requestClient.PhoneNumber;
+                closeCase.DateOfBirth = (new DateOnly((int)requestClient.IntYear, int.Parse(requestClient.StrMonth), (int)requestClient.IntDate));
+                closeCase.Files = docData;
+                closeCase.ConfirmationNum = Confirmationnum;
+                closeCase.requestid = requestid;
+                 return View(closeCase);
+            }
+
+            return Ok();
+        }
+
+
+
+        [HttpPost]
+        public IActionResult CloseCase(CloseCase closeCase,int id)
+        {
+            var reqclient = _context.RequestClients.FirstOrDefault(s => s.RequestId == id);
+
+            if (reqclient != null)
+            {
+                reqclient.PhoneNumber = closeCase.Phonenum;
+                reqclient.FirstName = closeCase.FirstName;
+                reqclient.LastName = closeCase.LastName;
+                reqclient.IntDate = closeCase.DateOfBirth.Day;
+                reqclient.IntYear = closeCase.DateOfBirth.Year;
+                reqclient.StrMonth = closeCase.DateOfBirth.Month.ToString();
+
+                _context.Update(reqclient);
+                _context.SaveChanges();
+               
+               
+            }
+            return RedirectToAction("CloseCase", new {requestid = id});
+        }
+
+        public IActionResult CloseInstance(int reqid)
+        {
+            var request = _context.Requests.FirstOrDefault(s => s.RequestId == reqid);
+
+            if (request != null)
+            {
+                request.Status= 9;
+                request.ModifiedDate= DateTime.Now;
+                _context.Update(request);
+                _context.SaveChanges();
+
+
+                RequestStatusLog  requestStatusLog  = new RequestStatusLog();
+                requestStatusLog.RequestId = reqid;
+                requestStatusLog.Status = 9;
+                requestStatusLog.CreatedDate = DateTime.Now;
+
+                _context.Add(requestStatusLog);
+                _context.SaveChanges();
+             return RedirectToAction("AdminDash");
+            }
+            return Ok();
+        }
 
     }
 }

@@ -14,7 +14,7 @@
         height: 0;
         border-left: 20px solid;
         border-right: 20px solid ;
-        border-top: 20px solid black;
+        border-top: 20px solid white;
         position: absolute;
         bottom:-20px;
         left: 50%;
@@ -28,36 +28,36 @@
         @* -------------------------------gutters--------------------------------------------- *@
  <div class="row gx-4 gy-4 mt-4 ms-3" style="margin-top:3rem">
             <div class="col-6 col-xl-2 col-md-4 ">
-            <div class="px-2 py-2  border  rounded-4 position-relative status" id="divnew" style="background-color:#e9eaef">
                 <a id="New">
+            <div class="px-2 py-2  border  rounded-4 position-relative status" id="divnew" style="background-color:#e9eaef">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                         </svg>
                         <h4>new</h4>
                     </div>
-                    <div class="triangle" id="tranew"></div>
+                    <div class="triangle text-white" id="tranew"></div>
                     <h3>@ViewBag.NewCount</h3>
-                </a>
                 </div>
+                </a>
             </div> 
             <div class="col-6 col-xl-2 col-md-4 ">
-        <div class="px-2 py-2 border rounded-4 position-relative status"  id="divpen">
                   <a id="Pending">
+        <div class="px-2 py-2 border rounded-4 position-relative status"  id="divpen">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill me-2" viewBox="0 0 16 16">
                             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
                         </svg>
                         <h4>pending</h4>
                     </div>
-                    <div class="triangle  text-white" id="trapending"></div>
+                    <div class="triangle text-white" id="trapending"></div>
                     <h3>@ViewBag.PendingCount</h3>
-                  </a>
                 </div>
+                  </a>
             </div> 
             <div class="col-6 col-xl-2 col-md-4 ">
-        <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#e9f0e8" id="divact">
                 <a id="Active">
+        <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#e9f0e8" id="divact">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
@@ -66,12 +66,12 @@
                     </div>
                     <div class="triangle text-white" id="traact"></div>
                     <h3>@ViewBag.activecount</h3>
-                </a>
                 </div>
+                </a>
             </div> 
             <div class="col-6 col-xl-2 col-md-4 ">
-        <div class="px-2 py-2 border  rounded-4 text-pink position-relative status" style="background-color:#f7e6ee" id="divcon">
                    <a id="Conclude">
+        <div class="px-2 py-2 border  rounded-4 text-pink position-relative status" style="background-color:#f7e6ee" id="divcon">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
@@ -80,12 +80,12 @@
                     </div>
                     <div class="triangle text-white" id="tracon"></div>
                     <h3>@ViewBag.conclude</h3>
-                   </a>
                 </div>
+                   </a>
             </div>  
             <div class="col-6 col-xl-2 col-md-4 ">
-        <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#e5eef5" id="divclo">
                 <a id="ToClose">
+        <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#e5eef5" id="divclo">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
@@ -94,12 +94,12 @@
                     </div>
                     <div class="triangle text-white" id="traclo"></div>
                     <h3>@ViewBag.toclosed</h3>
-                </a>
                 </div>
+                </a>
             </div>  
             <div class="col-6 col-xl-2 col-md-4 ">
-        <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#efeef4" id="divun">
                 <a id="UnPaid">
+        <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#efeef4" id="divun">
                     <div class="d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
@@ -108,15 +108,15 @@
                     </div>
                     <div class="triangle text-white" id="traun"></div>
                     <h3>@ViewBag.unpaid</h3>
-                </a>
                 </div>
+                </a>
             </div>
         </div>
         @* -------------------------------gutters--------------------------------------------- *@
         @* -------------------------------buttons--------------------------------------------- *@
     <div class="mt-3 mt-md-5 d-sm-flex justify-content-between align-items-center">
     <div class="ms-4">
-        <p class="fs-2 ps-2">Patients<span class="text-primary" id="textspan">(new)</span></p>
+        <p class="fs-2 ps-2">Patients<span class="text-primary" id="textspan"></span></p>
     </div>
     <div class="me-4" >
         <button type="button" class="btn btn-info text-white me-2">
@@ -241,12 +241,7 @@
                                 }
                                 i++;
                             }
-                           @*  <option selected>Reason For Cancellation</option>
-                            <option value="2">Cost Issue</option>
-                            <option value="3">Insurance Issue</option>
-                            <option value="4">Out of Service Area</option>
-                            <option value="5">Not appropriate for service</option>
-                            <option value="6">Referral to Clinic or Hospital</option> *@
+                          
                         </select>
 
                         <input id="requestid"  name="Requestid" hidden/>
@@ -478,12 +473,7 @@
         @* -------------------------------Search--------------------------------------------- *@
 
  <div id="PartialViews">
-    <partial name="AdminTableNew" model="@Model"></partial>
-     <partial name="AdminTablePending" model="@Model"></partial>
-    <partial name="AdminTableActive" model="@Model"></partial>
-    <partial name="AdminTableConclude" model="@Model"></partial>
-    <partial name="AdminTableToClose" model="@Model"></partial>
-    <partial name="AdminTableUnPaid" model="@Model"></partial> 
+  
  </div>
 
 

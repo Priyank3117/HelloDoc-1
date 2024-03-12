@@ -5,9 +5,6 @@ using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HelloDoc.Controllers
