@@ -319,6 +319,48 @@ namespace BAL.Repository
             _context.Add(orderDetail);
             _context.SaveChanges();
         }
+
+        public CloseCase CloseCase(int requestid)
+        {
+            var requestClient = _context.RequestClients.FirstOrDefault(s => s.RequestId == requestid);
+            var docData = _context.RequestWiseFiles.Where(s => s.RequestId == requestid).ToList();
+            var Confirmationnum = _context.Requests.FirstOrDefault(s => s.RequestId == requestid).ConfirmationNumber;
+
+            CloseCase closeCase = new CloseCase();
+            if (docData != null && requestClient != null)
+            {
+                closeCase.FirstName = requestClient.FirstName;
+                closeCase.LastName = requestClient.LastName;
+                closeCase.Email = requestClient.Email;
+                closeCase.Phonenum = requestClient.PhoneNumber;
+                closeCase.DateOfBirth = (new DateOnly((int)requestClient.IntYear, int.Parse(requestClient.StrMonth), (int)requestClient.IntDate));
+                closeCase.Files = docData;
+                closeCase.ConfirmationNum = Confirmationnum;
+                closeCase.requestid = requestid;
+            }
+
+            return closeCase;
+        }
+
+        public void CloseCasePost(CloseCase closeCase, int id)
+        {
+            var reqclient = _context.RequestClients.FirstOrDefault(s => s.RequestId == id);
+
+            if (reqclient != null)
+            {
+                reqclient.PhoneNumber = closeCase.Phonenum;
+                reqclient.FirstName = closeCase.FirstName;
+                reqclient.LastName = closeCase.LastName;
+                reqclient.IntDate = closeCase.DateOfBirth.Day;
+                reqclient.IntYear = closeCase.DateOfBirth.Year;
+                reqclient.StrMonth = closeCase.DateOfBirth.Month.ToString();
+
+                _context.Update(reqclient);
+                _context.SaveChanges();
+
+
+            }
+        }
     }
 }
 

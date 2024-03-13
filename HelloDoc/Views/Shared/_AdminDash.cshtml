@@ -101,7 +101,8 @@
     <script>
         $(document).ready(function () {
        
-
+            var currentpage = 1;
+            var pagesize = 4;
            
             // Function to retrieve data from local storage
             function getDataFromLocalStorage(key) {
@@ -151,7 +152,7 @@
             //  $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
 
 
-            filtertable(currentPartialview, currentstatus);
+            filtertable(currentPartialview, currentstatus, currentpage, pagesize);
             $('AdminTablePending').hide();
             $('AdminTableActive').hide();
             $('AdminTableConclude').hide();
@@ -197,9 +198,14 @@
             }
 
 
-          
+            $(document).on("click", "#pagination a.page-link", function () {
+                console.log("Pagination link clicked!");
+                currentpage = $(this).text().trim();
+                console.log("Current Page: " + currentpage);
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
+            });
 
-            // -------------hover  end---------------------
+          
 
             //-------------------on click functionality------------------------------
         
@@ -208,7 +214,8 @@
                 currentPartialview = "AdminTableNew";
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
-                filtertable(currentPartialview, currentstatus);
+                $("#Search").val("");
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(new)');
                 // $('.triangle').css('display', 'none');
                 // $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
@@ -223,15 +230,16 @@
 
 
             $("#Pending").click(function () {
+           
                 currentPartialview = "AdminTablePending";
                 currentstatus = [2];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
-                filtertable(currentPartialview, currentstatus);
+                $("#Search").val("");
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(pending)');
                 // $('.triangle').css('display', 'none');
                 // $('#trapending').css('display', 'block').css('border-top', '20px solid  #0dcaf0');
-
                 localStorage.setItem('textspanState', '(pending)');
                 localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
@@ -239,6 +247,7 @@
                 localStorage.setItem('id','#trapending');
 
                 setStylesFromLocalStorage();
+           
             });
 
             $("#Active").click(function () {
@@ -246,7 +255,8 @@
                 currentstatus = [4,5];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
-                filtertable(currentPartialview, currentstatus);
+                $("#Search").val("");
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(Active)');
                 // $('.triangle').css('display', 'none');
                 // $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
@@ -265,7 +275,8 @@
                 currentstatus = [6];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
-                filtertable(currentPartialview, currentstatus);
+                $("#Search").val("");
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(Conclude)');
                 // $('.triangle').css('display', 'none');
                 // $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
@@ -282,10 +293,8 @@
                 currentstatus = [3, 7, 8];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
-                filtertable(currentPartialview, currentstatus);
-                // $('#textspan').text('(To Close)');
-                // $('.triangle').css('display', 'none');
-                // $('#traclo').css('display', 'block').css('border-top', '20px solid #0370d7').css('color', 'white');
+                $("#Search").val("");
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 localStorage.setItem('textspanState', '(To Close)');
                 localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
@@ -295,14 +304,14 @@
             });
 
             $("#UnPaid").click(function () {
+               
                 currentPartialview = "AdminTableUnPaid";
                 currentstatus = [9];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
-                filtertable(currentPartialview, currentstatus);
-                // $('#textspan').text('(Unpaid)');
-                // $('.triangle').css('display', 'none');
-                // $('#traun').css('display', 'block').css('border-top', '20px solid #9966cd').css('color', 'white');
+                $("#Search").val("");
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
+             
                 localStorage.setItem('textspanState', '(Unpaid)');
                 localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
@@ -314,35 +323,25 @@
             //-------------------on click functionality end------------------------------
 
             $('.form-select').on("change", function () {
-                filtertable(currentPartialview, currentstatus)
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize)
             });
-
-
-
 
             // -------------filter btn-----------------------------
             $('.filter-btn').click(function () {
                 $('.filter-btn').removeClass('active')
                 $(this).addClass('active')
-                filtertable(currentPartialview, currentstatus)
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize)
 
             });
             // -------------filter btn end -----------------------------
 
             // -------on search value--------------------
             $("#Search").on("input", function () {
-                filtertable(currentPartialview, currentstatus);
+                filtertable(currentPartialview, currentstatus, currentpage, pagesize);
             });
             // -------on search value end---------------------
 
-
-            // --------------LoadPartialView---------------
-
-            // --------------LoadPartialView end---------------
-
-
-
-            function filtertable(partialName, currentstatus) {
+            function filtertable(partialName, currentstatus ,currentpage, pagesize) {
                 $.get('/AdminDash/CheckSession', function (session) {
 
 
@@ -358,7 +357,7 @@
 
 
                         if (SearchValue == "" && Filterselect == " ") {
-                            filtertable(currentPartialview, currentstatus);
+                            filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                         }
 
                         else {
@@ -368,7 +367,7 @@
                                 traditional: true,
                                 data: {
                                     SearchValue: SearchValue, Filterselect: Filterselect, selectvalue: selectvalue
-                                    , partialName: partialName, currentstatus: currentstatus
+                                    , partialName: partialName, currentstatus: currentstatus, currentpage: currentpage, pagesize: pagesize
                                 },
                                 success: function (data) {
                                     $('#PartialViews').html(data);
@@ -587,10 +586,7 @@
 
             // ------------------
             $('#regiondropdown').change(function () {
-
-
                 var regionid = $(this).val();
-
                 if (regionid != 0) {
                     $.ajax({
                         type: "GET",

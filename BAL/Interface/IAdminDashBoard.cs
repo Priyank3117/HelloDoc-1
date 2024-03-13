@@ -32,5 +32,9 @@ namespace BAL.Interface
 
         public void SendOrder(SendOrder sendOrder);
 
+        public CloseCase CloseCase(int requestid);
+
+        public void CloseCasePost(CloseCase closeCase, int id);
+
     }
 }
