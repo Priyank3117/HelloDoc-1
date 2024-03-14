@@ -21,8 +21,7 @@ namespace BAL.Repository
             _context = context;
         }
 
-
-
+    
         public IQueryable<Admin_DashBoard> GetList()
         {
 

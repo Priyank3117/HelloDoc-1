@@ -18,13 +18,13 @@
     </ul>
 </div>
 
-<div class="bg-body-secondary">
+<div class="">
     <div class="mx-auto pt-4  pb-3" style="width:70%;">
         <div class="d-flex justify-content-between my-2">
             <h3>User Profile</h3><br />
             <a asp-action="index"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
         </div>
-        <div class=" shadow bg-white p-4">
+        <div class=" shadow white-bag p-4">
             <h4 class="pt-3 mb-4">General Information</h4>
 
             <form  method="post" id="emailForm" enctype="multipart/form-data" asp-controller="DashBoard" asp-action="Patient_Profile">
@@ -34,7 +34,7 @@
                             <input type="text"
                                
                                    asp-for="FirstName"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingInput"
                                    placeholder="name@example.com"  disabled />
                             <label for="floatingInput">First Name</label>
@@ -45,7 +45,7 @@
                         <div class="form-floating">
                             <input type="text"
                                    asp-for="LastName"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingPassword"
                                    placeholder="Password"  disabled />
                             <label for="floatingPassword">Last Name</label>
@@ -58,7 +58,7 @@
                         <div class="form-floating">
                             <input type="date"
                                    asp-for="BirthDate"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingPassword"
                                    placeholder="Password"  disabled />
                             <label for="floatingPassword">Date Of Birth</label>
@@ -72,8 +72,7 @@
                     <div class="col col-sm-2 col-12">
                         <div class="form-floating mb-3">
                             <input type="email" id="email"
-                                 
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingInput"
                                    placeholder="name@example.com"  disabled />
                             <label for="floatingInput">Type</label>
@@ -84,7 +83,7 @@
                         <div class="form-floating mb-3">
                             <input type="tel"
                                      asp-for="PhoneNumber"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingInput"
                                    placeholder="name@example.com" disabled />
                             <label for="floatingInput">Mobile No</label>
@@ -95,7 +94,7 @@
                                   asp-for=Email
                                    class="form-control"
                                    id="floatingInput"  
-                                   placeholder="name@example.com"  readonly />
+                                   placeholder="name@example.com" disabled />
                             <label for="floatingInput">Email </label>
                         </div>
                     </div>
@@ -110,7 +109,7 @@
                         <div class="form-floating mb-3">
                             <input type="text"
                                    asp-for="Street"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingPassword"
                                    placeholder="Password"  disabled />
                             <label for="floatingPassword">Street</label>
@@ -120,7 +119,7 @@
                         <div class="form-floating mb-3">
                             <input type="text"
                                    asp-for="City"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingPassword"
                                    placeholder="Password"  disabled />
                             <label for="floatingPassword">City</label>
@@ -132,7 +131,7 @@
                         <div class="form-floating mb-3">
                             <input type="text"
                                     asp-for="State"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingPassword"
                                    placeholder="Password"  disabled />
                             <label for="floatingPassword">State</label>
@@ -142,7 +141,7 @@
                         <div class="form-floating mb-3">
                             <input type="text"
                                    asp-for="ZipCode"
-                                   class="form-control"
+                                   class="form-control changable"
                                    id="floatingPassword"
                                    placeholder="Password"  disabled />
                             <label for="floatingPassword">Zip Code</label>
@@ -165,7 +164,7 @@
                         <button onclick="toggleSave()"  type="submit" class="btn border-none bg-info p-2 text-light fw-semibold me-4" id="SaveBtn">
                             Save
                         </button>
-                        <button onclick="toggleCancle()"  class="btn border-none bg-danger p-2 text-light fw-semibold me-4" id="CancleBtn">
+                        <button onclick="toggleCancel()" type="button" class="btn border-none bg-danger p-2 text-light fw-semibold me-4" id="CancelBtn">
                             Cancle
                         </button>
                     </div>
@@ -185,25 +184,25 @@
 
     <script>
 
-        $("#CancleBtn").hide();
+        $("#CancelBtn").hide();
         $("#SaveBtn").hide();
         function toggleEdit() {
 
-            var inputFields = document.querySelectorAll('form input');
+            var inputFields = document.querySelectorAll('.changable');
 
 
             inputFields.forEach(function (input) {
                 input.disabled = !input.disabled;
             });
 
-            $("#CancleBtn").show();
+            $("#CancelBtn").show();
             $("#EditBtn").hide();
             $("#SaveBtn").show();
         }
 
 
         function toggleCancel() {
-            var inputFields = document.querySelectorAll('form input');
+            var inputFields = document.querySelectorAll('.changable');
 
             // Toggle the disabled attribute for each input field
             inputFields.forEach(function (input) {
@@ -211,7 +210,7 @@
             });
 
             $("#EditBtn").show();
-            $("#CancleBtn").hide();
+            $("#CancelBtn").hide();
             $("#SaveBtn").hide();
         }
 

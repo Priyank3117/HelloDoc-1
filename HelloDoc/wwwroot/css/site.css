@@ -24,3 +24,10 @@ body {
 .table {
     --bs-table-color: none !important;
 }
+[data-bs-theme = "light"] .white-bag
+{
+    background-color:white;
+}
+.color {
+    background-color: #E9ECEF;
+}

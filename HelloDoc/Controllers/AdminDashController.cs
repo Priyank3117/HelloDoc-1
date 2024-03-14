@@ -40,9 +40,6 @@ namespace HelloDoc.Controllers
         public IActionResult AdminDash()
         {
             var DashData = _AdminDashboard.GetList();
-
-
-
             var newcount = (_context.Requests.Where(item => item.Status == 1)).Count();
             var pendingcount = (_context.Requests.Where(item => item.Status == 2)).Count();
             var activecount = (_context.Requests.Where(item => item.Status == 4 || item.Status == 5)).Count();
@@ -315,9 +312,130 @@ namespace HelloDoc.Controllers
             return BadRequest();
         }
 
-        public IActionResult EncounterForm()
+        public IActionResult EncounterForm(int id)
         {
-            return View();
+
+            var result = (from req in _context.Requests join
+                         reqclient in _context.RequestClients on
+                         req.RequestId equals reqclient.RequestId
+                          join enc in _context.EncounterForms on req.RequestId equals enc.RequestId
+                          into reqs 
+                          from enc in reqs.DefaultIfEmpty()
+                          where req.RequestId == id
+                          select new Encounter()
+                          {
+                              FirstName = reqclient.FirstName,
+                              LastName = reqclient.LastName,
+                              Location = reqclient.Street+" " + reqclient.City,
+                              BirthDate = new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate),
+                              ServiceDate = DateTime.Now,
+                              IllnessOrInjury = enc.HistoryOfPresentIllnessOrInjury,
+                              MedicalHistory = enc.MedicalHistory,
+                              Medications = enc.Medications,
+                              Allergies = enc.Allergies,
+                              Temprature= enc.Temp,
+                              HR = enc.Hr,
+                              RR = enc.Rr,
+                              SytolicBp = enc.BloodPressureSystolic,
+                              DistolicBp = enc.BloodPressureDiastolic,
+                              O2 = enc.O2,
+                              Pain = enc.Pain,
+                              Heent = enc.Heent,
+                              Cv = enc.Cv,
+                              Chest = enc.Chest,
+                              ABD = enc.Abd,
+                              Extr = enc.Extremeties,
+                              Skin = enc.Skin,
+                              Neuro = enc.Neuro,
+                              Other = enc.Other,
+                              Dignosis = enc.Diagnosis,
+                              TreatmentPlan = enc.TreatmentPlan,
+                              MedicationDispensed  = enc.MedicationsDispensed,
+                              Procedures = enc.Procedures,
+                              Followup = enc.FollowUp,
+                              requestid = id
+
+                          }).FirstOrDefault();
+
+            return View(result);
+        }
+
+        [HttpPost]
+        public  IActionResult EncounterForm(int id,Encounter  enc)
+        {
+            var availabledata = _context.EncounterForms.FirstOrDefault(s => s.RequestId == id);
+            
+            if(availabledata != null)
+            {
+                //update the data already present
+                availabledata.HistoryOfPresentIllnessOrInjury = enc.IllnessOrInjury;
+                availabledata.MedicalHistory = enc.MedicalHistory;
+                availabledata.Medications = enc.Medications;
+                availabledata.Allergies = enc.Allergies;
+                availabledata.Temp = enc.Temprature;
+                availabledata.Hr = enc.HR;
+                availabledata.Rr = enc.RR;
+                availabledata.BloodPressureSystolic = enc.SytolicBp;
+                availabledata.BloodPressureDiastolic = enc.DistolicBp;
+                availabledata.O2 = enc.O2;
+                availabledata.Pain = enc.Pain;
+                availabledata.Heent = enc.Heent;
+                availabledata.Cv = enc.Cv;
+                availabledata.Chest = enc.Chest;
+                availabledata.Abd = enc.ABD;
+                availabledata.Extremeties = enc.Extr;
+                availabledata.Skin = enc.Skin;
+                availabledata.Neuro = enc.Neuro;
+                availabledata.Other = enc.Other;
+                availabledata.Diagnosis = enc.Dignosis;
+                availabledata.TreatmentPlan = enc.TreatmentPlan;
+                availabledata.MedicationsDispensed = enc.MedicationDispensed;
+                availabledata.Procedures = enc.Procedures;
+                availabledata.FollowUp = enc.Followup;
+                availabledata.IsFinalize = false;
+
+                _context.Update(availabledata);
+                _context.SaveChanges();
+
+
+            }
+            else
+            {
+
+                EncounterForm encounterForm = new EncounterForm();
+                //add the data not present
+                encounterForm.HistoryOfPresentIllnessOrInjury = enc.IllnessOrInjury;
+                encounterForm.MedicalHistory = enc.MedicalHistory;
+                encounterForm.Medications = enc.Medications;
+                encounterForm.Allergies = enc.Allergies;
+                 encounterForm.Temp = enc.Temprature;
+                encounterForm.Hr = enc.HR;
+                encounterForm.Rr = enc.RR;
+                encounterForm.BloodPressureSystolic = enc.SytolicBp;
+                encounterForm.BloodPressureDiastolic = enc.DistolicBp;
+                encounterForm.O2 = enc.O2;
+                encounterForm.Pain = enc.Pain;
+                encounterForm.Heent = enc.Heent;
+                encounterForm.Cv = enc.Cv;
+                encounterForm.Chest = enc.Chest;
+                encounterForm.Abd = enc.ABD;
+                encounterForm.Extremeties = enc.Extr;
+                 encounterForm.Skin = enc.Skin;
+                encounterForm.Neuro = enc.Neuro;
+                encounterForm.Other = enc.Other;
+                encounterForm.Diagnosis = enc.Dignosis;
+                encounterForm.TreatmentPlan = enc.TreatmentPlan;
+                encounterForm.MedicationsDispensed = enc.MedicationDispensed;
+                encounterForm.Procedures = enc.Procedures;
+                encounterForm.FollowUp = enc.Followup;
+                encounterForm.IsFinalize = false;
+                encounterForm.RequestId = id;
+
+                _context.Add(encounterForm);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("EncounterForm", new {id = id });
         }
 
         public IActionResult CloseCase(int requestid)

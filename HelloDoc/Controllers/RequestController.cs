@@ -176,6 +176,14 @@ namespace HelloDoc.Controllers
 
                 _context.Update(request);
                 _context.SaveChanges();
+
+                RequestStatusLog requestStatusLog = new RequestStatusLog();
+                requestStatusLog.RequestId = id;
+                requestStatusLog.CreatedDate = DateTime.Now;
+                requestStatusLog.Status = 4;
+                _context.Add(requestStatusLog);
+                _context.SaveChanges();
+
             }
             return View("ReviewAgreement");
         }

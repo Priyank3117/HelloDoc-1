@@ -10,10 +10,10 @@
             <h3>View Documents</h3><br />
             <a asp-action="index"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
         </div>
-        <div class="PatientInfoTable border rounded shadow bg-white p-4">
+        <div class="PatientInfoTable border rounded shadow white-bag p-4">
             <span> patient name</span>
             <h3 class="text-info">
-                @ViewBag.username <span class="fs-5 text-black">(@Model.confirmationnum)</span>
+                @ViewBag.username <span class="fs-5 text-info">(@Model.confirmationnum)</span>
             </h3>
             <span>Check here for any files that you or the doctors of your subsequents requestor have attached for you</span>
 
@@ -24,7 +24,7 @@
             <div class="input-group row p-2 mx-auto mt-3" style="height:60px">
                 <div class="d-flex">
                         <label for="fileUpload" class="col d-flex">
-                            <div class="col bg-white p-1 ps-3 text-muted border" ><span id="infoArea">Select File</span></div>
+                            <div class="col white-bag p-1 ps-3 text-muted border" ><span id="infoArea">Select File</span></div>
                             <div id="btn" class="p-1 btn btn-info">
 
                                 <i class="bi bi-cloud-arrow-up text-white"></i>
@@ -41,32 +41,33 @@
 
             <div class="d-flex justify-content-between mt-3">
                 <h4 class="mt-1">View Documents</h4>
-              <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none  text-decoration-none mb-3"
+              <button type="button" class="btn border border-info white-bag text-info shadow-none  text-decoration-none mb-3"
               id="DownloadAll">Download All</button>
             </div>
 
             <table class="table text-center">
-                <thead class="table-secondary">
+                <thead class="">
                     <tr>
                         <th scope="col"><input type="checkbox" id="chkbox"/></th>
                         <th scope="col">Uploader</th>
+                        <th scope="col">Documents</th>
                         <th scope="col">Upload Date</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white">
+                <tbody class="white-bag">
                   
                         @foreach (var item in Model.requestwisefile)
                         {
                     <tr>
                             <td><input type="checkbox" class="chkboxind"  data-filename="@item.FileName"/></td>
-                            <td>@item.FileName</td>
                             <td>test testing </td>
+                            <td>@item.FileName</td>
                             <td>@item.CreatedDate</td>
                             <td>
 
                                 <a href="/Files/@item.FileName"  download>
-                                    <button type="button" class="btn btn-primary btn  border border-info bg-white text-info shadow-none text-decoration-none ">
+                                    <button type="button" class="btn    border border-info white-bag text-info shadow-none text-decoration-none ">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="24"
                                              class="bi bi-cloud-arrow-up"
