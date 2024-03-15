@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGeneration.Design;
+using Rotativa.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +72,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseRotativa();
 
 app.UseRouting();
 app.UseAuthentication();

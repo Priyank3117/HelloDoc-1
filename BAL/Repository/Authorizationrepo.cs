@@ -27,7 +27,7 @@ namespace BAL.Repository
                 this._role = role;
             }
             public void OnAuthorization(AuthorizationFilterContext context)
-            {
+          {
                 var jwtService = context.HttpContext.RequestServices.GetService<IJwtService>();
 
                 var email = context.HttpContext.Session.GetString("Email");

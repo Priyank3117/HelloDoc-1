@@ -468,6 +468,30 @@
     </div>
 
     @* -----------SendAgreement Modal  --------------------------- *@
+    @* -----------Encounter Modal  --------------------------- *@
+    <div class="modal fade rounded-2" id="isFinalize" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  id="isFinalizeSubmit" asp-action="GeneratePdf">
+                    <div class="modal-body">
+                        <input type="hidden" name="requeid" id="requid" />
+                    <span class="text-body">Encounter Form is finalized successfully!</span>
+                    <div class="d-flex justify-content-center my-3">
+                            <button type="submit" class="btn btn-info" data-bs-dismiss="modal"> Download </button>
+                    </div>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    @* -----------Encounter Modal  --------------------------- *@
+
+
     @* -------------------------------Modal--------------------------------------------- *@
        
         @* -------------------------------Search--------------------------------------------- *@

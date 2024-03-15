@@ -1,4 +1,5 @@
-﻿using DAL.ViewModel;
+﻿using DAL.DataModels;
+using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -36,5 +37,10 @@ namespace BAL.Interface
 
         public void CloseCasePost(CloseCase closeCase, int id);
 
+        public Encounter EncounterForm(int id);
+
+        public void EncounterPost(int id, Encounter enc);
+
+        public bool CloseInstance(int reqid);
     }
 }

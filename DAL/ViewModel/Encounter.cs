@@ -12,6 +12,7 @@ namespace DAL.ViewModel
         public string LastName { get; set; }
 
         public string? Location { get; set; }
+        public string? Email {  get; set; }
 
         public DateTime BirthDate { get; set; }
         public DateTime ServiceDate { get; set; }   

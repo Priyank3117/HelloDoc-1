@@ -375,12 +375,11 @@
 <script>
    
 
-    function clearmodel(btn) {
-        const myModal = document.getElementById("ClearCaseModal");
+    function model(btn) {
+        const myModal = document.getElementById("isFinalize");
         var bsModal = new bootstrap.Modal(myModal);
         bsModal.show();
-        const requestid = btn.getAttribute('data-clearcaseid');
-        document.getElementById('clearcase').value = requestid;
+        
     }
 
   

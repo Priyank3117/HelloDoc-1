@@ -8,7 +8,7 @@ using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Net.Mail;
 using static BAL.Repository.Authorizationrepo;
-using System.Net;
+using Rotativa.AspNetCore;
 
 
 
@@ -57,9 +57,9 @@ namespace HelloDoc.Controllers
         public IActionResult SearchPatient(string SearchValue, string Filterselect,
             string selectvalue, string partialName, int[] currentstatus, int currentpage, int pagesize)
         {
-
+            
             var FilterData = _AdminDashboard.GetRequestData(SearchValue, Filterselect, selectvalue,
-                partialName, currentstatus).ToList();
+            partialName, currentstatus).ToList();
             int totalItems = FilterData.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
             var paginatedData = FilterData.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
@@ -235,8 +235,8 @@ namespace HelloDoc.Controllers
 
                     _emailService.SendEmail("patelpriyank3112002@gmail.com", subject, body, files);
                 }
-
                 return Ok(new { message = "Files Send successfully" });
+
             }
             catch (Exception ex)
             {
@@ -315,128 +315,32 @@ namespace HelloDoc.Controllers
         public IActionResult EncounterForm(int id)
         {
 
-            var result = (from req in _context.Requests join
-                         reqclient in _context.RequestClients on
-                         req.RequestId equals reqclient.RequestId
-                          join enc in _context.EncounterForms on req.RequestId equals enc.RequestId
-                          into reqs 
-                          from enc in reqs.DefaultIfEmpty()
-                          where req.RequestId == id
-                          select new Encounter()
-                          {
-                              FirstName = reqclient.FirstName,
-                              LastName = reqclient.LastName,
-                              Location = reqclient.Street+" " + reqclient.City,
-                              BirthDate = new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate),
-                              ServiceDate = DateTime.Now,
-                              IllnessOrInjury = enc.HistoryOfPresentIllnessOrInjury,
-                              MedicalHistory = enc.MedicalHistory,
-                              Medications = enc.Medications,
-                              Allergies = enc.Allergies,
-                              Temprature= enc.Temp,
-                              HR = enc.Hr,
-                              RR = enc.Rr,
-                              SytolicBp = enc.BloodPressureSystolic,
-                              DistolicBp = enc.BloodPressureDiastolic,
-                              O2 = enc.O2,
-                              Pain = enc.Pain,
-                              Heent = enc.Heent,
-                              Cv = enc.Cv,
-                              Chest = enc.Chest,
-                              ABD = enc.Abd,
-                              Extr = enc.Extremeties,
-                              Skin = enc.Skin,
-                              Neuro = enc.Neuro,
-                              Other = enc.Other,
-                              Dignosis = enc.Diagnosis,
-                              TreatmentPlan = enc.TreatmentPlan,
-                              MedicationDispensed  = enc.MedicationsDispensed,
-                              Procedures = enc.Procedures,
-                              Followup = enc.FollowUp,
-                              requestid = id
-
-                          }).FirstOrDefault();
-
-            return View(result);
+          var result = _AdminDashboard.EncounterForm(id);
+           return View(result);
         }
 
         [HttpPost]
         public  IActionResult EncounterForm(int id,Encounter  enc)
         {
-            var availabledata = _context.EncounterForms.FirstOrDefault(s => s.RequestId == id);
-            
-            if(availabledata != null)
-            {
-                //update the data already present
-                availabledata.HistoryOfPresentIllnessOrInjury = enc.IllnessOrInjury;
-                availabledata.MedicalHistory = enc.MedicalHistory;
-                availabledata.Medications = enc.Medications;
-                availabledata.Allergies = enc.Allergies;
-                availabledata.Temp = enc.Temprature;
-                availabledata.Hr = enc.HR;
-                availabledata.Rr = enc.RR;
-                availabledata.BloodPressureSystolic = enc.SytolicBp;
-                availabledata.BloodPressureDiastolic = enc.DistolicBp;
-                availabledata.O2 = enc.O2;
-                availabledata.Pain = enc.Pain;
-                availabledata.Heent = enc.Heent;
-                availabledata.Cv = enc.Cv;
-                availabledata.Chest = enc.Chest;
-                availabledata.Abd = enc.ABD;
-                availabledata.Extremeties = enc.Extr;
-                availabledata.Skin = enc.Skin;
-                availabledata.Neuro = enc.Neuro;
-                availabledata.Other = enc.Other;
-                availabledata.Diagnosis = enc.Dignosis;
-                availabledata.TreatmentPlan = enc.TreatmentPlan;
-                availabledata.MedicationsDispensed = enc.MedicationDispensed;
-                availabledata.Procedures = enc.Procedures;
-                availabledata.FollowUp = enc.Followup;
-                availabledata.IsFinalize = false;
-
-                _context.Update(availabledata);
-                _context.SaveChanges();
-
-
-            }
-            else
-            {
-
-                EncounterForm encounterForm = new EncounterForm();
-                //add the data not present
-                encounterForm.HistoryOfPresentIllnessOrInjury = enc.IllnessOrInjury;
-                encounterForm.MedicalHistory = enc.MedicalHistory;
-                encounterForm.Medications = enc.Medications;
-                encounterForm.Allergies = enc.Allergies;
-                 encounterForm.Temp = enc.Temprature;
-                encounterForm.Hr = enc.HR;
-                encounterForm.Rr = enc.RR;
-                encounterForm.BloodPressureSystolic = enc.SytolicBp;
-                encounterForm.BloodPressureDiastolic = enc.DistolicBp;
-                encounterForm.O2 = enc.O2;
-                encounterForm.Pain = enc.Pain;
-                encounterForm.Heent = enc.Heent;
-                encounterForm.Cv = enc.Cv;
-                encounterForm.Chest = enc.Chest;
-                encounterForm.Abd = enc.ABD;
-                encounterForm.Extremeties = enc.Extr;
-                 encounterForm.Skin = enc.Skin;
-                encounterForm.Neuro = enc.Neuro;
-                encounterForm.Other = enc.Other;
-                encounterForm.Diagnosis = enc.Dignosis;
-                encounterForm.TreatmentPlan = enc.TreatmentPlan;
-                encounterForm.MedicationsDispensed = enc.MedicationDispensed;
-                encounterForm.Procedures = enc.Procedures;
-                encounterForm.FollowUp = enc.Followup;
-                encounterForm.IsFinalize = false;
-                encounterForm.RequestId = id;
-
-                _context.Add(encounterForm);
-                _context.SaveChanges();
-            }
-
+           _AdminDashboard.EncounterPost(id, enc);
             return RedirectToAction("EncounterForm", new {id = id });
         }
+
+        public IActionResult Finalize(int id)
+        {
+            var finalize = _context.EncounterForms.FirstOrDefault(s => s.RequestId == id);
+
+            if(finalize != null)
+            {
+                finalize.IsFinalize = true;
+                _context.Update(finalize);
+                _context.SaveChanges();
+            }
+            
+
+            return RedirectToAction("AdminDash");
+        }
+
 
         public IActionResult CloseCase(int requestid)
         {
@@ -455,27 +359,31 @@ namespace HelloDoc.Controllers
 
         public IActionResult CloseInstance(int reqid)
         {
-            var request = _context.Requests.FirstOrDefault(s => s.RequestId == reqid);
-
-            if (request != null)
+            if (_AdminDashboard.CloseInstance(reqid))
             {
-                request.Status = 9;
-                request.ModifiedDate = DateTime.Now;
-                _context.Update(request);
-                _context.SaveChanges();
-
-
-                RequestStatusLog requestStatusLog = new RequestStatusLog();
-                requestStatusLog.RequestId = reqid;
-                requestStatusLog.Status = 9;
-                requestStatusLog.CreatedDate = DateTime.Now;
-
-                _context.Add(requestStatusLog);
-                _context.SaveChanges();
                 return RedirectToAction("AdminDash");
             }
-            return Ok();
+           else
+            {
+                return RedirectToAction("CloseCase", new { requestid = reqid });
+            }
         }
+
+        public IActionResult GeneratePDF(int requeid)
+        {
+            var EncounterForm = _AdminDashboard.EncounterForm(requeid);
+
+            if (EncounterForm == null)
+            {
+                return NotFound();
+            }
+
+            return new ViewAsPdf("EncounterFormDetails", EncounterForm)
+            {
+                FileName = "Encounter_Form.pdf"
+            };
+        }
+
 
     }
 }
