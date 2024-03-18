@@ -60,6 +60,10 @@ namespace HelloDoc.Controllers
             
             var FilterData = _AdminDashboard.GetRequestData(SearchValue, Filterselect, selectvalue,
             partialName, currentstatus).ToList();
+            if (SearchValue != null || Filterselect != null || selectvalue != null)
+            {
+                currentpage = 1;
+            }
             int totalItems = FilterData.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
             var paginatedData = FilterData.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
@@ -382,6 +386,13 @@ namespace HelloDoc.Controllers
             {
                 FileName = "Encounter_Form.pdf"
             };
+        }
+
+        public IActionResult AdminProfile() 
+        {
+            AdminProfile adminProfile = new AdminProfile();
+            adminProfile.Regions = _context.Regions.ToList();
+            return View(adminProfile);     
         }
 
 

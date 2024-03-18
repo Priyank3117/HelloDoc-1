@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.DataModels;
 
 namespace DAL.ViewModels
 {
@@ -30,7 +31,7 @@ namespace DAL.ViewModels
         [StringLength(256)]
         public string Email { get; set;}
 
-       
+        public List<Region>? regions { get; set; }
         [Column(TypeName = "character varying")]
         public string? PhoneNumber { get; set; }
 

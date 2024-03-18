@@ -26,8 +26,11 @@ body {
 }
 [data-bs-theme = "light"] .white-bag
 {
-    background-color:white;
+    background-color:#fff;
 }
-.color {
+[data-bs-theme = "dark"] .white-bag {
+    background-color: #212529;
+}
+[data-bs-theme = "light"] .color {
     background-color: #E9ECEF;
 }

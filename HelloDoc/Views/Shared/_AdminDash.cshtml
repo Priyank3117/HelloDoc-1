@@ -20,18 +20,34 @@
             <div class="row border border-bottom shadow">
                 <!-- -----------------nav--------------- -->
                 <div class="col col-12 d-flex mb-1 flex-row justify-content-between">
+                    
+                    <nav class="navbar d-inline d-sm-none">
+                        <div class="container-fluid">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                        </div>
+                    </nav>
                     <div class="doct-logo">
-                        <img src="~/images/doct-logo-2.png" alt="" style="height:5rem" />
+                        <img src="~/images/doct-logo-2.png" alt="" style="height:5rem"/>
                     </div>
+
                     <div class=" float-end ">
-                        <span class="fw-bold me-2"> Welcome:@ViewBag.username</span>
+                        <span class="fw-bold me-2 d-none d-sm-inline"> Welcome:@ViewBag.username</span>
                         <a asp-action="Logout" asp-controller="Login">
+                           
                             <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"
                                     style="height:3rem">
-                                logout
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="33" fill="currentColor" class="bi text-info bi-box-arrow-right d-inline d-sm-none" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                                    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                                </svg>
+                                <span class="d-none d-sm-inline">logout</span>
+                                
                             </button>
                         </a>
-                        <button class="dark-button border border-2 border-info bg-white my-3 mx-2">
+
+                        <button class="dark-button border border-2 border-info bg-white my-3 mx-2" id="theme-toggle">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="35"
                                  height="39"
@@ -44,20 +60,20 @@
                     </div>
                 </div>
                 <!-- -----------------nav--------------- -->
+
             </div>
             <!-- Nav tabs -->
-
-        </div>
+           
         <div class="w-100 shadow  px-2 px-md-5  pt-2  border-5 border-bottom-5 d-none d-sm-block pb-1  ">
             <ul class="nav nav-tabs-info nav-underline   fs-4 " id="pills-tab" role="tablist">
                 <li class="nav-item text-info">
-                    <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Index" ? "active" : "")">Dashboard</a>
+                    <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none"> <button class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Index" ? "active" : "")">Dashboard</button></a>
                 </li>
                 <li class="nav-item ">
                     <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Profile" ? "active" : "")">My Profile</a>
+                    <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none"><button class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Profile" ? "active" : "")">My Profile</button></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" ? "active" : "")">Provider</a>
@@ -72,7 +88,31 @@
             </ul>
 
         </div>
+            <div class="collapse " id="navbarToggleExternalContent">
+                <div class=" p-4">
+                    <ul class="nav nav-tabs-info nav-underline   fs-4 " id="pills-tab" role="tablist">
+                        <li class="nav-item text-info">
+                            <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none"> <button class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Index" ? "active" : "")">Dashboard</button></a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none"><button class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Profile" ? "active" : "")">My Profile</button></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" ? "active" : "")">Provider</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Parteners" ? "active" : "")">Parteners</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Records" ? "active" : "")">Records</a>
+                        </li>
 
+                    </ul>
+                </div>
+            </div>
     </header>
     <div class="container-fluid ">
         <main role="main">
@@ -215,6 +255,7 @@
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
                 $("#Search").val("");
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(new)');
                 // $('.triangle').css('display', 'none');
@@ -236,6 +277,7 @@
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
                 $("#Search").val("");
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(pending)');
                 // $('.triangle').css('display', 'none');
@@ -256,6 +298,7 @@
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
                 $("#Search").val("");
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(Active)');
                 // $('.triangle').css('display', 'none');
@@ -276,6 +319,7 @@
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
                 $("#Search").val("");
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 // $('#textspan').text('(Conclude)');
                 // $('.triangle').css('display', 'none');
@@ -294,6 +338,7 @@
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
                 $("#Search").val("");
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
                 localStorage.setItem('textspanState', '(To Close)');
                 localStorage.setItem('triangleDisplayState', 'none');
@@ -310,6 +355,7 @@
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
                 $("#Search").val("");
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
              
                 localStorage.setItem('textspanState', '(Unpaid)');

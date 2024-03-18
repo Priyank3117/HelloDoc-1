@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BAL.Repository
 {
@@ -11,9 +12,9 @@ namespace BAL.Repository
         private readonly ApplicationDbContext _context;
         private readonly IPasswordHasher<Patient> _passwordHasher;
 
-        public Patient_Requestrepo(ApplicationDbContext context,IPasswordHasher<Patient> passwordHasher)
+        public Patient_Requestrepo(ApplicationDbContext context, IPasswordHasher<Patient> passwordHasher)
         {
-                   _context = context;
+            _context = context;
             _passwordHasher = passwordHasher;
         }
 
@@ -22,7 +23,7 @@ namespace BAL.Repository
             AspNetUser aspnetUser = new AspNetUser();
             User user = new User();
             Request request = new Request();
-              
+
 
             //Status shows that user is Exists or not
             var status = _context.Users.FirstOrDefault(User => User.Email == patient.Email);
@@ -32,11 +33,13 @@ namespace BAL.Repository
 
             if (patient != null && status == null && patient.PasswordHash == patient.Confirmpassword)
             {
-               
-                Guid id = Guid.NewGuid();
-                aspnetUser.AspNetUserId = id.ToString(); 
 
-                aspnetUser.UserName = String.Concat(patient.FirstName, ' ' ,patient.LastName);
+
+                Guid id = Guid.NewGuid();
+                aspnetUser.AspNetUserId = id.ToString();
+
+
+                aspnetUser.UserName = String.Concat(patient.FirstName, ' ', patient.LastName);
                 aspnetUser.Email = patient.Email;
                 aspnetUser.PasswordHash = _passwordHasher.HashPassword(null, patient.PasswordHash);
                 aspnetUser.PhoneNumber = patient.PhoneNumber;
@@ -55,37 +58,15 @@ namespace BAL.Repository
                 user.CreatedDate = DateTime.Now;
                 user.Street = patient.Street;
                 user.City = patient.City;
-                user.State = patient.State;
+                user.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(patient.State)).Name;
                 user.ZipCode = patient.ZipCode;
                 user.IntYear = patient.BirthDate.Value.Year;
                 user.IntDate = patient.BirthDate.Value.Day;
                 user.StrMonth = (patient.BirthDate.Value.Month).ToString();
                 user.CreatedBy = patient.FirstName;
                 user.CreatedDate = DateTime.Now;
-
-               if(patient.State != null)
-                {
-                   if (patient.State.ToLower() == "maryland")
-                    {
-                        user.RegionId = 1;
-                    }
-                   else if(patient.State.ToLower() == "virginia")
-                    {
-                        user.RegionId = 2;
-                    } 
-                    else if(patient.State.ToLower() == "newyork")
-                    {
-                        user.RegionId = 3;
-                    } 
-                    else if(patient.State.ToLower() == "alaska")
-                    {
-                        user.RegionId = 4;
-                    }
-                }
-
-
                 _context.Users.Add(user);
-                _context.SaveChanges();           
+                _context.SaveChanges();
 
                 request.UserId = user.UserId;
                 request.FirstName = patient.FirstName;
@@ -94,11 +75,10 @@ namespace BAL.Repository
                 request.PhoneNumber = patient.PhoneNumber;
                 request.CreatedDate = DateTime.Now;
                 request.RequestTypeId = 1;
-
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 
-                
+
                 request_c.RequestId = request.RequestId;
                 request_c.FirstName = patient.FirstName;
                 request_c.LastName = patient.LastName;
@@ -106,18 +86,17 @@ namespace BAL.Repository
                 request_c.PhoneNumber = patient.PhoneNumber;
                 request_c.Street = patient.Street;
                 request_c.City = patient.City;
-                request_c.State = patient.State;
+                request_c.State = user.State;
                 request_c.ZipCode = patient.ZipCode;
                 request_c.IntYear = patient.BirthDate.Value.Year;
                 request_c.IntDate = patient.BirthDate.Value.Day;
-
-
-                if(user.RegionId != null)
-                {
-                    request_c.RegionId = user.RegionId;
-                }
                 request_c.StrMonth = (patient.BirthDate.Value.Month).ToString();
 
+
+                if (patient.State != null)
+                {
+                    request_c.RegionId = int.Parse(patient.State);
+                }
 
                 _context.RequestClients.Add(request_c);
                 _context.SaveChanges();
@@ -129,13 +108,13 @@ namespace BAL.Repository
                 //-------------------------------------
                 if (region != null)
                 {
-                    var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") + 
+                    var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") +
                         request_c.LastName.Substring(0, 2).ToUpper() + request_c.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
                     request.ConfirmationNumber = confirmationnum;
                 }
                 else
                 {
-                    var confirmationnum = "AB" + request.CreatedDate.ToString("ddMMyy") + 
+                    var confirmationnum = "AB" + request.CreatedDate.ToString("ddMMyy") +
                         request_c.LastName.Substring(0, 2).ToUpper() + request_c.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
                     request.ConfirmationNumber = confirmationnum;
                 }
@@ -143,7 +122,7 @@ namespace BAL.Repository
 
                 _context.Update(request);
                 _context.SaveChanges();
-        }
+            }
             else if (patient.PasswordHash == patient.Confirmpassword)
             {
 
@@ -158,7 +137,7 @@ namespace BAL.Repository
                 _context.SaveChanges();
 
                 var users = _context.Users.FirstOrDefault(x => x.Email == request.Email);
-                                        
+
 
                 request_c.RequestId = request.RequestId;
                 request_c.FirstName = patient.FirstName;
@@ -173,7 +152,7 @@ namespace BAL.Repository
                 request_c.IntDate = patient.BirthDate.Value.Day;
                 request_c.StrMonth = (patient.BirthDate.Value.Month).ToString();
 
-                if(users != null)
+                if (users != null)
                 {
                     request_c.RegionId = users.RegionId;
                 }
@@ -186,7 +165,7 @@ namespace BAL.Repository
 
                 if (region != null)
                 {
-                    var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") + 
+                    var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") +
                         request_c.LastName.Substring(0, 2).ToUpper() + request_c.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
                     request.ConfirmationNumber = confirmationnum;
                 }

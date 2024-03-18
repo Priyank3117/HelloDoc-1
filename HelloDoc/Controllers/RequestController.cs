@@ -1,5 +1,4 @@
 ﻿using BAL.Interface;
-using BAL.Repository;
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
@@ -18,18 +17,18 @@ namespace HelloDoc.Controllers
         private readonly IBusiness_Request _business;
         private readonly IAddFile _file;
         private readonly IHostingEnvironment _environment;
-       
+
 
 
         //-----------------------Add Context---------------------------------
 
-        public RequestController(ApplicationDbContext context,IPatient_Request patient_Request,IFamily_Request Family_Req,
-            IConcierge_Request concierge,IBusiness_Request business_Request,IAddFile file,IHostingEnvironment hostingEnvironment)
+        public RequestController(ApplicationDbContext context, IPatient_Request patient_Request, IFamily_Request Family_Req,
+            IConcierge_Request concierge, IBusiness_Request business_Request, IAddFile file, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
             _request = patient_Request;
             _Family_Request = Family_Req;
-            _concierge = concierge; 
+            _concierge = concierge;
             _business = business_Request;
             _file = file;
             _environment = hostingEnvironment;
@@ -38,13 +37,6 @@ namespace HelloDoc.Controllers
         //-----------------------Add Context-------------------------------------
 
         //----------------Patient Request----------------------------
-
-        public IActionResult Patient_Request()
-
-        {
-            return View();
-        }
-
         //verify email
         [HttpPost]
         public IActionResult CheckEmail(string email)
@@ -53,12 +45,21 @@ namespace HelloDoc.Controllers
             return Json(new { exists = user != null });
         }
 
+        public IActionResult Patient_Request()
+        {
+            Patient patient = new Patient();
+            patient.regions = _context.Regions.ToList();
+            return View(patient);
+        }
+
+
+
         [HttpPost]
         public IActionResult Patient_Request(Patient patient)
         {
             if (ModelState.IsValid)
             {
-              _request.AddPatient(patient);
+                _request.AddPatient(patient);
                 if (patient.Filedata != null)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Files");
@@ -66,15 +67,16 @@ namespace HelloDoc.Controllers
 
                     string fileName = Path.GetFileName(patient.Filedata.FileName);
                     fileName = $"{uniquefilesavetoken}_{fileName}";
-                    _file.AddFile(patient.Filedata,path,fileName);
-                     
+                    _file.AddFile(patient.Filedata, path, fileName);
 
                     var Request = _request.GetUserByEmail(patient.Email);
                     _request.RequestWiseFile(fileName, Request.RequestId);
-                    return View();
+
                 }
+                return RedirectToAction("Patient_Request");
             }
-            return View();  
+            patient.regions = _context.Regions.ToList();
+            return View("Patient_Request", patient);
         }
         //----------------Patient Request----------------------------
 
@@ -83,7 +85,10 @@ namespace HelloDoc.Controllers
         public IActionResult Family_Friend_Request()
 
         {
-            return View();
+            Other_Request other_Request = new Other_Request();
+            other_Request.regions = _context.Regions.ToList();
+            return View(other_Request);
+
         }
 
         [HttpPost]
@@ -91,40 +96,49 @@ namespace HelloDoc.Controllers
 
         {
 
-            if(ModelState.IsValid)
-            { 
-                 _Family_Request.AddData(other_Reqs);
+            if (ModelState.IsValid)
+            {
+                _Family_Request.AddData(other_Reqs);
                 if (other_Reqs.Filedata != null)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Files");
                     var uniquefilesavetoken = new Guid().ToString();
 
                     string fileName = Path.GetFileName(other_Reqs.Filedata.FileName);
-                    fileName = $"{fileName}_{uniquefilesavetoken}";
+                    fileName = $"{uniquefilesavetoken}_{fileName}";
                     _file.AddFile(other_Reqs.Filedata, path, fileName);
                     var Request = _request.GetUserByEmail(other_Reqs.Email_P);
                     _request.RequestWiseFile(fileName, Request.RequestId);
-               
-                   }
+
                 }
-            return View();
+               return RedirectToAction("Family_Friend_Request");
+            }
+            other_Reqs.regions = _context.Regions.ToList();
+            return View("Family_Friend_Request", other_Reqs);
         }
         //--------------------Family/Friend----------------------------------------
 
         //--------------------Concierge---------------------------------------
 
         public IActionResult Concierge_Request()
-
         {
-            return View();
+            Other_Request other_Request = new Other_Request();
+            other_Request.regions = _context.Regions.ToList();
+            return View(other_Request);
         }
 
         [HttpPost]
         public IActionResult Concierge_Request(Other_Request other_Reqs)
 
         {
-            _concierge.AddData(other_Reqs);
-            return View();
+            if(ModelState.IsValid)
+            {
+               _concierge.AddData(other_Reqs);
+               return RedirectToAction("Concierge_Request");
+
+            }
+            other_Reqs.regions = _context.Regions.ToList();
+            return View("Family_Friend_Request", other_Reqs);
         }
         //--------------------Concierge---------------------------------------
 
@@ -133,17 +147,25 @@ namespace HelloDoc.Controllers
         public IActionResult Business_Request()
 
         {
-            return View();
+            Other_Request other_Request = new Other_Request();
+            other_Request.regions = _context.Regions.ToList();
+            return View(other_Request);
+
         }
 
         [HttpPost]
         public IActionResult Business_Request(Other_Request other_Reqs)
         {
-            _business.addbusinessdata(other_Reqs);
-            return View();
+          if(ModelState.IsValid)
+            {
+             _business.addbusinessdata(other_Reqs);
+            return RedirectToAction("Business_Request");
+            }
+            other_Reqs.regions = _context.Regions.ToList() ;
+            return View("Family_Friend_Request", other_Reqs);
         }
 
-       
+
         public IActionResult ReviewAgreement(int requestid)
         {
 
@@ -152,24 +174,24 @@ namespace HelloDoc.Controllers
 
 
             ViewBag.requestid = requestid;
-            ViewBag.name = name.FirstName +" "+name.LastName;
+            ViewBag.name = name.FirstName + " " + name.LastName;
 
-            if(request.Status == 2) 
-            { 
-              return View();
+            if (request.Status == 2)
+            {
+                return View();
             }
             else
             {
                 RedirectToAction("Patient_login", "Login");
             }
-          return BadRequest();
+            return BadRequest();
         }
 
         public IActionResult Agree(int id)
         {
             var request = _context.Requests.FirstOrDefault(s => s.RequestId == id);
 
-            if(request != null)
+            if (request != null)
             {
                 request.Status = 4;
                 request.ModifiedDate = DateTime.Now;
@@ -188,18 +210,18 @@ namespace HelloDoc.Controllers
             return View("ReviewAgreement");
         }
 
-        public IActionResult CancelAgreement(string Notes,int id)
+        public IActionResult CancelAgreement(string Notes, int id)
         {
             var req = _context.Requests.FirstOrDefault(s => s.RequestId == id);
 
-            if(req != null)
+            if (req != null)
             {
                 req.Status = 7;
                 req.ModifiedDate = DateTime.Now;
                 _context.Update(req);
                 _context.SaveChanges();
 
-                RequestStatusLog requestStatusLog  = new RequestStatusLog();
+                RequestStatusLog requestStatusLog = new RequestStatusLog();
                 requestStatusLog.Notes = Notes;
                 requestStatusLog.RequestId = id;
                 requestStatusLog.CreatedDate = DateTime.Now;
@@ -208,7 +230,7 @@ namespace HelloDoc.Controllers
                 _context.SaveChanges();
 
                 return RedirectToAction("Patient_login", "Login");
-             
+
             }
             return BadRequest();
         }

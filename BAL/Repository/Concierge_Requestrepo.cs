@@ -19,7 +19,7 @@ namespace BAL.Repository
             var request = new Request();
             var requestClient = new RequestClient();
             var concierge = new Concierge();
-          
+
 
             request.FirstName = req.FirstNameOther;
             request.LastName = req.LastNameOther;
@@ -31,7 +31,7 @@ namespace BAL.Repository
             _context.Requests.Add(request);
             _context.SaveChanges();
 
-            var users = _context.Users.FirstOrDefault(x => x.Email == request.Email);
+
 
             requestClient.RequestId = request.RequestId;
             requestClient.FirstName = req.FirstName_P;
@@ -43,14 +43,9 @@ namespace BAL.Repository
             requestClient.IntDate = req.BirthDate_P.Day;
             requestClient.Street = req.Street;
             requestClient.City = req.City;
-            requestClient.State = req.State;
+            requestClient.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(req.State)).Name;
             requestClient.ZipCode = req.Zipcode;
-
-            if (users != null)
-            {
-                requestClient.RegionId = users.RegionId;
-            }
-
+            requestClient.RegionId = int.Parse(req.State);
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
 
@@ -74,7 +69,7 @@ namespace BAL.Repository
             _context.Update(request);
             _context.SaveChanges();
 
-            concierge.ConciergeName = req.FirstNameOther+ req.LastNameOther;
+            concierge.ConciergeName = req.FirstNameOther + req.LastNameOther;
             concierge.Address = req.Street + req.City + req.State + req.Zipcode;
             concierge.Street = req.Street;
             concierge.City = req.City;

@@ -30,8 +30,6 @@ namespace BAL.Repository
             _context.Requests.Add(request);
             _context.SaveChanges();
 
-            var users = _context.Users.FirstOrDefault(x => x.Email == request.Email);
-
             requestClient.RequestId = request.RequestId;
             requestClient.FirstName = req.FirstName_P;
             requestClient.LastName = req.LastName_P;
@@ -44,11 +42,7 @@ namespace BAL.Repository
             requestClient.City = req.City;
             requestClient.State = req.State;
             requestClient.ZipCode = req.Zipcode;
-
-            if (users != null)
-            {
-                requestClient.RegionId = users.RegionId;
-            }
+            requestClient.RegionId = int.Parse(req.State);
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
 
@@ -68,17 +62,13 @@ namespace BAL.Repository
                 request.ConfirmationNumber = confirmationnum;
             }
 
-
             _context.Update(request);
             _context.SaveChanges();
 
-
-
             Business.Name = req.BusinessName;
             Business.Address1 = req.Street + req.City;
-            Business.Address2 = req.State + req.Zipcode;
+            Business.Address2 = req.Zipcode;
             Business.CreatedDate = DateTime.Now;
-
 
             _context.Businesses.Add(Business);
             _context.SaveChanges();
@@ -94,6 +84,6 @@ namespace BAL.Repository
             _context.SaveChanges();
         }
 
-       
+
     }
 }

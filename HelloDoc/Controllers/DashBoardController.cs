@@ -40,10 +40,10 @@ namespace HelloDoc.Controllers
                 ViewBag.username = mail.FirstName + " " + mail.LastName;
             }
 
-            var result = from req in _context.Requests
-                         join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId
+            var result = from req in _context.Requests join reqclient in _context.RequestClients on req.RequestId equals reqclient.RequestId
+                         join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId                        
                          into reqs
-                         where req.Email == Email
+                         where reqclient.Email == Email
                          from requestfile in reqs.DefaultIfEmpty()
 
                          select new Patient_Dash

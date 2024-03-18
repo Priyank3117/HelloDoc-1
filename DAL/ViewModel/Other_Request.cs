@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DAL.DataModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,9 +24,14 @@ namespace DAL.ViewModel
         [Column(TypeName = "character varying")]
         public string? PhoneNumberother { get; set; }
 
+        public string? State_c { get; set; }
+
+
         [StringLength(256)]
         [Required(ErrorMessage = "Please Enter  Email")]
         public string? EmailOther { get; set; } = null!;
+
+        public List<Region>? regions { get; set; }
 
         [StringLength(256)]
         public string? Relation { get; set; }
@@ -51,7 +57,7 @@ namespace DAL.ViewModel
         [Column(TypeName = "character varying")]
         public string? PhoneNumber_P { get; set; }
 
-        [Required(ErrorMessage = "Please Enter The DOB Of the Patient")]
+       
         public DateTime BirthDate_P { get; set; }
 
         [Required(ErrorMessage = "Please Enter Street")]

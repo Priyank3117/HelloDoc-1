@@ -1,7 +1,9 @@
-﻿using BAL.Interface;
+﻿
+using BAL.Interface;
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
+using DAL.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,11 +34,10 @@ namespace BAL.Repository
             request.RelationName = req.Relation;
             request.CreatedDate = DateTime.Now;
             request.RequestTypeId = 2;
-
             _context.Requests.Add(request);
             _context.SaveChanges();
 
-            var users = _context.Users.FirstOrDefault(x => x.Email == request.Email);
+
             //patient data will be added to the request client
             RequestClient requestClient = new RequestClient();
 
@@ -47,17 +48,12 @@ namespace BAL.Repository
             requestClient.PhoneNumber = req.PhoneNumber_P;
             requestClient.Street = req.Street;
             requestClient.City = req.City;
-            requestClient.State = req.State;
+            requestClient.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(req.State)).Name;
             requestClient.ZipCode = req.Zipcode;
             requestClient.StrMonth = req.BirthDate_P.Month.ToString();
             requestClient.IntYear = req.BirthDate_P.Year;
             requestClient.IntDate = req.BirthDate_P.Day;
-
-            if (users != null)
-            {
-                requestClient.RegionId = users.RegionId;
-            }
-
+            requestClient.RegionId = int.Parse(req.State);
             _context.RequestClients.Add(requestClient);
             _context.SaveChanges();
 
