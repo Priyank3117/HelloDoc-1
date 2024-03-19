@@ -9,6 +9,8 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Net.Mail;
 using static BAL.Repository.Authorizationrepo;
 using Rotativa.AspNetCore;
+using DAL.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 
 
@@ -26,9 +28,11 @@ namespace HelloDoc.Controllers
         private readonly IAddFile _files;
         private readonly IPatient_Request _patient;
         private readonly IEmailService _emailService;
+        private readonly IPasswordHasher<AdminProfile> _passwordHasher;
 
 
-        public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService)
+        public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
+            IPasswordHasher<AdminProfile> passwordHasher)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
@@ -36,6 +40,7 @@ namespace HelloDoc.Controllers
             _files = files;
             _patient = patient;
             _emailService = emailService;
+            _passwordHasher = passwordHasher;
         }
         public IActionResult AdminDash()
         {
@@ -390,9 +395,47 @@ namespace HelloDoc.Controllers
 
         public IActionResult AdminProfile() 
         {
-            AdminProfile adminProfile = new AdminProfile();
-            adminProfile.Regions = _context.Regions.ToList();
+            var Email = HttpContext.Session.GetString("Email"); 
+            var adminProfile= _AdminDashboard.GetAdminData(Email);
+           
             return View(adminProfile);     
+        }
+
+        public IActionResult AdministratorInformation(AdminProfile adminProfile,List<string> states)
+
+        {
+           
+            var Email = HttpContext.Session.GetString("Email");
+            if (Email != null)
+            {
+                _AdminDashboard.AdministratorInformation(adminProfile, Email,states);
+            }
+            HttpContext.Session.SetString("Email", adminProfile.Email);
+            return RedirectToAction("AdminProfile");  
+        } 
+        
+        
+        public IActionResult MailingBillingInformation(AdminProfile adminProfile)
+        {
+            var Email = HttpContext.Session.GetString("Email");
+            if (Email != null)
+            {
+                _AdminDashboard.MailingBillingInformation(adminProfile, Email);
+            }
+          
+            return RedirectToAction("AdminProfile");  
+        }
+
+        public IActionResult AccountInformation([FromForm] string Password)
+        {
+            var Email = HttpContext.Session.GetString("Email");
+            var hashPassword = _passwordHasher.HashPassword(null, Password);
+
+            if (Email != null)
+            {
+                _AdminDashboard.AccountInformation(hashPassword, Email);
+            }
+            return RedirectToAction("Patient_login", "Login");
         }
 
 

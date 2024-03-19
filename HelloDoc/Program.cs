@@ -36,6 +36,7 @@ builder.Services.AddScoped<IAdminDashBoard,AdminDashBoardrepo>();
 builder.Services.AddScoped<IEmailService, EmailServicerepo>();
 builder.Services.AddScoped<IPasswordHasher<Patient>,PasswordHasher<Patient>>();
 builder.Services.AddScoped<IPasswordHasher<Patient_login>,PasswordHasher<Patient_login>>();
+builder.Services.AddScoped<IPasswordHasher<AdminProfile>,PasswordHasher<AdminProfile>>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
 //Jwt configuration starts here

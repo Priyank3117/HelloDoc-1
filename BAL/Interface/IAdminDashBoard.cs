@@ -42,5 +42,12 @@ namespace BAL.Interface
         public void EncounterPost(int id, Encounter enc);
 
         public bool CloseInstance(int reqid);
+
+        public AdminProfile GetAdminData(string Email);
+
+        public void AdministratorInformation(AdminProfile adminProfile,string Email, List<string> states);   
+        public void MailingBillingInformation(AdminProfile adminProfile,string Email);
+
+        public void AccountInformation(string password,string Email);
     }
 }

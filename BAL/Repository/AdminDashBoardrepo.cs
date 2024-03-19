@@ -2,12 +2,8 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DAL.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace BAL.Repository
 {
@@ -15,13 +11,15 @@ namespace BAL.Repository
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly IPasswordHasher<AdminProfile> _passwordHasher;
 
         public AdminDashBoardrepo(ApplicationDbContext context)
         {
             _context = context;
+
         }
 
-    
+
         public IQueryable<Admin_DashBoard> GetList()
         {
 
@@ -59,7 +57,7 @@ namespace BAL.Repository
         {
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
-                             on req.RequestId equals reqclient.RequestId 
+                             on req.RequestId equals reqclient.RequestId
 
 
                             select new Admin_DashBoard()
@@ -369,11 +367,11 @@ namespace BAL.Repository
                           join
                        reqclient in _context.RequestClients on
                        req.RequestId equals reqclient.RequestId
-                            join enc in _context.EncounterForms on req.RequestId equals enc.RequestId
-                          into reqs
+                          join enc in _context.EncounterForms on req.RequestId equals enc.RequestId
+                        into reqs
                           from enc in reqs.DefaultIfEmpty()
                           where req.RequestId == id
-                          select new Encounter()    
+                          select new Encounter()
                           {
                               FirstName = reqclient.FirstName,
                               LastName = reqclient.LastName,
@@ -409,7 +407,7 @@ namespace BAL.Repository
                           }).FirstOrDefault();
 
             return result;
-            
+
         }
 
         public void EncounterPost(int id, Encounter enc)
@@ -510,6 +508,88 @@ namespace BAL.Repository
             {
                 return false;
             }
+        }
+
+        public AdminProfile GetAdminData(string Email)
+        {
+            AdminProfile adminProfile = new AdminProfile();
+            adminProfile.Regions = _context.Regions.ToList();
+
+            var aspNetUser = _context.AspNetUsers.FirstOrDefault(x => x.Email == Email);
+            if (aspNetUser != null)
+            {
+                var admin = _context.Admins.FirstOrDefault(x => x.AspNetUserId == aspNetUser.AspNetUserId);
+                var region = _context.Regions.FirstOrDefault(s => s.RegionId == admin.RegionId);
+                adminProfile.Address1 = admin.Address1;
+                adminProfile.Address2 = admin.Address2;
+                adminProfile.PhoneNumAspNetUsers = aspNetUser.PhoneNumber;
+                adminProfile.UserName = Email;
+                adminProfile.Email = Email;
+                adminProfile.zip = admin.Zip;
+                adminProfile.City = admin.City;
+                adminProfile.state = region.RegionId;
+                adminProfile.FirstName = admin.FirstName;
+                adminProfile.LastName = admin.LastName;
+                adminProfile.MobileNumAdmin = admin.Mobile;
+
+
+            }
+            return adminProfile;
+        }
+
+        public void AdministratorInformation(AdminProfile adminProfile, string Email, List<string> states)
+        {
+
+            AspNetUser user = _context.AspNetUsers.FirstOrDefault(s => s.Email == Email);
+            Admin admin = _context.Admins.FirstOrDefault(s => s.AspNetUserId == user.AspNetUserId);
+            var List = _context.AdminRegions.Where(s => s.AdminId == admin.AdminId).ToList();
+
+            _context.AdminRegions.RemoveRange(List);
+
+            //add on the adminid 
+            foreach (var item in states)
+            {
+            AdminRegion adminRegion = new AdminRegion();
+                adminRegion.AdminId = admin.AdminId;
+                adminRegion.RegionId = int.Parse(item);
+                _context.Add(adminRegion);
+                _context.SaveChanges();
+            }
+
+            user.Email = adminProfile.Email;
+            user.PhoneNumber = adminProfile.PhoneNumAspNetUsers;
+            admin.Email = adminProfile.Email;
+            admin.FirstName = adminProfile.FirstName;
+            admin.LastName = adminProfile.LastName;
+            _context.Update(user);
+            _context.Update(admin);
+            _context.SaveChanges();
+
+
+        }
+
+        public void AccountInformation(string password, string Email)
+        {
+            AspNetUser user = _context.AspNetUsers.FirstOrDefault(s => s.Email == Email);
+            user.PasswordHash = password;
+
+            _context.Update(user);
+            _context.SaveChanges();
+        }
+
+        public void MailingBillingInformation(AdminProfile adminProfile, string Email)
+        {
+            AspNetUser user = _context.AspNetUsers.FirstOrDefault(s => s.Email == Email);
+            Admin admin = _context.Admins.FirstOrDefault(s => s.AspNetUserId == user.AspNetUserId);
+            var region = _context.Regions.FirstOrDefault(s => s.RegionId == admin.RegionId);
+            admin.Address1 = adminProfile.Address1;
+            admin.Address2 = adminProfile.Address2;
+            admin.Zip = adminProfile.zip;
+            admin.City = adminProfile.City;
+            admin.RegionId = adminProfile.SelectedStateId;
+            admin.Mobile = adminProfile.MobileNumAdmin;
+            _context.Update(admin);
+            _context.SaveChanges();
         }
     }
 }
