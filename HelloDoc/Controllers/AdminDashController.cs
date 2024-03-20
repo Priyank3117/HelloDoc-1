@@ -474,5 +474,19 @@ namespace HelloDoc.Controllers
             return View(patient);
             }
 
+        [HttpPost]
+        public IActionResult CreateRequest(Patient patient, string SelectedStateId)
+        {
+            var Email = HttpContext.Session.GetString("Email");
+            if (ModelState.IsValid)
+            {
+                 
+                  _AdminDashboard.AddCreateRequest(patient, Email, SelectedStateId); 
+            }
+          
+            patient.Region = _context.Regions.ToList();
+            return View(patient);
+       }
+
     }
 }

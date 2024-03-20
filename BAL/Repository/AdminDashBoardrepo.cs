@@ -607,6 +607,80 @@ namespace BAL.Repository
         {
             throw new NotImplementedException();
         }
+
+        public void AddCreateRequest(Patient patient, string Email, string SelectedStateId)
+        {
+          
+                var admin = _context.Admins.Where(x => x.Email == Email).FirstOrDefault();
+                if (patient != null)
+                {
+                    patient.CreatedDate = DateTime.Now;
+                    var request = new Request();
+
+                    request.FirstName = admin.FirstName;
+                    request.LastName = admin.LastName;
+                    request.CreatedDate = DateTime.Now;
+                    request.PhoneNumber = admin.Mobile;
+                    request.Email = Email;
+                    
+
+                    _context.Requests.Add(request);
+                    _context.SaveChanges();
+
+
+                    var requestClient = new RequestClient();
+
+                    requestClient.RequestId = request.RequestId;
+                    requestClient.FirstName = patient.FirstName;
+                    requestClient.LastName = patient.LastName;
+                    requestClient.Email = patient.Email;
+                    requestClient.PhoneNumber = patient.PhoneNumber;
+                    requestClient.Street = patient.Street;
+                    requestClient.City = patient.City;
+                    requestClient.State = patient.State;
+                    requestClient.ZipCode = patient.ZipCode;
+                    requestClient.IntDate = patient.BirthDate.Value.Day;
+                    requestClient.IntYear = patient.BirthDate.Value.Year;
+                    requestClient.StrMonth = patient.BirthDate.Value.Month.ToString();
+                    requestClient.RegionId = int.Parse(SelectedStateId);
+
+
+                    _context.RequestClients.Add(requestClient);
+                    _context.SaveChanges();
+
+
+                var region = _context.Regions.FirstOrDefault(x => x.RegionId == requestClient.RegionId);
+                var count = _context.Requests.Where(x => x.CreatedDate.Date == request.CreatedDate.Date).Count();
+
+
+                //-------------------------------------
+                if (region != null)
+                {
+                    var confirmationnum = region.Abbreviation.ToUpper() + request.CreatedDate.ToString("ddMMyy") +
+                        requestClient.LastName.Substring(0, 2).ToUpper() + requestClient.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                    request.ConfirmationNumber = confirmationnum;
+                }
+                else
+                {
+                    var confirmationnum = "AB" + request.CreatedDate.ToString("ddMMyy") +
+                        requestClient.LastName.Substring(0, 2).ToUpper() + requestClient.FirstName.Substring(0, 2).ToUpper() + count.ToString("D4");
+                    request.ConfirmationNumber = confirmationnum;
+                }
+
+                _context.Update(request);
+                _context.SaveChanges();
+
+                var reqnotes = new RequestNote();
+                    reqnotes.RequestId = request.RequestId;
+                    reqnotes.AdminNotes = patient.AdminNote;
+                    reqnotes.CreatedDate = DateTime.Now;
+                    reqnotes.CreatedBy = request.FirstName + request.LastName;
+                    reqnotes.PhysicianNotes = "-";
+                    _context.RequestNotes.Add(reqnotes);
+                    _context.SaveChanges();
+                }
+            }
+        
     }
 }
 

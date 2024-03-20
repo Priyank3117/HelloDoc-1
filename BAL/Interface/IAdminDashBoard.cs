@@ -1,5 +1,6 @@
 ﻿using DAL.DataModels;
 using DAL.ViewModel;
+using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -51,5 +52,7 @@ namespace BAL.Interface
         public void MailingBillingInformation(AdminProfile adminProfile,string Email);
 
         public void AccountInformation(string password,string Email);
+
+        public void AddCreateRequest(Patient patient, string Email, string SelectedStateId);
     }
 }

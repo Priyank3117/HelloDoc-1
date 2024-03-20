@@ -22,14 +22,14 @@ namespace DAL.ViewModels
 
         [Column(TypeName = "character varying")]
         [Required]
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
         [Column(TypeName = "character varying")]
         [Required]
-        public string Confirmpassword { get; set; }
+        public string? Confirmpassword { get; set; }
 
         [Required]
         [StringLength(256)]
-        public string Email { get; set;}
+        public string? Email { get; set;}
 
         public List<Region>? regions { get; set; }
         [Column(TypeName = "character varying")]
@@ -61,10 +61,12 @@ namespace DAL.ViewModels
         [StringLength(10)]
         public string? ZipCode { get; set; }
 
-        public int Typeid { get; set; }
+        public int? Typeid { get; set; }
 
         public IFormFile? Filedata { get; set; }
 
-        public List<Region> Region { get; set; }   
+        public List<Region>? Region { get; set; }   
+
+        public string? AdminNote { get; set; }
     }
 }
