@@ -4,6 +4,7 @@ using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using static DAL.ViewModel.AdminProfile;
 
 namespace BAL.Repository
 {
@@ -79,7 +80,7 @@ namespace BAL.Repository
                                 confirmationnum = req.ConfirmationNumber,
                                 requestid = reqclient.RequestId,
                                 Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
-
+                                
 
                             }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
                               (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
@@ -520,6 +521,7 @@ namespace BAL.Repository
             {
                 var admin = _context.Admins.FirstOrDefault(x => x.AspNetUserId == aspNetUser.AspNetUserId);
                 var region = _context.Regions.FirstOrDefault(s => s.RegionId == admin.RegionId);
+                var states = _context.AdminRegions.Where(v => v.AdminId == admin.AdminId);
                 adminProfile.Address1 = admin.Address1;
                 adminProfile.Address2 = admin.Address2;
                 adminProfile.PhoneNumAspNetUsers = aspNetUser.PhoneNumber;
@@ -531,7 +533,16 @@ namespace BAL.Repository
                 adminProfile.FirstName = admin.FirstName;
                 adminProfile.LastName = admin.LastName;
                 adminProfile.MobileNumAdmin = admin.Mobile;
+                adminProfile.SelectedRegions = states.Select(x => x.RegionId).ToList();
+                 adminProfile.statesForChecked= (from adminregion in _context.AdminRegions
+                           where adminregion.AdminId == admin.AdminId
+                           select new CheckboxList_model
+                           {
+                               Value = adminregion.RegionId,
+                               Selected = true
+                           }).ToList();
 
+                
 
             }
             return adminProfile;
@@ -590,6 +601,11 @@ namespace BAL.Repository
             admin.Mobile = adminProfile.MobileNumAdmin;
             _context.Update(admin);
             _context.SaveChanges();
+        }
+
+        public int CountByStatus(int[] status)
+        {
+            throw new NotImplementedException();
         }
     }
 }

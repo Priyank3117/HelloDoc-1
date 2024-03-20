@@ -64,5 +64,7 @@ namespace DAL.ViewModels
         public int Typeid { get; set; }
 
         public IFormFile? Filedata { get; set; }
+
+        public List<Region> Region { get; set; }   
     }
 }

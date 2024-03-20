@@ -113,14 +113,29 @@
             </div>
             <div class="col-sm-12 col-md-12 col-lg-6 my-3 ">
 
-
+            @{
+                var i = 0;
+            }
             @foreach (var state in Model.Regions)
             {
-             
-                <input class="form-check-input text-body" name="states" type="checkbox" id="box1_@state" value="@state.RegionId" />
-                <label class="form-check-label fs-6" for="box1">
-                    @state.Name
-                </label>
+                if (i < Model.statesForChecked.Count && state.RegionId == Model.statesForChecked[i].Value)
+                {
+                    <input class="form-check-input text-body changable" name="states" for="box1" type="checkbox" id="@state.RegionId"
+                           value="@state.RegionId" checked disabled/>
+                    <label class="form-check-label fs-6" for="states">
+                        @state.Name
+                    </label>
+                    i++;
+                }
+                else
+                {
+                    <input class="form-check-input text-body changable" name="states" for="box1" type="checkbox" id="@state.RegionId"
+                           value="@state.RegionId" disabled/>
+                    <label class="form-check-label fs-6" for="states">
+                        @state.Name
+                    </label>
+                }
+                
             }
          
             </div>
@@ -201,7 +216,7 @@
             </button>
         </div>
     </form>
-               </div>
+            </div>
         </div>
 </div>
 

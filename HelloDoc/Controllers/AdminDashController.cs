@@ -44,6 +44,8 @@ namespace HelloDoc.Controllers
         }
         public IActionResult AdminDash()
         {
+            var email = HttpContext.Session.GetString("Email");
+            ViewBag.username = _context.AspNetUsers.First(u => u.Email == email).UserName;
             var DashData = _AdminDashboard.GetList();
             var newcount = (_context.Requests.Where(item => item.Status == 1)).Count();
             var pendingcount = (_context.Requests.Where(item => item.Status == 2)).Count();
@@ -59,18 +61,25 @@ namespace HelloDoc.Controllers
             ViewBag.unpaid = unpaid;
             return View(DashData.ToList());
         }
+
+
         public IActionResult SearchPatient(string SearchValue, string Filterselect,
             string selectvalue, string partialName, int[] currentstatus, int currentpage, int pagesize)
         {
             
             var FilterData = _AdminDashboard.GetRequestData(SearchValue, Filterselect, selectvalue,
             partialName, currentstatus).ToList();
-            if (SearchValue != null || Filterselect != null || selectvalue != null)
-            {
-                currentpage = 1;
-            }
+           
             int totalItems = FilterData.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
+            if (SearchValue != null || selectvalue != null || Filterselect!=null)
+            {
+                if (totalPages <= 1)
+                {
+                    currentpage = 1;
+                }
+            }
+  
             var paginatedData = FilterData.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = currentpage;
@@ -438,6 +447,32 @@ namespace HelloDoc.Controllers
             return RedirectToAction("Patient_login", "Login");
         }
 
+        public IActionResult SendLinkForm(string sendLinkFirstname, string sendLinkLastname, string sendLinkEmail)
+        {
+            var mail = sendLinkEmail;      
+            var subject = "Creat Patient Request";
+            var formLink = Url.ActionLink("Patient_Request", "Request",  protocol: HttpContext.Request.Scheme);
+
+
+            if (ModelState.IsValid)
+            {
+
+                if (formLink != null)
+                {
+                    _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
+                        $"<a href='{formLink}'>Click here </a> for Request");
+                }   
+            }
+
+            return RedirectToAction("AdminDash");
+        }
+
+        public IActionResult CreateRequest()
+        {
+            Patient patient = new Patient();
+            patient.Region = _context.Regions.ToList();
+            return View(patient);
+            }
 
     }
 }

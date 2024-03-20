@@ -15,6 +15,8 @@ namespace BAL.Interface
             string selectvalue, string partialName, int[] currentstatus);  
         public IQueryable<Admin_DashBoard> getregionwise();
 
+        public int CountByStatus(int[] status);
+
         public IQueryable<Admin_DashBoard> GetList();
 
         public IQueryable<ViewNotes> GetViewNotes(int id);

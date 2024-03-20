@@ -62,6 +62,7 @@ namespace HelloDoc.Controllers
                     }
                     else if (role == "Admin")
                     {
+                        
                         //TempData["SweetAlertMessage"] = new SweetAlertMessage("Login Successful!", "You are now logged in.", SweetAlertMessageType.Success);
                         return RedirectToAction("AdminDash", "AdminDash");
                     }

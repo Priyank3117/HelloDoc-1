@@ -35,5 +35,13 @@ namespace DAL.ViewModel
         public string MobileNumAdmin {get; set;}
 
         public int SelectedStateId { get; set; }
+        public List<int> SelectedRegions { get; set;}
+
+        public List<CheckboxList_model> statesForChecked { get; set; }
+    }
+    public class CheckboxList_model
+    {
+        public int? Value { get; set; }
+        public Boolean? Selected { get; set; }
     }
 }

@@ -240,7 +240,8 @@
 
             $(document).on("click", "#pagination a.page-link", function () {
                 console.log("Pagination link clicked!");
-                currentpage = $(this).text().trim();
+                var id = $(this).attr("id");
+                currentpage = $("#" + id).data("page");
                 console.log("Current Page: " + currentpage);
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
             });
@@ -300,10 +301,6 @@
                 $("#Search").val("");
                 currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
-                // $('#textspan').text('(Active)');
-                // $('.triangle').css('display', 'none');
-                // $('#traact').css('display', 'block').css('border-top', '20px solid #228c20').css('color', 'white');
-
                 localStorage.setItem('textspanState', '(active)');
                 localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
@@ -321,9 +318,6 @@
                 $("#Search").val("");
                 currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
-                // $('#textspan').text('(Conclude)');
-                // $('.triangle').css('display', 'none');
-                // $('#tracon').css('display', 'block').css('border-top', '20px solid #da0f82').css('color', 'white');
                 localStorage.setItem('textspanState', '(Conclude)');
                 localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
@@ -349,7 +343,6 @@
             });
 
             $("#UnPaid").click(function () {
-               
                 currentPartialview = "AdminTableUnPaid";
                 currentstatus = [9];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
@@ -357,7 +350,6 @@
                 $("#Search").val("");
                 currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
-             
                 localStorage.setItem('textspanState', '(Unpaid)');
                 localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
@@ -369,11 +361,13 @@
             //-------------------on click functionality end------------------------------
 
             $('.form-select').on("change", function () {
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize)
             });
 
             // -------------filter btn-----------------------------
             $('.filter-btn').click(function () {
+                currentpage = 1;
                 $('.filter-btn').removeClass('active')
                 $(this).addClass('active')
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize)
@@ -383,6 +377,7 @@
 
             // -------on search value--------------------
             $("#Search").on("input", function () {
+                currentpage = 1;
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
             });
             // -------on search value end---------------------
