@@ -608,7 +608,7 @@ namespace BAL.Repository
             throw new NotImplementedException();
         }
 
-        public void AddCreateRequest(Patient patient, string Email, string SelectedStateId)
+        public void AddCreateRequest(CreateRequest patient, string Email, string SelectedStateId)
         {
           
                 var admin = _context.Admins.Where(x => x.Email == Email).FirstOrDefault();
@@ -622,7 +622,8 @@ namespace BAL.Repository
                     request.CreatedDate = DateTime.Now;
                     request.PhoneNumber = admin.Mobile;
                     request.Email = Email;
-                    
+                   request.RequestTypeId = 1;
+
 
                     _context.Requests.Add(request);
                     _context.SaveChanges();
@@ -637,7 +638,7 @@ namespace BAL.Repository
                     requestClient.PhoneNumber = patient.PhoneNumber;
                     requestClient.Street = patient.Street;
                     requestClient.City = patient.City;
-                    requestClient.State = patient.State;
+                    requestClient.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(SelectedStateId)).Name;
                     requestClient.ZipCode = patient.ZipCode;
                     requestClient.IntDate = patient.BirthDate.Value.Day;
                     requestClient.IntYear = patient.BirthDate.Value.Year;
@@ -680,7 +681,26 @@ namespace BAL.Repository
                     _context.SaveChanges();
                 }
             }
-        
+
+        public GetCount GetCount()
+        {
+            var newcount = (_context.Requests.Where(item => item.Status == 1)).Count();
+            var pendingcount = (_context.Requests.Where(item => item.Status == 2)).Count();
+            var activecount = (_context.Requests.Where(item => item.Status == 4 || item.Status == 5)).Count();
+            var conclude = (_context.Requests.Where(item => item.Status == 6)).Count();
+            var toclosed = (_context.Requests.Where(item => item.Status == 3 || item.Status == 7 || item.Status == 8)).Count();
+            var unpaid = (_context.Requests.Where(item => item.Status == 9)).Count();
+
+            return new GetCount
+            {
+                NewCount = newcount,
+                PendingCount = pendingcount,
+                ActiveCount = activecount,
+                Conclude = conclude,
+                ToClosed = toclosed,
+                Unpaid = unpaid
+            };
+        }
     }
 }
 

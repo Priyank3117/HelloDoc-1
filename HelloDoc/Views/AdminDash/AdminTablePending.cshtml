@@ -136,14 +136,7 @@
                             </button>
                             </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="me-3" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                                </svg>Cancel Case
-                            </a>
-                        </li>
+                       
                         <li>
                             <a asp-action="ViewCase" asp-route-id="@item.reqclientid">
                                 <button class="dropdown-item">
@@ -399,48 +392,19 @@
 
 
 @* ---------------table---------------------------- *@
-<div class="pb-3">
-    <nav id="pagination" aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-0">
-            @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+<div class="mb-5">
+    <nav id="pagination" aria-label="Page navigation " class="mb-3">
+        <ul class="pagination w-100  d-flex justify-content-center">
+            @for (int b = 1; b <= ViewBag.TotalPages; b++)
             {
-                int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
-                int currpage = Convert.ToInt32(ViewBag.CurrentPage);
-                int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
-                if (ViewBag.CurrentPage > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link" id="previous" data-page="@(prevpage)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="visually-hidden">Previous</span>
-                        </a>
-                    </li>
-                }
-                for (int z = 0; z < 3; z++)
-                {
-                    if (currpage + z <= ViewBag.TotalPages)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
-                                <span>@(ViewBag.CurrentPage + z)</span>
-                            </a>
-                        </li>
-                    }
-                }
-                if (ViewBag.CurrentPage < ViewBag.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link" id="next" data-page="@(nextpage)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            <span class="visually-hidden">Next</span>
-                        </a>
-                    </li>
-                }
-
+                <li class="page-item @(b == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" data-page="@b">@b</a>
+                </li>
             }
         </ul>
     </nav>
 </div>
+
 <script>
     function transfermodel(btn){
         const myModal = document.getElementById("TransferModal");

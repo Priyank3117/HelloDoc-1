@@ -17,13 +17,15 @@ namespace HelloDoc.Controllers
         private readonly IBusiness_Request _business;
         private readonly IAddFile _file;
         private readonly IHostingEnvironment _environment;
+        private readonly IEmailService _emailService;
 
 
 
         //-----------------------Add Context---------------------------------
 
         public RequestController(ApplicationDbContext context, IPatient_Request patient_Request, IFamily_Request Family_Req,
-            IConcierge_Request concierge, IBusiness_Request business_Request, IAddFile file, IHostingEnvironment hostingEnvironment)
+            IConcierge_Request concierge, IBusiness_Request business_Request, IAddFile file, 
+            IHostingEnvironment hostingEnvironment, IEmailService emailService)
         {
             _context = context;
             _request = patient_Request;
@@ -32,6 +34,7 @@ namespace HelloDoc.Controllers
             _business = business_Request;
             _file = file;
             _environment = hostingEnvironment;
+            _emailService = emailService;
         }
 
         //-----------------------Add Context-------------------------------------
@@ -95,10 +98,18 @@ namespace HelloDoc.Controllers
         public IActionResult Family_Friend_Request(Other_Request other_Reqs)
 
         {
-
+            var subject = "Creat Patient Request";
+            var formLink = Url.ActionLink("Create_Patient", "Home", new { email = other_Reqs.Email_P }, protocol: HttpContext.Request.Scheme);
+            var present = _context.AspNetUsers.FirstOrDefault(s => s.Email == other_Reqs.Email_P);
             if (ModelState.IsValid)
             {
                 _Family_Request.AddData(other_Reqs);
+                if (formLink != null && present == null)
+                {
+                    //send mail on the other_request.Email_p
+                    _emailService.SendEmail("patelpriyank3112002@gmail.com",subject,
+                   $"<a href='{formLink}'>Click here </a> for Request");
+                }
                 if (other_Reqs.Filedata != null)
                 {
                     string path = Path.Combine(this._environment.WebRootPath, "Files");
@@ -131,10 +142,19 @@ namespace HelloDoc.Controllers
         public IActionResult Concierge_Request(Other_Request other_Reqs)
 
         {
-            if(ModelState.IsValid)
+            var subject = "Creat Patient Request";
+            var formLink = Url.ActionLink("Create_Patient", "Home", new { email = other_Reqs.Email_P }, protocol: HttpContext.Request.Scheme);
+            var present = _context.AspNetUsers.FirstOrDefault(s => s.Email == other_Reqs.Email_P);
+            if (ModelState.IsValid)
             {
                _concierge.AddData(other_Reqs);
-               return RedirectToAction("Concierge_Request");
+                if (formLink != null && present != null)
+                {
+                    //send mail on the other_request.Email_p
+                    _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
+                   $"<a href='{formLink}'>Click here </a> for Request");
+                }
+                return RedirectToAction("Concierge_Request");
 
             }
             other_Reqs.regions = _context.Regions.ToList();
@@ -156,10 +176,19 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult Business_Request(Other_Request other_Reqs)
         {
-          if(ModelState.IsValid)
+            var subject = "Creat Patient Request";
+            var formLink = Url.ActionLink("Create_Patient", "Home",new {email = other_Reqs.Email_P}, protocol: HttpContext.Request.Scheme);
+            var present = _context.AspNetUsers.FirstOrDefault(s => s.Email == other_Reqs.Email_P);
+            if (ModelState.IsValid)
             {
              _business.addbusinessdata(other_Reqs);
-            return RedirectToAction("Business_Request");
+                if (formLink != null && present != null)
+                {
+                    //send mail on the other_request.Email_P if its not exist in Db
+                    _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
+                   $"<a href='{formLink}'>Click here </a> for Request");
+                }
+                return RedirectToAction("Business_Request");
             }
             other_Reqs.regions = _context.Regions.ToList() ;
             return View("Family_Friend_Request", other_Reqs);

@@ -47,18 +47,17 @@ namespace HelloDoc.Controllers
             var email = HttpContext.Session.GetString("Email");
             ViewBag.username = _context.AspNetUsers.First(u => u.Email == email).UserName;
             var DashData = _AdminDashboard.GetList();
-            var newcount = (_context.Requests.Where(item => item.Status == 1)).Count();
-            var pendingcount = (_context.Requests.Where(item => item.Status == 2)).Count();
-            var activecount = (_context.Requests.Where(item => item.Status == 4 || item.Status == 5)).Count();
-            var conclude = (_context.Requests.Where(item => item.Status == 6)).Count();
-            var toclosed = (_context.Requests.Where(item => item.Status == 3 || item.Status == 7 || item.Status == 8)).Count();
-            var unpaid = (_context.Requests.Where(item => item.Status == 9)).Count();
-            ViewBag.NewCount = newcount;
-            ViewBag.PendingCount = pendingcount;
-            ViewBag.activecount = activecount;
-            ViewBag.conclude = conclude;
-            ViewBag.toclosed = toclosed;
-            ViewBag.unpaid = unpaid;
+         
+            var dashboardData = _AdminDashboard.GetCount();
+
+            // Set ViewBag properties
+            ViewBag.NewCount = dashboardData.NewCount;
+            ViewBag.PendingCount = dashboardData.PendingCount;
+            ViewBag.ActiveCount = dashboardData.ActiveCount;
+            ViewBag.Conclude = dashboardData.Conclude;
+            ViewBag.ToClosed = dashboardData.ToClosed;
+            ViewBag.Unpaid = dashboardData.Unpaid;
+
             return View(DashData.ToList());
         }
 
@@ -79,7 +78,6 @@ namespace HelloDoc.Controllers
                     currentpage = 1;
                 }
             }
-  
             var paginatedData = FilterData.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = currentpage;
@@ -460,7 +458,7 @@ namespace HelloDoc.Controllers
                 if (formLink != null)
                 {
                     _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
-                        $"<a href='{formLink}'>Click here </a> for Request");
+                     $"<a href='{formLink}'>Click here </a> for Request");
                 }   
             }
 
@@ -469,24 +467,36 @@ namespace HelloDoc.Controllers
 
         public IActionResult CreateRequest()
         {
-            Patient patient = new Patient();
-            patient.Region = _context.Regions.ToList();
-            return View(patient);
-            }
+           CreateRequest createRequest = new CreateRequest();
+            createRequest.Region = _context.Regions.ToList();
+            return View(createRequest);
+        }
 
         [HttpPost]
-        public IActionResult CreateRequest(Patient patient, string SelectedStateId)
+        public IActionResult CreateRequest(CreateRequest createRequest, string SelectedStateId)
         {
             var Email = HttpContext.Session.GetString("Email");
+            var subject = "Creat Patient Request";
+            var formLink = Url.ActionLink("Patient_Request", "Request", protocol: HttpContext.Request.Scheme);
             if (ModelState.IsValid)
             {
-                 
-                  _AdminDashboard.AddCreateRequest(patient, Email, SelectedStateId); 
+               _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId);
+                if (formLink != null)
+                {
+                    //send email on createRequest.Email which is enter by admin
+                    _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
+                     $"<a href='{formLink}'>Click here </a> for Request");
+                }
+                return RedirectToAction("CreateRequest");
             }
           
-            patient.Region = _context.Regions.ToList();
-            return View(patient);
+            createRequest.Region = _context.Regions.ToList();
+            return View(createRequest);
        }
 
+        public IActionResult Provider()
+        {
+            return View();
+        }
     }
 }

@@ -53,6 +53,8 @@ namespace BAL.Interface
 
         public void AccountInformation(string password,string Email);
 
-        public void AddCreateRequest(Patient patient, string Email, string SelectedStateId);
+        public void AddCreateRequest(CreateRequest createRequest, string Email, string SelectedStateId);
+
+        public GetCount GetCount();
     }
 }

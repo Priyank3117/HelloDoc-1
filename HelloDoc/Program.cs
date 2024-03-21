@@ -32,11 +32,13 @@ builder.Services.AddScoped<IFamily_Request,Family_Requestrepo>();
 builder.Services.AddScoped<IConcierge_Request,Concierge_Requestrepo>();
 builder.Services.AddScoped<IBusiness_Request,Business_Requestrepo>();
 builder.Services.AddScoped<IAddFile,AddFilerepo>();
+builder.Services.AddScoped<IHome,HomeRepo>();
 builder.Services.AddScoped<IAdminDashBoard,AdminDashBoardrepo>();
 builder.Services.AddScoped<IEmailService, EmailServicerepo>();
 builder.Services.AddScoped<IPasswordHasher<Patient>,PasswordHasher<Patient>>();
 builder.Services.AddScoped<IPasswordHasher<Patient_login>,PasswordHasher<Patient_login>>();
 builder.Services.AddScoped<IPasswordHasher<AdminProfile>,PasswordHasher<AdminProfile>>();
+builder.Services.AddScoped<IPasswordHasher<CreateAccount>,PasswordHasher<CreateAccount>>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
 //Jwt configuration starts here

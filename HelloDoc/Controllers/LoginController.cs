@@ -38,15 +38,14 @@ namespace HelloDoc.Controllers
         public IActionResult Patient_login(Patient_login patient)
         {
 
-            var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
-            var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
-            bool verifiedpassword = result == PasswordVerificationResult.Success;
-            var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
-            var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name.Trim();
-
 
             if (ModelState.IsValid)
             {
+                var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
+                var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
+                var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name.Trim();
+                var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
+                bool verifiedpassword = result == PasswordVerificationResult.Success;
 
                 if (Email != null && verifiedpassword)
                 {
@@ -67,6 +66,8 @@ namespace HelloDoc.Controllers
                         return RedirectToAction("AdminDash", "AdminDash");
                     }
                 }
+               
+
             }
             return View(patient);
         }

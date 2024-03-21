@@ -16,6 +16,6 @@ namespace DAL.ViewModel
 
         [Column(TypeName = "character varying")]
         [Required]
-        public string? PasswordHash { get; set; }
+        public string PasswordHash { get; set; }
     }
 }

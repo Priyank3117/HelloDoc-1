@@ -240,13 +240,13 @@
 
             $(document).on("click", "#pagination a.page-link", function () {
                 console.log("Pagination link clicked!");
-                var id = $(this).attr("id");
-                currentpage = $("#" + id).data("page");
+                currentpage = $(this).text().trim();
                 console.log("Current Page: " + currentpage);
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
             });
 
-          
+
+
 
             //-------------------on click functionality------------------------------
         

@@ -1,5 +1,4 @@
-﻿
-@model DAL.DataModels.Region
+﻿@model DAL.ViewModel.CreateAccount
 
 @{
      ViewData["Title"] = "Create_Patient";
@@ -54,18 +53,18 @@
                     <div class="inp">
                         <div class="form-floating d-flex mb-3 border rounded inps">
                             <input type="text"
-                                       asp-for="RegionId"
+                                  asp-for="Email"
                                    class="form-control border-0 no-border"
                                    id="floatingInput"
-                                   placeholder="name@example.com" />
+                                   placeholder="name@example.com"  readonly/>
                             <img src="../images/user_circle.svg"
                                  alt=""
                                  class="pe-3 bg-white" />
-                            <label for="floatingInput">Username</label>
+                            <label for="floatingInput">Email</label>
                         </div>
                         <div class="form-floating d-flex mb-3 border rounded">
                             <input type="password"
-                                       asp-for="Name"
+                                    asp-for="Password"
                                    class="form-control border-0 no-border"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -75,7 +74,7 @@
                             <label for="floatingPassword">Password</label>
                         </div> <div class="form-floating d-flex mb-3 border rounded">
                             <input type="password"
-                                       asp-for="Name"
+                                       asp-for="ConfirmPassword"
                                    class="form-control border-0 no-border"
                                    id="floatingPassword"
                                    placeholder="Password" />
@@ -87,10 +86,8 @@
                     </div>
                     <button class="btn btn-info text-white" type="submit">Create</button>
                     </form>
-                    <a asp-action="Patient_ResetPassword" style="text-decoration:none">
-                        <div class="text-center text-info fs-5 mt-3">Forget password? </div></a>
+                <div asp-validation-summary="All"> </div>
                 </div>
-
                 <!-- ------------------- -->
             </div>
             <footer class="text-muted text-center position-absolute bottom-0">
