@@ -23,3 +23,4 @@ toggleButton.addEventListener("click", function () {
     // Store the theme in localStorage
     localStorage.setItem("theme", currentTheme);
 });
+

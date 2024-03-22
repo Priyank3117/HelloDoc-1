@@ -253,7 +253,7 @@
                     <div class="modal-footer">
                         <div class="d-flex justify-content-end mt-3">
                             <a> <button type="submit" class="btn btn-info">Confirm</button></a>
-                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">cancle</button>
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-outline-info ms-3">Cancle</button>
                         </div>
                     </div>
                 </form>
@@ -489,9 +489,41 @@
         </div>
     </div>
     @* -----------Encounter Modal  --------------------------- *@
-     @*modal for send link*@   <div class="modal fade" id="sendLinkModal" tabindex="-1" aria-labelledby="sendLinkModalLabel" aria-hidden="true">     <div class="modal-dialog modal-dialog-centered">         <div class="modal-content">             <div class="modal-header bg-info text-white">                 <h2 class="modal-title fs-5" id="sendLinkModalLabel">Send Mail to Patient for Submitting request</h2>                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>             </div>
-                <form id="sendLinkForm" asp-action="SendLinkForm">                 <div class="modal-body">                     <div class="form-floating my-3">                         <input type="text" class="form-control" id="sendLinkFirstname" name="sendLinkFirstname" placeholder="Firstname">                         <label class="text-muted floating-label">Firstname</label>                         <span class="text-danger"></span>                     </div>                     <div class="form-floating my-3">                         <input type="text" class="form-control" id="sendLinkLarstname" name="sendLinkLastname" placeholder="Lastname">                         <label class="text-muted floating-label">Lastname</label>                         <span class="text-danger"></span>                     </div>                     <div class="form-floating my-3">                         <input type="email" class="form-control" id="sendLinkEmail" name="sendLinkEmail" placeholder="Email">                         <label class="text-muted floating-label">Email</label>                         <span class="text-danger"></span>                     </div>                 </div>                 <div class="modal-footer border-top-0">
-                        <button type="submit" class="btn btn-info text-white" data-bs-dismiss="modal">Submit</button>                     <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>                 </div>             </form>         </div>     </div> </div>
+     @*modal for send link*@  
+ <div class="modal fade" id="sendLinkModal" tabindex="-1" aria-labelledby="sendLinkModalLabel" aria-hidden="true">
+     <div class="modal-dialog modal-dialog-centered">
+         <div class="modal-content">
+             <div class="modal-header bg-info text-white">
+                 <h2 class="modal-title fs-5" id="sendLinkModalLabel">Send Mail to Patient for Submitting request</h2>
+                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+                <form id="sendLinkForm" asp-action="SendLinkForm">
+                 <div class="modal-body">
+                     <div class="form-floating my-3">
+                         <input type="text" class="form-control" id="sendLinkFirstname" name="sendLinkFirstname" placeholder="Firstname">
+                         <label class="text-muted floating-label">Firstname</label>
+                         <span class="text-danger"></span>
+                     </div>
+                     <div class="form-floating my-3">
+                         <input type="text" class="form-control" id="sendLinkLarstname" name="sendLinkLastname" placeholder="Lastname">
+                         <label class="text-muted floating-label">Lastname</label>
+                         <span class="text-danger"></span>
+                     </div>
+                     <div class="form-floating my-3">
+                         <input type="email" class="form-control" id="sendLinkEmail" name="sendLinkEmail" placeholder="Email">
+                         <label class="text-muted floating-label">Email</label>
+                         <span class="text-danger"></span>
+                     </div>
+
+                 </div>
+                 <div class="modal-footer border-top-0">
+                        <button type="submit" class="btn btn-info text-white" data-bs-dismiss="modal">Submit</button>
+                     <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+ </div>
 
 
     @* -------------------------------Modal--------------------------------------------- *@

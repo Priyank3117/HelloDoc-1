@@ -2,15 +2,14 @@
 using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModel;
-using DAL.DataModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Net.Mail;
 using static BAL.Repository.Authorizationrepo;
 using Rotativa.AspNetCore;
-using DAL.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using DAL.DataModels;
 
 
 
@@ -45,7 +44,10 @@ namespace HelloDoc.Controllers
         public IActionResult AdminDash()
         {
             var email = HttpContext.Session.GetString("Email");
-            ViewBag.username = _context.AspNetUsers.First(u => u.Email == email).UserName;
+            if (email != null)
+            {
+                ViewBag.username = _context.AspNetUsers.First(u => u.Email == email).UserName;
+            }
             var DashData = _AdminDashboard.GetList();
          
             var dashboardData = _AdminDashboard.GetCount();
@@ -496,6 +498,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult Provider()
         {
+           
             return View();
         }
     }

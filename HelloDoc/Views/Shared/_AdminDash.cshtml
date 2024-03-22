@@ -20,7 +20,7 @@
             <div class="row border border-bottom shadow">
                 <!-- -----------------nav--------------- -->
                 <div class="col col-12 d-flex mb-1 flex-row justify-content-between">
-                    
+
                     <nav class="navbar d-inline d-sm-none mt-3">
                         <div class="container-fluid">
                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,13 +29,13 @@
                         </div>
                     </nav>
                     <div class="doct-logo d-none d-sm-inline">
-                        <img src="~/images/doct-logo-2.png" alt="" style="height:4rem"/>
+                        <img src="~/images/doct-logo-2.png" alt="" style="height:4rem" />
                     </div>
 
                     <div class=" float-end ">
                         <span class="fw-bold me-2 d-none d-sm-inline"> Welcome:@ViewBag.username</span>
                         <a asp-action="Logout" asp-controller="Login">
-                           
+
                             <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"
                                     style="height:3rem">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="33" fill="currentColor" class="bi text-info bi-box-arrow-right d-inline d-sm-none" viewBox="0 0 16 16">
@@ -43,7 +43,7 @@
                                     <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
                                 </svg>
                                 <span class="d-none d-sm-inline">logout</span>
-                                
+
                             </button>
                         </a>
 
@@ -63,31 +63,43 @@
 
             </div>
             <!-- Nav tabs -->
-           
-        <div class="w-100 shadow  px-2 px-md-5  pt-2  border-5 border-bottom-5 d-none d-sm-block pb-1  ">
-            <ul class="nav nav-tabs-info nav-underline   fs-4 " id="pills-tab" role="tablist">
-                <li class="nav-item text-info">
-                    <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none"> <button class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Index" ? "active" : "")">Dashboard</button></a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
-                </li>
-                <li class="nav-item">
-                    <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none"><button class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Profile" ? "active" : "")">My Profile</button></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" ? "active" : "")">Provider</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Parteners" ? "active" : "")">Parteners</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Records" ? "active" : "")">Records</a>
-                </li>
 
-            </ul>
+            <div class="w-100 shadow  px-2 px-md-5  pt-2  border-5 border-bottom-5 d-none d-sm-block pb-1  ">
+                <ul class="nav nav-tabs-info nav-underline   fs-4 " id="pills-tab" role="tablist">
+                    <li class="nav-item text-info">
+                        <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none">
+                            <button class="nav-link  text-info
+                   @(ViewContext.ActionDescriptor.RouteValues["action"] == "Index" ? "active" : "")">
+                                Dashboard
+                            </button>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none"><button class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Profile" ? "active" : "")">My Profile</button></a>
+                    </li>
+                   <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Provider
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-action="Provider" asp-controller="AdminDash"  class="dropdown-item">Provider</a></li>
+                            <li><a class="dropdown-item" >Scheduling</a></li>
+                            <li><a class="dropdown-item">Invoice</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Parteners" ? "active" : "")">Parteners</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Records" ? "active" : "")">Records</a>
+                    </li>
 
-        </div>
+                </ul>
+
+            </div>
             <div class="collapse " id="navbarToggleExternalContent">
                 <div class=" p-4">
                     <ul class="nav nav-tabs-info nav-underline   fs-4 " id="pills-tab" role="tablist">
@@ -130,20 +142,21 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Patient_request.js" asp-append-version="true"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>   @await RenderSectionAsync("Scripts", required: false)
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>    *@
+    @await RenderSectionAsync("Scripts", required: false)
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script>
         $(document).ready(function () {
-       
+
             var currentpage = 1;
             var pagesize = 4;
-           
+
             // Function to retrieve data from local storage
             function getDataFromLocalStorage(key) {
                 return localStorage.getItem(key);
@@ -155,7 +168,7 @@
             }
 
             function setStylesFromLocalStorage() {
-                
+
                 // Get the stored state from local storage
                 var textSpanState = localStorage.getItem('textspanState');
                 var triangleDisplayState = localStorage.getItem('triangleDisplayState');
@@ -171,12 +184,12 @@
                     $('.triangle').css('display', triangleDisplayState);
                 }
                 if (DisplayState) {
-                 
+
                     $(ida).css('display', DisplayState);
-                
+
                 }
                 if (BorderStyle) {
-                    $(ida).css('border-top',BorderStyle);
+                    $(ida).css('border-top', BorderStyle);
                 }
             }
 
@@ -199,7 +212,7 @@
             $('AdminTableToClose').hide();
             $('AdminTableUnPaid').hide();
 
-            
+
             function updateActiveElement(id) {
                 $(".status").removeClass("active");
                 $(id).addClass("active");
@@ -249,7 +262,7 @@
 
 
             //-------------------on click functionality------------------------------
-        
+
             $("#New").click(function () {
                 currentstatus = [1];
                 currentPartialview = "AdminTableNew";
@@ -263,16 +276,16 @@
                 // $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
 
                 localStorage.setItem('textspanState', '(new)');
-                localStorage.setItem('triangleDisplayState','none');
+                localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
                 localStorage.setItem('BorderStyle', '20px solid #203f9a');
-                localStorage.setItem('id','#tranew');
+                localStorage.setItem('id', '#tranew');
                 setStylesFromLocalStorage();
             });
 
 
             $("#Pending").click(function () {
-           
+
                 currentPartialview = "AdminTablePending";
                 currentstatus = [2];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
@@ -287,15 +300,15 @@
                 localStorage.setItem('triangleDisplayState', 'none');
                 localStorage.setItem('DisplayState', 'block');
                 localStorage.setItem('BorderStyle', '20px solid #0dcaf0');
-                localStorage.setItem('id','#trapending');
+                localStorage.setItem('id', '#trapending');
 
                 setStylesFromLocalStorage();
-           
+
             });
 
             $("#Active").click(function () {
                 currentPartialview = "AdminTableActive";
-                currentstatus = [4,5];
+                currentstatus = [4, 5];
                 setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
                 setDataInLocalStorage("currentPartialview", currentPartialview);
                 $("#Search").val("");
@@ -382,7 +395,7 @@
             });
             // -------on search value end---------------------
 
-            function filtertable(partialName, currentstatus ,currentpage, pagesize) {
+            function filtertable(partialName, currentstatus, currentpage, pagesize) {
                 $.get('/AdminDash/CheckSession', function (session) {
 
 
@@ -432,7 +445,7 @@
             // -------------------------------------------------------------
 
             // -------------------------------------------------------------
-           
+
             // -------------------------------------------------------------
             $('#ModalFormsubmit').submit(function (event) {
                 event.preventDefault();
@@ -670,10 +683,10 @@
             $('#BlockCaseModal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
             });
-            // ------------------------------------------------------------- 
-            
-            
-             // -------------------------------------------------------------
+            // -------------------------------------------------------------
+
+
+            // -------------------------------------------------------------
             $('#ClearCaseModalSubmit').submit(function (event) {
                 event.preventDefault();
 
@@ -698,9 +711,9 @@
                 $(this).find('form')[0].reset();
             });
             // -------------------------------------------------------------
-            // 
-              // -------------------------------------------------------------
-           
+            //
+            // -------------------------------------------------------------
+
             // -------------------------------------------------------------
         });
 

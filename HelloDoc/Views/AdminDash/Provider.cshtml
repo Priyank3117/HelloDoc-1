@@ -1,7 +1,203 @@
-﻿
+﻿@model DAL.ViewModel.Provider
+
 @{
     ViewData["Title"] = "Provider";
+    Layout = "~/Views/Shared/_AdminDash.cshtml";
 }
 
-<h1>Provider</h1>
+
+
+<style>
+    .form-check-input:checked {
+        background-color: #17a2b8 !important;
+    }
+</style>
+
+<!--Send Message-->
+<div class="modal fade " id="sendModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Contact Your Providor</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="ContactProvidor" method="post">
+                    <div class="mb-3">
+                        <p class="mb-4">Choose communication to send message</p>
+                        <input type="hidden" id="physicaniid" name="physicaniid" />
+                        <div class="">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="communicationMethod" value="SMS" id="SMS">
+                                <label class="form-check-label" for="SMS">
+                                    SMS
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="communicationMethod" value="Email" id="Email">
+                                <label class="form-check-label" for="Email">
+                                    Email
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="communicationMethod" value="Both" id="Both">
+                                <label class="form-check-label" for="Both">
+                                    Both
+                                </label>
+                            </div>
+                        </div>
+                        <div class=" d-flex justify-content-center mt-2">
+                            <textarea name="notes" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Provide Additional Notes"></textarea>
+                        </div>
+                        <div class=" d-flex justify-content-end mt-4">
+                            <div class="d-inline-block">
+                                <button type="submit" class="btn btn-info text-white me-3">Confirm</button>
+                            </div>
+                            <div class="d-inline-block">
+                                <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid  bg-body-secondary">
+    <p class="h3">Providor Information</p>
+    <div class="container  bg-white shadow rounded pt-2">
+        <div class="row d-flex">
+            <div class="col-lg-4 col-md-6 col-sm-12 mt-3">
+                <i class="bi bi-search text-muted position-absolute" style="padding-top:10px; padding-left:10px;"></i>
+                <input type="search" class="form-control" style="padding-left:35px;" id="SearchString" placeholder="Search Patients">
+            </div>
+            <div class="col text-lg-end text-md-end text-sm-center text-xs-center mt-3">
+                <button class="btn btn-info text-white ">Create Providor account</button>
+            </div>
+        </div>
+        <div class="table-responsive mt-4 mb-4">
+            <table class="table table-hover d-md-table d-none">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Stop Notification</th>
+                        <th scope="col">Provider Name <i class="bi bi-arrow-up"></i></th>
+                        <th scope="col">Role</th>
+                        <th scope="col">On Call Status</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  @*   @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td scope="row">
+                                <input type="checkbox" class="form-check-input" name="fileIds" @(item.IsNotificationStop ? "checked" : "")>
+                            </td>
+                            <td scope="row">@item.PhysicanName</td>
+                            <td scope="row">@item.RoleName</td>
+                            <td scope="row">Unavailable</td>
+                            <td scope="row">
+                                @if (item.Status == 1)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else if (item.Status == 2)
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                                else if (item.Status == 3)
+                                {
+                                    <span class="badge bg-secondary">Conclude</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Unknown</span>
+                                }
+                            </td>
+                            <td scope="row">
+                                <div class="d-flex">
+                                    <button class="btn btn-outline-info rounded me-2" onclick="sendEmailModal(@item.PhysicanId)">Contact</button>
+                                    <a asp-action="PhysicanProfile" asp-route-id="@item.PhysicanId" class="btn btn-outline-info rounded">Edit</a>
+                                </div>
+                            </td>
+                        </tr>
+                    } *@
+                </tbody>
+            </table>
+        </div>
+
+        <div class="accordion accordion-flush d-md-none mt-3 bg-white" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="checkbox" class="form-check-input" name="fileIds" />
+                                    <span>AMIT, Gupta</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col mt-3 mb-3">
+                                    <p>On Call Status: <b>Un Available</b></p>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body" id="accodianbody">
+                        <div class="row">
+                            <div class="col">
+                                <p><i class="bi bi-person-circle text-info"></i> Role: <b>Admin</b> </p>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p><i class="bi bi-check-circle text-info"></i> Status: <b>Pending</b></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col justify-content-end d-flex mt-3">
+                                    <button class="btn btn-outline-info rounded me-2" onclick="sendEmailModal()">Contact</button>
+                                    <button class="btn btn-outline-info rounded"> Edit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col justify-content-end">
+                <button class="btm btn-info text-white">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAccordion() {
+        var collapse = document.getElementById('flush-headingOne');
+
+
+        if (collapse.style.display === 'block') {
+
+            collapse.style.display = 'none';
+        } else {
+
+            collapse.style.display = 'block';
+        }
+    }
+</script>
+<script>
+    const modal = new bootstrap.Modal(document.getElementById("sendModal"));
+    function sendEmailModal(physicainId) {
+        var physicanid = document.getElementById('physicaniid');
+        physicanid.value = physicainId;
+        modal.show();
+    }
+</script>
 
