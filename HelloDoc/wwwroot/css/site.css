@@ -24,6 +24,11 @@ body {
 .table {
     --bs-table-color: none !important;
 }
+
+.nav-link:not(.active) {
+    color: #000 !important; /* Black color for inactive links */
+    text-decoration: none; /* Remove underline for inactive links */
+}
 [data-bs-theme = "light"] .white-bag
 {
     background-color:#fff;

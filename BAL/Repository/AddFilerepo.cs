@@ -24,6 +24,8 @@ namespace BAL.Repository
             }
         }
 
+
+
         public void RemoveFile(string path)
         {
               if(File.Exists(path))

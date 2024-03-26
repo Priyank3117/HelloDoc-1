@@ -1,9 +1,9 @@
-﻿using BAL.Interface;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Common;
 using System.Text;
 
 namespace HelloDoc.Controllers
@@ -18,12 +18,15 @@ namespace HelloDoc.Controllers
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<Patient_login> _passwordHasher;
         private readonly IJwtService _jwtService;
-        public LoginController(ApplicationDbContext context, IEmailService emailService, IPasswordHasher<Patient_login> passwordHasher, IJwtService jwtService)
+        private readonly INotyfService _notyf;
+        public LoginController(ApplicationDbContext context, IEmailService emailService,
+            IPasswordHasher<Patient_login> passwordHasher, IJwtService jwtService, INotyfService notyf)
         {
             _context = context;
             _emailService = emailService;
             _passwordHasher = passwordHasher;
             _jwtService = jwtService;
+            _notyf = notyf;
         }
         public IActionResult Patient_login()
 
@@ -56,19 +59,23 @@ namespace HelloDoc.Controllers
                     Response.Cookies.Append("jwt", jwt);
                     if (role == "Patient")
                     {
-
+                      
+                        _notyf.Success("Successfully Login");
                         return RedirectToAction("Index", "DashBoard");
                     }
                     else if (role == "Admin")
                     {
-                        
-                        //TempData["SweetAlertMessage"] = new SweetAlertMessage("Login Successful!", "You are now logged in.", SweetAlertMessageType.Success);
+                        _notyf.Success("Successfully Login");
                         return RedirectToAction("AdminDash", "AdminDash");
                     }
                 }
-               
-
+                else if(Email == null || verifiedpassword == false)
+                {
+                    _notyf.Error("Invalid Email OR Password");
+                }
             }
+
+          
             return View(patient);
         }
 

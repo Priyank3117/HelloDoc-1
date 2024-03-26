@@ -10,6 +10,7 @@ using static BAL.Repository.Authorizationrepo;
 using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using DAL.DataModels;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 
 
@@ -28,10 +29,11 @@ namespace HelloDoc.Controllers
         private readonly IPatient_Request _patient;
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<AdminProfile> _passwordHasher;
+        private readonly INotyfService _notyf;
 
 
         public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
-            IPasswordHasher<AdminProfile> passwordHasher)
+            IPasswordHasher<AdminProfile> passwordHasher, INotyfService notyf)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
@@ -40,6 +42,7 @@ namespace HelloDoc.Controllers
             _patient = patient;
             _emailService = emailService;
             _passwordHasher = passwordHasher;
+            _notyf = notyf;
         }
         public IActionResult AdminDash()
         {
@@ -418,6 +421,7 @@ namespace HelloDoc.Controllers
             if (Email != null)
             {
                 _AdminDashboard.AdministratorInformation(adminProfile, Email,states);
+                _notyf.Success("The Data Saved Successfully");
             }
             HttpContext.Session.SetString("Email", adminProfile.Email);
             return RedirectToAction("AdminProfile");  
@@ -430,6 +434,7 @@ namespace HelloDoc.Controllers
             if (Email != null)
             {
                 _AdminDashboard.MailingBillingInformation(adminProfile, Email);
+                _notyf.Success("The Data Saved Successfully");
             }
           
             return RedirectToAction("AdminProfile");  
@@ -438,13 +443,20 @@ namespace HelloDoc.Controllers
         public IActionResult AccountInformation([FromForm] string Password)
         {
             var Email = HttpContext.Session.GetString("Email");
-            var hashPassword = _passwordHasher.HashPassword(null, Password);
 
-            if (Email != null)
+            if (Email != null && Password != null)
             {
+               var hashPassword = _passwordHasher.HashPassword(null, Password);
                 _AdminDashboard.AccountInformation(hashPassword, Email);
+                _notyf.Success("PasswordChanged Successfully");
+               return RedirectToAction("Patient_login", "Login");
             }
-            return RedirectToAction("Patient_login", "Login");
+            else
+            {
+                _notyf.Error("Please Enter the Password");
+                _notyf.Warning("Password is Required");
+                return RedirectToAction("AdminProfile");
+            }
         }
 
         public IActionResult SendLinkForm(string sendLinkFirstname, string sendLinkLastname, string sendLinkEmail)
@@ -461,6 +473,7 @@ namespace HelloDoc.Controllers
                 {
                     _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
                      $"<a href='{formLink}'>Click here </a> for Request");
+                    _notyf.Success("Email Sent Successfully");
                 }   
             }
 
@@ -488,6 +501,7 @@ namespace HelloDoc.Controllers
                     //send email on createRequest.Email which is enter by admin
                     _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
                      $"<a href='{formLink}'>Click here </a> for Request");
+                    _notyf.Success("Email Sent Successfully");
                 }
                 return RedirectToAction("CreateRequest");
             }
@@ -498,8 +512,149 @@ namespace HelloDoc.Controllers
 
         public IActionResult Provider()
         {
-           
-            return View();
+            Provider provider = new Provider();
+            provider.regions = _context.Regions.ToList();
+            return View(provider);
         }
+
+        public IActionResult ProvidersData(string region)
+        {
+            var result = (from phy in _context.Physicians
+                          join role in _context.Roles
+                          on phy.RoleId equals role.RoleId
+                          join notify in _context.PhysicianNotifications
+                          on phy.PhysicianId equals notify.PhysicianId
+                          where (string.IsNullOrEmpty(region) || phy.RegionId == int.Parse(region))
+                          select new Provider
+                          {
+                              Name = phy.FirstName,
+                              Role = role.Name,
+                              OnCallStaus = new BitArray(new[] { notify.IsNotificationStopped[0] }),
+                              status = phy.Status,
+                              regions = _context.Regions.ToList(),
+                              physicianid = phy.PhysicianId
+                          }).ToList();
+            return PartialView("_ProviderTable", result);
+        }
+
+        public IActionResult PhysicianProfile(int id)
+        {
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+            PhysicianProfile physicanProfile = new PhysicianProfile();
+            physicanProfile.FirstName = physician.FirstName;
+            physicanProfile.LastName = physician.LastName ?? "";
+            physicanProfile.Email = physician.Email;
+            physicanProfile.Address1 = physician.Address1 ?? "";
+            physicanProfile.Address2 = physician.Address2 ?? "";
+            physicanProfile.City = physician.City ?? "";
+            physicanProfile.ZipCode = physician.Zip ?? "";
+            physicanProfile.MobileNo = physician.Mobile ?? "";
+            physicanProfile.Regions = _context.Regions.ToList();
+            physicanProfile.MedicalLicense = physician.MedicalLicense;
+            physicanProfile.NPINumber = physician.Npinumber;
+            physicanProfile.SynchronizationEmail = physician.SyncEmailAddress;
+            physicanProfile.physicianid = physician.PhysicianId;
+            physicanProfile.WorkingRegions = _context.PhysicianRegions.Where(item => item.PhysicianId == physician.PhysicianId).ToList();
+            physicanProfile.State = physician.RegionId;
+            physicanProfile.SignatureFilename = physician.Signature;
+            physicanProfile.BusinessWebsite = physician.BusinessWebsite;
+            physicanProfile.BusinessName = physician.BusinessName;
+            physicanProfile.PhotoFileName = physician.Photo;
+            physicanProfile.IsAgreement = physician.IsAgreementDoc;
+            physicanProfile.IsBackground = physician.IsBackgroundDoc;
+            physicanProfile.IsHippa = physician.IsAgreementDoc;
+            physicanProfile.NonDiscoluser = physician.IsNonDisclosureDoc;
+            physicanProfile.License = physician.IsLicenseDoc;
+            return View(physicanProfile);
+        }
+
+        public IActionResult ResetPhysicianPassword(string Password, int physicianid)
+        {
+
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+
+          
+            if (account != null && Password != null)
+            {
+                string passwordhash = _passwordHasher.HashPassword(null,Password);
+                account.PasswordHash = passwordhash;
+                _context.AspNetUsers.Update(account);
+                _context.SaveChanges();
+                _notyf.Success("Password Changed Successfully");
+            }
+            else
+            {
+                _notyf.Error("Please Enter the Password");
+            }
+
+            return RedirectToAction("PhysicianProfile", "AdminDash", new { id = physicianid });
+        }
+
+        public IActionResult PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
+        {
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+            if (physician != null)
+            {
+                physician.Mobile = MobileNo;
+                physician.Npinumber = NPINumber;
+                physician.MedicalLicense = MedicalLicense;
+                physician.SyncEmailAddress = SynchronizationEmail;
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+
+
+                List<PhysicianRegion> region = _context.PhysicianRegions.
+                    Where(item => item.PhysicianId == physician.PhysicianId).ToList();
+
+                _context.PhysicianRegions.RemoveRange(region);
+                _context.SaveChanges();
+
+                foreach (var item in Region)
+                {
+                    PhysicianRegion physicianRegion = new PhysicianRegion();
+                    physicianRegion.PhysicianId= id;
+                    physicianRegion.RegionId = int.Parse(item);
+                    _context.Add(physicianRegion);
+                    _context.SaveChanges();
+                }
+
+                _notyf.Success("Data Saved Successfully");
+                
+            }
+            else
+            {
+                _notyf.Error("Data Can not be added");
+            }
+            return RedirectToAction("PhysicianProfile", "AdminDash", new { id = id });
+
+        }
+
+        public IActionResult MailingBillingInformationProvider(int physicianid, string MobileNo, string Address1, string Address2, string City, int State, string Zipcode)
+        {
+          
+                Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+                if (physician != null)
+                {
+                    physician.Address1 = Address1;
+                    physician.Address2 = Address2;
+                    physician.City = City;
+                    physician.Mobile = MobileNo;
+                    physician.RegionId = State;
+                    physician.Zip = Zipcode;
+                    _context.Physicians.Update(physician);
+                    _context.SaveChanges();
+                  _notyf.Success("Data Saved Successfully");
+               }
+                else
+                {
+                  _notyf.Error("Data Can not be added");
+
+                }
+                return RedirectToAction("PhysicianProfile", "AdminDash", new { id = physicianid });
+            }
     }
 }

@@ -1,3 +1,5 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using BAL.Interface;
 using BAL.Repository;
 using DAL.DataContext;
@@ -23,8 +25,6 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
-  
-
 });
 
 builder.Services.AddScoped<IPatient_Request, Patient_Requestrepo>();
@@ -40,6 +40,10 @@ builder.Services.AddScoped<IPasswordHasher<Patient_login>,PasswordHasher<Patient
 builder.Services.AddScoped<IPasswordHasher<AdminProfile>,PasswordHasher<AdminProfile>>();
 builder.Services.AddScoped<IPasswordHasher<CreateAccount>,PasswordHasher<CreateAccount>>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddNotyf(config => {
+    config.DurationInSeconds = 5; config.IsDismissable = true;
+    config.Position = NotyfPosition.TopRight;
+});
 
 //Jwt configuration starts here
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
@@ -81,6 +85,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+app.UseNotyf();
 
 app.MapControllerRoute(
     name: "default",
