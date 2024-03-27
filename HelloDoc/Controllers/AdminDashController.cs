@@ -11,6 +11,7 @@ using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using DAL.DataModels;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using BAL.Repository;
 
 
 
@@ -30,10 +31,11 @@ namespace HelloDoc.Controllers
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<AdminProfile> _passwordHasher;
         private readonly INotyfService _notyf;
+        private readonly IUploadProvider _uploadProvider;
 
 
         public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
-            IPasswordHasher<AdminProfile> passwordHasher, INotyfService notyf)
+            IPasswordHasher<AdminProfile> passwordHasher, INotyfService notyf,IUploadProvider uploadProvider)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
@@ -43,6 +45,7 @@ namespace HelloDoc.Controllers
             _emailService = emailService;
             _passwordHasher = passwordHasher;
             _notyf = notyf;
+            _uploadProvider = uploadProvider;
         }
         public IActionResult AdminDash()
         {
@@ -629,7 +632,7 @@ namespace HelloDoc.Controllers
             {
                 _notyf.Error("Data Can not be added");
             }
-            return RedirectToAction("PhysicianProfile", "AdminDash", new { id = id });
+            return RedirectToAction("PhysicianProfile", "AdminDash", new{id = id });
 
         }
 
@@ -656,5 +659,91 @@ namespace HelloDoc.Controllers
                 }
                 return RedirectToAction("PhysicianProfile", "AdminDash", new { id = physicianid });
             }
+        [HttpPost]
+        public IActionResult SaveSignatureImage(IFormFile signatureImage, int id)
+        {
+            
+                if (signatureImage != null && signatureImage.Length > 0)
+                {
+                    string fileName = _uploadProvider.UploadSignature(signatureImage, id);
+                    var physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+                    physician.Signature = fileName;
+                    _context.Physicians.Update(physician);
+                    _context.SaveChanges();
+                    _notyf.Success("Signature Saved Successfully");
+                    return Ok();
+                }
+                else
+                {
+                    _notyf.Error("signature can not be saved");
+                    return BadRequest();
+                }
+      
+           
+        }
+
+        public IActionResult Providerprofile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile)
+        {
+            try
+            {
+                _AdminDashboard.UpdateProviderProfile(id, businessName, businessWebsite, signatureFile, photoFile);
+                _notyf.Success("Data Added Successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _notyf.Error("Error While Saving the data");
+                Console.WriteLine(ex.Message);
+            }
+
+            return RedirectToAction("PhysicianProfile", "AdminDash", new { id = id });
+        }
+
+        [HttpPost]
+        public IActionResult UploadDocumetns(string fileName, IFormFile File, int physicianid)
+        {
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+            if (physician != null)
+            {
+
+                if (fileName == "ICA")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsAgreementDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "Background")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsBackgroundDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "Hippa")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsTrainingDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "NonDiscoluser")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsNonDisclosureDoc = new BitArray(new[] { true });
+                }
+                if (fileName == "License")
+                {
+                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
+                    physician.IsLicenseDoc = new BitArray(new[] { true });
+                }
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+                _notyf.Success("Document Saved Successfully");
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("No Doc File received.");
+            }
+        }
+
+        public IActionResult CreateProviderAccount()
+        {
+            return View();
+        }
     }
 }

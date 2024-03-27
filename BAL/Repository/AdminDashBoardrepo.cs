@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using static DAL.ViewModel.AdminProfile;
 
@@ -13,11 +14,13 @@ namespace BAL.Repository
 
         private readonly ApplicationDbContext _context;
         private readonly IPasswordHasher<AdminProfile> _passwordHasher;
+        private readonly IUploadProvider _uploadprovider;
 
-        public AdminDashBoardrepo(ApplicationDbContext context)
+
+        public AdminDashBoardrepo(ApplicationDbContext context, IUploadProvider uploadprovider)
         {
             _context = context;
-
+            _uploadprovider = uploadprovider;
         }
 
 
@@ -700,6 +703,36 @@ namespace BAL.Repository
                 ToClosed = toclosed,
                 Unpaid = unpaid
             };
+        }
+
+        public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile)
+        {
+            var physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+            if (physician != null)
+            {
+                physician.BusinessName = businessName;
+                physician.BusinessWebsite = businessWebsite;
+
+                if (signatureFile != null && signatureFile.FileName != null)
+                {
+                    string signatureFileName = _uploadprovider.UploadSignature(signatureFile, id);
+                    physician.Signature = signatureFileName;
+                }
+
+                if (photoFile != null && photoFile.FileName != null)
+                {
+                    string photoFileName = _uploadprovider.UploadPhoto(photoFile, id);
+                    physician.Photo = photoFileName;
+                }
+
+                _context.Physicians.Update(physician);
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new InvalidOperationException("Physician not found");
+            }
         }
     }
 }

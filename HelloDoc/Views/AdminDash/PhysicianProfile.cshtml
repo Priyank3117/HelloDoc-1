@@ -255,14 +255,45 @@
                             <div id="fileName" asp-for="FileName" class="form-control fs-6 align-middle">
                                 Select Photo
                             </div>
-                            <input type="file" asp-for="File" class="form-control changable2" id="fileInput" hidden disabled accept="jpg,png" />
+                            <input type="file" asp-for="File" name="photoFile" class="form-control changable2" id="fileInput" hidden disabled accept="jpg,png" />
                             <label class="input-group-text btn btn-info text-light" for="fileInput">
                             
                                 <span class="d-none d-md-inline">Upload</span>
                             </label>
                         </div>
                     </div>
-                   
+                   @* ---------- *@
+                    <div class="col">
+                        <div class="input-group input-group-lg">
+                            <div id="signname" class="form-control fs-6 align-middle">
+                                Select Signature
+                            </div>
+                            <input type="file" id="sign" name="signature" class="form-control changable2" hidden disabled />
+                            <label class="input-group-text btn btn-info text-light" for="sign">
+                            
+                                <span class="d-none d-md-inline">Upload Sign</span>
+                            </label>
+                            <button class="btn btn-outline-info mx-2 changable2" type="button" id="createBtn" disabled>Create</button>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+
+                        <div id="canvasContainer" style="display: block;">
+                            <div id="signatureArea">
+                                <canvas id="signatureCanvas" class="bg-body-secondary" width="400" height="200"></canvas>
+                            </div>
+                            <div class="buttons">
+                                <button id="clearBtn" class="btn btn-outline-info" type="button">Clear</button>
+                                <button id="saveBtn" onclick="saveSignature()" class="btn btn-outline-info" type="button">Save</button>
+                            </div>
+                        </div>
+
+
+ <img src="~/Physician/@Model.physicianid/@Model.SignatureFilename" alt="Signature" id="signatureImage" style="max-width: 100%; max-height: 200px;" /> 
+
+                    </div>
+                   @* ---------- *@
                     <div class="col-12 col-md-12">
                         <div class="form-floating">
                             <textarea class="form-control changable2"
@@ -295,7 +326,7 @@
                 </div>
             </form>
             <h5>Onboarding</h5>
-            <form>
+            <form class="mb-5 ">
 
 
                 <div class="d-flex align-items-center gap-3 mb-3">
@@ -338,7 +369,7 @@
                     }
                 </div>
            <div class="d-flex align-items-center gap-3 mb-3">
-                    <input type="checkbox" class="form-check-input" id="agreeToICA" name="agreeToICA" @(Model.NonDiscoluser[0] ? "checked" : "")>
+                    <input type="checkbox" class="form-check-input" id="agreeToICA" name="agreeToICA" @(Model.NonDiscoluser[0] ? "checked" : "") accept=".pdf .jpg">
                     <span>Non-disclosure-Agreement</span>
 
                     <input type="file" class="form-control" id="NonDiscoluser" hidden />
@@ -347,7 +378,7 @@
                     </label>
                     @if (Model.NonDiscoluser[0])
                     {
-                        <a class="btn btn-info" href="~/Physician/@Model.physicianid/Hippa.pdf">View</a>
+                        <a class="btn btn-info" href="~/Physician/@Model.physicianid/NonDiscoluser.pdf">View</a>
                     }
                 </div>
            <div class="d-flex align-items-center gap-3 mb-3">
@@ -467,7 +498,7 @@
         inputFields.forEach(function (input) {
             input.disabled = !input.disabled;
         });
-
+        $('#canvasContainer').hide();   
         $("#EditBtn2").show();
         $("#CancelBtn2").hide();
         $("#SaveBtn2").hide();
@@ -500,6 +531,112 @@
         }
     };
 </script>
+@* ------------------------------ *@
+
+
+<script src="https://cdn.jsdelivr.net/npm/formdata-polyfill"></script>
+
+<script>
+  
+    $('#canvasContainer').hide();
+    $("#createBtn").click(function () {
+        if ($("#signatureImage").is(":visible")) {
+            $('#signatureImage').hide(); 
+            $('#canvasContainer').show(); 
+        }
+        else {
+            $('#canvasContainer').show(); 
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var canvas = document.getElementById('signatureCanvas');
+        var ctx = canvas.getContext("2d");
+        var isDrawing = false;
+        var lastX = 0;
+        var lastY = 0;
+        var signatureData;
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        document.getElementById('clearBtn').addEventListener('click', clearSignature);
+        document.getElementById('saveBtn').addEventListener('click', saveSignature);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            signatureData = true;
+
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            signatureData = null;
+
+
+        }
+        function saveSignature() {
+
+            console.log(signatureData);
+            if (!signatureData) {
+                alert("Please Sign First")
+                return;
+            }
+
+            var canvas = document.getElementById('signatureCanvas');
+            var dataUrl = canvas.toDataURL('image/png');
+
+            // Convert data URL to blob
+            fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    var formData = new FormData();
+                    formData.append('signatureImage', blob);
+                    formData.append('id', @Model.physicianid);
+
+                    $.ajax({
+                        url: '/AdminDash/SaveSignatureImage',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                                  debugger
+                            window.location.reload(true);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error converting data URL to blob:', error);
+                });
+        }
+
+    });
+
+</script>
+@* ------------------------------ *@
+<script src="https://cdn.jsdelivr.net/npm/formdata-polyfill"></script>
 
 
 <script>
@@ -531,12 +668,12 @@
         }
 
         const formData = new FormData();
-        formData.append('File', fileInput.files[0]);  // Append file to FormData
-        formData.append('fileName', fileInput.id); // Indicate file type in server-side processing (optional)
+        formData.append('File', fileInput.files[0]);  
+        formData.append('fileName', fileInput.id); 
         formData.append('physicianid', @Model.physicianid);
-        // Replace with your server-side URL and data handling logic
+       
         $.ajax({
-            url: '/Admin/UploadDoc',
+            url: '/AdminDash/UploadDocumetns',
             type: 'POST',
             data: formData,
             processData: false,

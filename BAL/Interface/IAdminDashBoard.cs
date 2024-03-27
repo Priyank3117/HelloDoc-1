@@ -1,6 +1,7 @@
 ﻿using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -56,5 +57,6 @@ namespace BAL.Interface
         public void AddCreateRequest(CreateRequest createRequest, string Email, string SelectedStateId);
 
         public GetCount GetCount();
+        public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
     }
 }
