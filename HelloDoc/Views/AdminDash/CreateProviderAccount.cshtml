@@ -23,7 +23,7 @@
 </div>
 <div class="row justify-content-center">
     <div class="col-10 rounded mb-3" style="box-shadow: 2px 2px 20px rgb(179, 177, 177);">
-        <form asp-action="CreateProviderPartial" enctype="multipart/form-data">
+        <form asp-action="CreateProviderAccount" enctype="multipart/form-data">
             <div class="row">
                 <h6 class="my-3">Account Information</h6>
             </div>
@@ -46,12 +46,18 @@
                 </div>
                 <div class="col-md-4 col-sm-6 col-12">
                     <div class="form-floating">
-                        <select class="form-select border text-muted mb-2 roles" id="roleProvider" aria-label="Default select example" asp-for="Role">
+                        <select class="form-control d-flex align-items-center py-2" asp-for="Role">
+                            <option>Select Roles</option>
+                            @foreach (var item in Model.roles)
+                            {
+                                <option value="@item.RoleId">@item.Name</option>
+                            }
                         </select>
-                        <label for="role">Role</label>
+                      
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
                 </div>
+              
             </div>
             <div class="row">
                 <h6 class="my-3">Provider Information</h6>
@@ -102,7 +108,22 @@
                         <span asp-validation-for="NPINum" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-6" id="physicianRegionsContainer">
+                <div class="col-md-6">
+                    <div class="form-check form-check-inline ">
+                        @foreach (var region in Model.regions)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input changable"
+                                       type="checkbox"
+                                       id="region-@region.RegionId"
+                                       name="regions"
+                                       value="@region.RegionId" />
+                                <label class="form-check-label" for="region-@region.RegionId">@region.Name</label>
+                            </div>
+
+                        }
+                        <span class="error-adminRegion text-danger"></span>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -133,9 +154,13 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select border text-muted mb-2 regions" id="stateProvider" aria-label="Default select example" asp-for="State">
+                        <select class="form-control d-flex align-items-center py-2" asp-for="State">
+                            <option>Select State</option>
+                            @foreach (var state in Model.regions)
+                            {
+                                <option value="@state.RegionId">@state.Name</option>
+                            }
                         </select>
-                        <label for="stateProvider">State</label>
                         <span asp-validation-for="State" class="text-danger"></span>
                     </div>
                 </div>
@@ -252,6 +277,19 @@
                         <label for="nonDisclosure" class="input-group-text btn btn-info text-white"><span><i class="bi bi-cloud-arrow-up text-white"></i></span> Upload</label>
                         <span asp-validation-for="NonDisclosure" class="text-danger"></span>
                     </div>
+                </div> 
+                <div class="col-8 d-flex justify-content-between mb-3">
+                    <div>
+                        <input type="checkbox" id="checkLicense" />
+                    </div>
+                    <div>
+                        <span>Medical License</span>
+                    </div>
+                    <div>
+                        <input type="file" class="form-control" id="License" accept=".pdf" hidden asp-for="License" />
+                        <label for="License" class="input-group-text btn btn-info text-white"><span><i class="bi bi-cloud-arrow-up text-white"></i></span> Upload</label>
+                        <span asp-validation-for="License" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
             <hr />
@@ -310,6 +348,16 @@
         }
         else {
             $('#checkNonDisclosure').prop('checked', false);
+        }
+    });
+    
+    $('#License').on('change', function () {
+        if (this.files && this.files.length > 0) {
+            console.log(this.files.length);
+            $('#checkLicense').prop('checked', true);
+        }
+        else {
+            $('#checkLicense').prop('checked', false);
         }
     });
    

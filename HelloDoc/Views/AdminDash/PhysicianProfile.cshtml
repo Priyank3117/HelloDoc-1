@@ -238,7 +238,7 @@
 
                     <div class="col">
                         <div class="form-floating">
-                            <input asp-for=@Model.BusinessName type="text" class="form-control changable2" id="email" placeholder="Email" name="Businessname" disabled>
+                            <input asp-for=@Model.BusinessName type="text" class="form-control changable2" id="email" placeholder="Email" name="Businessname" disabled required>
                             <label for="email">BusinessName</label>
                           
                         </div>
@@ -537,7 +537,8 @@
 <script src="https://cdn.jsdelivr.net/npm/formdata-polyfill"></script>
 
 <script>
-  
+    var signatureData = false;
+
     $('#canvasContainer').hide();
     $("#createBtn").click(function () {
         if ($("#signatureImage").is(":visible")) {
@@ -555,7 +556,6 @@
         var isDrawing = false;
         var lastX = 0;
         var lastY = 0;
-        var signatureData;
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
@@ -581,21 +581,22 @@
             [lastX, lastY] = [e.offsetX, e.offsetY];
         }
 
+       
+
+        function clearSignature() {
+            console.log(signatureData + "signatureData");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            signatureData = false;
+        }
         function stopDrawing() {
+            console.log(signatureData + "stopDrawing");
             isDrawing = false;
             signatureData = true;
 
         }
-
-        function clearSignature() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            signatureData = null;
-
-
-        }
         function saveSignature() {
 
-            console.log(signatureData);
+            console.log(signatureData + "saveSignature");
             if (!signatureData) {
                 alert("Please Sign First")
                 return;
@@ -684,7 +685,7 @@
             },
             error: function (error) {
                 console.error('Error:', error);
-                toastr.error('An error occurred while saving the agreement. Please try again.');
+                
             }
         })
     };

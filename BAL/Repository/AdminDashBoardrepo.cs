@@ -2,10 +2,11 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
-using DAL.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using static DAL.ViewModel.AdminProfile;
+using System.Collections;
+
+
 
 namespace BAL.Repository
 {
@@ -17,10 +18,11 @@ namespace BAL.Repository
         private readonly IUploadProvider _uploadprovider;
 
 
-        public AdminDashBoardrepo(ApplicationDbContext context, IUploadProvider uploadprovider)
+        public AdminDashBoardrepo(ApplicationDbContext context, IUploadProvider uploadprovider,IPasswordHasher<AdminProfile> passwordHasher)
         {
             _context = context;
             _uploadprovider = uploadprovider;
+            _passwordHasher = passwordHasher;
         }
 
 
@@ -732,6 +734,172 @@ namespace BAL.Repository
             else
             {
                 throw new InvalidOperationException("Physician not found");
+            }
+        }
+
+        public List<Provider> providers(string Region)
+        {
+            var result = (from phy in _context.Physicians
+                          join role in _context.Roles
+                          on phy.RoleId equals role.RoleId
+                          join notify in _context.PhysicianNotifications
+            on phy.PhysicianId equals notify.PhysicianId
+            orderby phy.CreatedDate
+                          where (string.IsNullOrEmpty(Region) || phy.RegionId == int.Parse(Region))
+                          select new Provider
+                          {
+                              Name = phy.FirstName,
+                              Role = role.Name,
+                              OnCallStaus = new BitArray(new[] { notify.IsNotificationStopped[0] }),
+                              status = phy.Status,
+                              regions = _context.Regions.ToList(),
+                              physicianid = phy.PhysicianId
+                          }).ToList();
+
+            return result;
+        }
+
+        public PhysicianProfile PhysicianProfile(int id)
+        {
+            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+            PhysicianProfile physicanProfile = new PhysicianProfile();
+            physicanProfile.FirstName = physician.FirstName;
+            physicanProfile.LastName = physician.LastName ?? "";
+            physicanProfile.Email = physician.Email;
+            physicanProfile.Address1 = physician.Address1 ?? "";
+            physicanProfile.Address2 = physician.Address2 ?? "";
+            physicanProfile.City = physician.City ?? "";
+            physicanProfile.ZipCode = physician.Zip ?? "";
+            physicanProfile.MobileNo = physician.Mobile ?? "";
+            physicanProfile.Regions = _context.Regions.ToList();
+            physicanProfile.MedicalLicense = physician.MedicalLicense;
+            physicanProfile.NPINumber = physician.Npinumber;
+            physicanProfile.SynchronizationEmail = physician.SyncEmailAddress;
+            physicanProfile.physicianid = physician.PhysicianId;
+            physicanProfile.WorkingRegions = _context.PhysicianRegions.Where(item => item.PhysicianId == physician.PhysicianId).ToList();
+            physicanProfile.State = physician.RegionId;
+            physicanProfile.SignatureFilename = physician.Signature;
+            physicanProfile.BusinessWebsite = physician.BusinessWebsite;
+            physicanProfile.BusinessName = physician.BusinessName;
+            physicanProfile.PhotoFileName = physician.Photo;
+            physicanProfile.IsAgreement = physician.IsAgreementDoc;
+            physicanProfile.IsBackground = physician.IsBackgroundDoc;
+            physicanProfile.IsHippa = physician.IsAgreementDoc;
+            physicanProfile.NonDiscoluser = physician.IsNonDisclosureDoc;
+            physicanProfile.License = physician.IsLicenseDoc;
+            return physicanProfile;
+        }
+
+        public void CreateProviderAccountPost(CreateProviderAccount CreateProviderAccount, string[] regions)
+        {
+            AspNetUser aspnetUser = new AspNetUser();
+
+            Guid id = Guid.NewGuid();
+            aspnetUser.AspNetUserId = id.ToString();
+
+            aspnetUser.UserName = CreateProviderAccount.Username;
+            aspnetUser.Email = CreateProviderAccount.Email;
+            aspnetUser.PasswordHash = _passwordHasher.HashPassword(null, CreateProviderAccount.Password);
+            aspnetUser.PhoneNumber = CreateProviderAccount.Phone;
+            aspnetUser.CreatedDate = DateTime.Now;
+
+            _context.AspNetUsers.Add(aspnetUser);
+            _context.SaveChanges();
+
+            Physician physician = new Physician();
+            physician.AspNetUserId = aspnetUser.AspNetUserId;
+            physician.RoleId = int.Parse(CreateProviderAccount.Role);
+            physician.FirstName = CreateProviderAccount.Firstname;
+            physician.LastName = CreateProviderAccount.Lastname;
+            physician.Email = CreateProviderAccount.Email;
+            physician.Mobile = CreateProviderAccount.Phone;
+            physician.MedicalLicense = CreateProviderAccount.MedLicense;
+            physician.Npinumber = CreateProviderAccount.NPINum;
+            physician.Address1 = CreateProviderAccount.Address1;
+            physician.Address2 = CreateProviderAccount.Address2;
+            physician.RegionId = int.Parse(CreateProviderAccount.State);
+            physician.Zip = CreateProviderAccount.Zip;
+            physician.BusinessName = CreateProviderAccount.BusinessName;
+            physician.CreatedDate = DateTime.Now;
+            physician.Status = 1;
+            physician.BusinessWebsite = CreateProviderAccount.BusinessWebsite;
+            _context.Physicians.Add(physician);
+            _context.SaveChanges();
+
+            if (CreateProviderAccount.Photo != null)
+            {
+                _uploadprovider.UploadPhoto(CreateProviderAccount.Photo, physician.PhysicianId);
+                physician.Photo = CreateProviderAccount.Photo.FileName;
+
+            }
+            if (CreateProviderAccount.ICA != null)
+            {
+                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.ICA, physician.PhysicianId, "ICA");
+                physician.IsAgreementDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsAgreementDoc = new BitArray(new[] { false });
+            }
+            if (CreateProviderAccount.BackgroundCheck != null)
+            {
+                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.BackgroundCheck, physician.PhysicianId, "Background");
+                physician.IsBackgroundDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsBackgroundDoc = new BitArray(new[] { false });
+            }
+            if (CreateProviderAccount.HIPAA != null)
+            {
+                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.HIPAA, physician.PhysicianId, "Hippa");
+                physician.IsTrainingDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsTrainingDoc = new BitArray(new[] { false });
+            }
+            if (CreateProviderAccount.NonDisclosure != null)
+            {
+                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.NonDisclosure, physician.PhysicianId, "NonDiscoluser");
+                physician.IsNonDisclosureDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsNonDisclosureDoc = new BitArray(new[] { false });
+            }
+            if (CreateProviderAccount.License != null)
+            {
+                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.License, physician.PhysicianId, "License");
+                physician.IsLicenseDoc = new BitArray(new[] { true });
+            }
+            else
+            {
+                physician.IsLicenseDoc = new BitArray(new[] { false });
+            }
+            _context.Physicians.Update(physician);
+            _context.SaveChanges();
+
+            PhysicianNotification physicianNotification = new PhysicianNotification();
+            physicianNotification.PhysicianId = physician.PhysicianId;
+            physicianNotification.IsNotificationStopped = new BitArray(new[] { true });
+            _context.PhysicianNotifications.Add(physicianNotification);
+            _context.SaveChanges();
+
+
+
+
+            if (regions != null)
+            {
+                foreach (var item in regions)
+                {
+                    PhysicianRegion physicianRegion = new PhysicianRegion();
+                    physicianRegion.PhysicianId = physician.PhysicianId;
+                    physicianRegion.RegionId = int.Parse(item);
+                    _context.Add(physicianRegion);
+                    _context.SaveChanges();
+                }
             }
         }
     }

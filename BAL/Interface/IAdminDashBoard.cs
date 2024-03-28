@@ -57,6 +57,11 @@ namespace BAL.Interface
         public void AddCreateRequest(CreateRequest createRequest, string Email, string SelectedStateId);
 
         public GetCount GetCount();
+
+        public List<Provider> providers(string Region);
+        public PhysicianProfile PhysicianProfile(int id);
+
+        public void CreateProviderAccountPost(CreateProviderAccount CreateProviderAccount, string[] regions);
         public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
     }
 }

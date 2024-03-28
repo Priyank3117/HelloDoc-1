@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Identity;
 using DAL.DataModels;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using BAL.Repository;
+using DAL.ViewModels;
+using System.ComponentModel;
+
 
 
 
@@ -522,53 +525,13 @@ namespace HelloDoc.Controllers
 
         public IActionResult ProvidersData(string region)
         {
-            var result = (from phy in _context.Physicians
-                          join role in _context.Roles
-                          on phy.RoleId equals role.RoleId
-                          join notify in _context.PhysicianNotifications
-                          on phy.PhysicianId equals notify.PhysicianId
-                          where (string.IsNullOrEmpty(region) || phy.RegionId == int.Parse(region))
-                          select new Provider
-                          {
-                              Name = phy.FirstName,
-                              Role = role.Name,
-                              OnCallStaus = new BitArray(new[] { notify.IsNotificationStopped[0] }),
-                              status = phy.Status,
-                              regions = _context.Regions.ToList(),
-                              physicianid = phy.PhysicianId
-                          }).ToList();
+            var result = _AdminDashboard.providers(region);
             return PartialView("_ProviderTable", result);
         }
 
         public IActionResult PhysicianProfile(int id)
         {
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
-
-            PhysicianProfile physicanProfile = new PhysicianProfile();
-            physicanProfile.FirstName = physician.FirstName;
-            physicanProfile.LastName = physician.LastName ?? "";
-            physicanProfile.Email = physician.Email;
-            physicanProfile.Address1 = physician.Address1 ?? "";
-            physicanProfile.Address2 = physician.Address2 ?? "";
-            physicanProfile.City = physician.City ?? "";
-            physicanProfile.ZipCode = physician.Zip ?? "";
-            physicanProfile.MobileNo = physician.Mobile ?? "";
-            physicanProfile.Regions = _context.Regions.ToList();
-            physicanProfile.MedicalLicense = physician.MedicalLicense;
-            physicanProfile.NPINumber = physician.Npinumber;
-            physicanProfile.SynchronizationEmail = physician.SyncEmailAddress;
-            physicanProfile.physicianid = physician.PhysicianId;
-            physicanProfile.WorkingRegions = _context.PhysicianRegions.Where(item => item.PhysicianId == physician.PhysicianId).ToList();
-            physicanProfile.State = physician.RegionId;
-            physicanProfile.SignatureFilename = physician.Signature;
-            physicanProfile.BusinessWebsite = physician.BusinessWebsite;
-            physicanProfile.BusinessName = physician.BusinessName;
-            physicanProfile.PhotoFileName = physician.Photo;
-            physicanProfile.IsAgreement = physician.IsAgreementDoc;
-            physicanProfile.IsBackground = physician.IsBackgroundDoc;
-            physicanProfile.IsHippa = physician.IsAgreementDoc;
-            physicanProfile.NonDiscoluser = physician.IsNonDisclosureDoc;
-            physicanProfile.License = physician.IsLicenseDoc;
+            var physicanProfile = _AdminDashboard.PhysicianProfile(id);
             return View(physicanProfile);
         }
 
@@ -697,6 +660,26 @@ namespace HelloDoc.Controllers
 
             return RedirectToAction("PhysicianProfile", "AdminDash", new { id = id });
         }
+        public IActionResult NotificationManagement(bool isChecked, string id)
+        {
+            var physicianNotification = _context.PhysicianNotifications.Where(u => u.PhysicianId == int.Parse(id)).FirstOrDefault();
+            if (physicianNotification != null)
+            {
+                if (isChecked == true)
+                {
+                    physicianNotification.IsNotificationStopped = new BitArray(new[] { true });
+                }
+                else
+                {
+                    physicianNotification.IsNotificationStopped = new BitArray(new[] { false });
+                }
+
+                _context.PhysicianNotifications.Update(physicianNotification);
+                _context.SaveChanges();
+                return RedirectToAction("Provider");
+            }
+            return RedirectToAction("Provider");
+        }
 
         [HttpPost]
         public IActionResult UploadDocumetns(string fileName, IFormFile File, int physicianid)
@@ -743,7 +726,28 @@ namespace HelloDoc.Controllers
 
         public IActionResult CreateProviderAccount()
         {
-            return View();
+             CreateProviderAccount createProviderAccount = new CreateProviderAccount();
+            createProviderAccount.regions = _context.Regions.ToList();
+            createProviderAccount.roles = _context.Roles.ToList();
+            return View(createProviderAccount);
+
+        }
+
+
+        [HttpPost]
+        public IActionResult CreateProviderAccount(CreateProviderAccount CreateProviderAccount,string[] regions)
+        {
+            if (ModelState.IsValid)
+            {              
+                _AdminDashboard.CreateProviderAccountPost(CreateProviderAccount, regions);
+                _notyf.Success("Physician Added Successfully");
+                return RedirectToAction("CreateProviderAccount");
+            }
+
+            else
+            {
+                return View("CreateProviderAccount", CreateProviderAccount);
+            }
         }
     }
 }

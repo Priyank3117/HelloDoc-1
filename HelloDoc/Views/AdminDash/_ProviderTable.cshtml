@@ -15,7 +15,7 @@
             {
                 <tr>
                     <td scope="row">
-                        <input type="checkbox" class="form-check-input" name="fileIds" @(item.OnCallStaus[0] ? "checked" : "")>
+                        <input id="NotifyBox" type="checkbox" onchange="locationchange(@item.physicianid)" class="form-check-input" name="fileIds" @(item.OnCallStaus[0] ? "checked" : "")>
                     </td>
                     <td scope="row">@item.Name</td>
                     <td scope="row">@item.Role</td>
@@ -49,3 +49,22 @@
         </tbody>
     </table>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    
+    function locationchange(id){
+        var boxid = $("#NotifyBox");
+        var isChecked = boxid.is(':checked');
+        $.ajax({
+           type: 'Post',
+            url: '/AdminDash/NotificationManagement',
+           data : {isChecked: isChecked , id : id },
+           success : function (){
+               console.log("Checked");
+           },
+           error: function(error){
+               console.log("error to check");
+           }
+        });
+    }</script>
