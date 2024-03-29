@@ -290,7 +290,11 @@
                         </div>
 
 
- <img src="~/Physician/@Model.physicianid/@Model.SignatureFilename" alt="Signature" id="signatureImage" style="max-width: 100%; max-height: 200px;" /> 
+                        if(@Model.SignatureFilename != null)
+                        {
+                        <img src="~/Physician/@Model.physicianid/@Model.SignatureFilename" alt="Signature" id="signatureImage" style="max-width: 100%; max-height: 200px;" />
+                        }
+
 
                     </div>
                    @* ---------- *@

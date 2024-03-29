@@ -18,6 +18,7 @@ namespace DAL.ViewModel
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
+            [Required]
             public string Role { get; set; }
             [Required]
             public string Firstname { get; set; }

@@ -23,29 +23,7 @@ namespace BAL.Interface
 
         public IQueryable<ViewNotes> GetViewNotes(int id);
 
-        public ViewCase ViewCase(int id, int status);
-
-        public bool CancelCase(int Requestid, string Reason, string Notes);
-
-        public void AssignCase(int req, string Description, string phyid);
-
-        public void TransferCase(int transferid, string Descriptionoftra, string phyidtra);
-
-        public void BlockCase(int blocknameid, string blocknotes);
-
-        public void ClearCase(int clearcaseid);
-
-        public void SendOrder(SendOrder sendOrder);
-
-        public CloseCase CloseCase(int requestid);
-
-        public void CloseCasePost(CloseCase closeCase, int id);
-
-        public Encounter EncounterForm(int id);
-
-        public void EncounterPost(int id, Encounter enc);
-
-        public bool CloseInstance(int reqid);
+       
 
         public AdminProfile GetAdminData(string Email);
 
@@ -63,5 +41,7 @@ namespace BAL.Interface
 
         public void CreateProviderAccountPost(CreateProviderAccount CreateProviderAccount, string[] regions);
         public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
+
+        public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid);
     }
 }

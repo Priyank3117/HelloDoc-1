@@ -86,17 +86,26 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" ? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAccount" ? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Provider
                         </a>
                         <ul class="dropdown-menu ">
-                            <li><a asp-action="Provider" asp-controller="AdminDash" class="dropdown-item">Provider</a></li>
+                            <li><a asp-action="Provider" asp-controller="AdminDash" class="dropdown-item ">Provider</a></li>
                             <li><a class="dropdown-item">Scheduling</a></li>
                             <li><a class="dropdown-item">Invoice</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.ActionDescriptor.RouteValues["action"] == "Parteners" ? "active" : "")">Parteners</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "UserAccess" ? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Access
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-action="UserAccess" class="dropdown-item">User Access</a></li>
+                            <li><a class="dropdown-item">Account Access</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link  @(ViewContext.ActionDescriptor.RouteValues["action"] == "Records" ? "active" : "")">Records</a>
@@ -131,14 +140,14 @@
                 </div>
             </div>
     </header>
-    <div class="container-fluid ">
+    <div class="container-fluid">
         <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted mt-3">
-        <div class="d-flex flex-row justify-content-end align-items-center bg-dark text-white pe-3 footer position-absolute bottom-0 w-100">
+    <footer class="border-top footer mt-3    bg-dark text-white pe-3   footer position-absolute bottom-0 w-100 align-middle" style="height: 6vh !important;">
+        <div class="d-flex flex-row justify-content-end align-items-center my-auto h-100 py-auto w-100">
             <span>Terms Of Condition | Privacy Policy</span>
         </div>
     </footer>
@@ -156,6 +165,8 @@
     @await RenderSectionAsync("Scripts", required: false)
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/js/UserAccess.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script>

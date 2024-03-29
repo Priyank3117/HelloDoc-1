@@ -35,10 +35,11 @@ namespace HelloDoc.Controllers
         private readonly IPasswordHasher<AdminProfile> _passwordHasher;
         private readonly INotyfService _notyf;
         private readonly IUploadProvider _uploadProvider;
+        private readonly IAdminAction _adminAction;
 
 
         public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
-            IPasswordHasher<AdminProfile> passwordHasher, INotyfService notyf,IUploadProvider uploadProvider)
+            IPasswordHasher<AdminProfile> passwordHasher, INotyfService notyf,IUploadProvider uploadProvider, IAdminAction adminAction)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
@@ -49,6 +50,7 @@ namespace HelloDoc.Controllers
             _passwordHasher = passwordHasher;
             _notyf = notyf;
             _uploadProvider = uploadProvider;
+            _adminAction = adminAction;
         }
         public IActionResult AdminDash()
         {
@@ -98,7 +100,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult ViewCase(int id, int status)
         {
-            var viewCase = _AdminDashboard.ViewCase(id, status);
+            var viewCase = _adminAction.ViewCase(id, status);
             return View(viewCase);
         }
 
@@ -112,7 +114,7 @@ namespace HelloDoc.Controllers
         }
         public ActionResult CancelCase(int Requestid, string Reason, string Notes)
         {
-            if (_AdminDashboard.CancelCase(Requestid, Reason, Notes))
+            if (_adminAction.CancelCase(Requestid, Reason, Notes))
             {
                 return RedirectToAction("AdminDash");
             }
@@ -132,13 +134,13 @@ namespace HelloDoc.Controllers
 
         public IActionResult AssignCase(int req, string Description, string phyid)
         {
-            _AdminDashboard.AssignCase(req, Description, phyid);
+            _adminAction.AssignCase(req, Description, phyid);
             return Ok();
         }
 
         public IActionResult TransferCase(int transferid, string Descriptionoftra, string phyidtra)
         {
-            _AdminDashboard.TransferCase(transferid, Descriptionoftra, phyidtra);
+            _adminAction.TransferCase(transferid, Descriptionoftra, phyidtra);
             return Ok();
         }
         public IActionResult GetPhysicianForTransfer(string regionid)
@@ -153,7 +155,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult BlockCase(int blocknameid, string blocknotes)
         {
-            _AdminDashboard.BlockCase(blocknameid, blocknotes);
+            _adminAction.BlockCase(blocknameid, blocknotes);
             return Ok();
         }
 
@@ -300,7 +302,7 @@ namespace HelloDoc.Controllers
         public IActionResult SendOrder(SendOrder sendOrder)
         {
 
-            _AdminDashboard.SendOrder(sendOrder);
+            _adminAction.SendOrder(sendOrder);
             return RedirectToAction("SendOrder", new { id = sendOrder.requestid });
         }
 
@@ -319,7 +321,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult ClearCase(int clearcaseid)
         {
-            _AdminDashboard.ClearCase(clearcaseid);
+            _adminAction.ClearCase(clearcaseid);
             return Ok();
         }
 
@@ -342,14 +344,14 @@ namespace HelloDoc.Controllers
         public IActionResult EncounterForm(int id)
         {
 
-          var result = _AdminDashboard.EncounterForm(id);
+          var result = _adminAction.EncounterForm(id);
            return View(result);
         }
 
         [HttpPost]
         public  IActionResult EncounterForm(int id,Encounter  enc)
         {
-           _AdminDashboard.EncounterPost(id, enc);
+            _adminAction.EncounterPost(id, enc);
             return RedirectToAction("EncounterForm", new {id = id });
         }
 
@@ -371,7 +373,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult CloseCase(int requestid)
         {
-           var closecase = _AdminDashboard.CloseCase(requestid);
+           var closecase = _adminAction.CloseCase(requestid);
            return View(closecase);
         }
 
@@ -380,13 +382,13 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult CloseCase(CloseCase closeCase, int id)
         {
-            _AdminDashboard.CloseCasePost(closeCase, id);
+            _adminAction.CloseCasePost(closeCase, id);
             return RedirectToAction("CloseCase", new { requestid = id });
         }
 
         public IActionResult CloseInstance(int reqid)
         {
-            if (_AdminDashboard.CloseInstance(reqid))
+            if (_adminAction.CloseInstance(reqid))
             {
                 return RedirectToAction("AdminDash");
             }
@@ -398,7 +400,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult GeneratePDF(int requeid)
         {
-            var EncounterForm = _AdminDashboard.EncounterForm(requeid);
+            var EncounterForm = _adminAction.EncounterForm(requeid);
 
             if (EncounterForm == null)
             {
@@ -684,37 +686,9 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult UploadDocumetns(string fileName, IFormFile File, int physicianid)
         {
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
-            if (physician != null)
+           
+            if (_AdminDashboard.UploadDocumetnsProvider(fileName,File,physicianid))
             {
-
-                if (fileName == "ICA")
-                {
-                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
-                    physician.IsAgreementDoc = new BitArray(new[] { true });
-                }
-                if (fileName == "Background")
-                {
-                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
-                    physician.IsBackgroundDoc = new BitArray(new[] { true });
-                }
-                if (fileName == "Hippa")
-                {
-                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
-                    physician.IsTrainingDoc = new BitArray(new[] { true });
-                }
-                if (fileName == "NonDiscoluser")
-                {
-                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
-                    physician.IsNonDisclosureDoc = new BitArray(new[] { true });
-                }
-                if (fileName == "License")
-                {
-                    var docfile = _uploadProvider.UploadDocFile(File, physicianid, fileName);
-                    physician.IsLicenseDoc = new BitArray(new[] { true });
-                }
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
                 _notyf.Success("Document Saved Successfully");
                 return Ok();
             }
@@ -746,8 +720,76 @@ namespace HelloDoc.Controllers
 
             else
             {
+                CreateProviderAccount.regions = _context.Regions.ToList();
+                CreateProviderAccount.roles = _context.Roles.ToList();
                 return View("CreateProviderAccount", CreateProviderAccount);
             }
+        }
+
+        public IActionResult SendEmailSMS(string id,string Message,string radioForprovider)
+        {
+
+            if(id != null)
+            {
+                var physicianEmail = _context.Physicians.FirstOrDefault(s => s.PhysicianId == int.Parse(id)).Email;
+            }
+            ///do for value 3 and 2 
+            if(radioForprovider == "1")
+            {
+                _emailService.SendEmail("Patelpriyank3112002@gmail.com", "For Contact", Message);
+                _notyf.Success("Email sent successully");
+
+            }
+           else
+            {
+                _notyf.Error("Email can not be sent");
+            }
+            return RedirectToAction("AdminDash");
+        }
+
+        public IActionResult UserAccess()
+        {   
+            return View();
+        }
+
+        public IActionResult UserAccessData(int role)
+         {
+
+
+            var result = (from aspuser in _context.AspNetUsers
+                          join aspnetuserrole in _context.AspNetUserRoles
+                          on aspuser.AspNetUserId equals aspnetuserrole.UserId
+                          join aspnetrole in _context.AspNetRoles
+                          on aspnetuserrole.RoleId equals aspnetrole.AspNetRoleId
+                          join phy in _context.Physicians
+                          on aspuser.AspNetUserId equals phy.AspNetUserId into phyusers
+                          from totaluser in phyusers.DefaultIfEmpty()
+                          join admin in _context.Admins
+                          on aspuser.AspNetUserId equals admin.AspNetUserId into admins
+                          from totaladmins in admins.DefaultIfEmpty()
+                          where ((role == 0 || aspnetuserrole.RoleId == role.ToString()) && aspnetuserrole.RoleId != "2")
+                          select (role == 1 ? new UserAccess()
+                          {
+                              AccountType = aspnetrole.Name,
+                              AccountPOC = aspuser.UserName,
+                              phonenum = totaladmins.Mobile,
+                              status = totaladmins.AdminId,
+                              roleid = role,
+                              AccountTypeid = role,
+                              useraccessid = totaladmins.AdminId,
+                          } : new UserAccess()
+                          {
+                              AccountType = aspnetrole.Name,
+                              AccountPOC = aspuser.UserName,
+                              phonenum = totaluser.Mobile,
+                              status = totaluser.Status,
+                              roleid = role,
+                              AccountTypeid = role,
+                              useraccessid = totaluser.PhysicianId,
+                          }
+
+                          )).ToList();
+            return PartialView("_UserAccessPartial", result);
         }
     }
 }
