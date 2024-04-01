@@ -10,7 +10,7 @@
 
         if (accountType === "1") {
             var createAdminAnchor = $("<a>").text("Create Admin").addClass("btn btn-outline-info");
-            createAdminAnchor.attr("href", "/AdminDash/");
+            createAdminAnchor.attr("href", "/AdminDash/CreateAdminAccount");
             buttonContainer.append(createAdminAnchor);
         }
         else if (accountType === "3") {
@@ -19,12 +19,12 @@
             buttonContainer.append(createProviderAnchor);
         }
         else if (accountType === "0") {
-            var createProviderAnchor = $("<a>").text("Create Provider").css("margin-right","px").addClass("btn btn-outline-info");
+            var createProviderAnchor = $("<a>").text("Create Provider").css("margin-right","5px").addClass("btn btn-outline-info");
             createProviderAnchor.attr("href", "/AdminDash/CreateProviderAccount");
             buttonContainer.append(createProviderAnchor);
 
             var createAdminAnchor = $("<a>").text("Create Admin").addClass("btn btn-outline-info");
-            createAdminAnchor.attr("href", "/AdminDash/");
+            createAdminAnchor.attr("href", "/AdminDash/CreateAdminAccount");
             buttonContainer.append(createAdminAnchor);
         }
     }

@@ -45,6 +45,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddNotyf(config => {
     config.DurationInSeconds = 5; config.IsDismissable = true;
     config.Position = NotyfPosition.TopRight;
+    config.IsDismissable = false;
 });
 
 //Jwt configuration starts here

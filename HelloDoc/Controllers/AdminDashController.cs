@@ -20,6 +20,7 @@ using System.ComponentModel;
 
 
 
+
 namespace HelloDoc.Controllers
 {
 
@@ -601,6 +602,11 @@ namespace HelloDoc.Controllers
 
         }
 
+        public IActionResult ProviderLocation()
+        {
+           return View();
+        }
+
         public IActionResult MailingBillingInformationProvider(int physicianid, string MobileNo, string Address1, string Address2, string City, int State, string Zipcode)
         {
           
@@ -791,5 +797,218 @@ namespace HelloDoc.Controllers
                           )).ToList();
             return PartialView("_UserAccessPartial", result);
         }
+
+        public IActionResult CreateAdminAccount()
+        {
+            AdminProfile profile = new AdminProfile();
+            profile.Regions = _context.Regions.ToList();
+            profile.roles = _context.Roles.ToList();
+            return View(profile);
+        }
+
+        [HttpPost]
+        public IActionResult CreateAdminAccount(AdminProfile profile, string[] regions)
+        {
+
+            if (ModelState.IsValid)
+            {
+                AspNetUser aspnetUser = new AspNetUser();
+
+                Guid id = Guid.NewGuid();
+                aspnetUser.AspNetUserId = id.ToString();
+
+                aspnetUser.UserName = profile.UserName;
+                aspnetUser.Email = profile.Email;
+                aspnetUser.PasswordHash = _passwordHasher.HashPassword(null, profile.Password);
+                aspnetUser.PhoneNumber = profile.PhoneNumAspNetUsers;
+                aspnetUser.CreatedDate = DateTime.Now;
+
+                _context.AspNetUsers.Add(aspnetUser);
+                _context.SaveChanges();
+
+                Admin admin = new Admin();
+                admin.AspNetUserId = aspnetUser.AspNetUserId;
+                admin.FirstName = profile.FirstName;
+                admin.LastName = profile.LastName;
+                admin.Email = profile.Email;
+                admin.Mobile = profile.PhoneNumAspNetUsers;
+                admin.Address1 = profile.Address1;
+                admin.Address2 = profile.Address2;
+                admin.RegionId = profile.state;
+                admin.City = profile.City;
+                admin.Zip = profile.zip;
+                admin.CreatedDate = DateTime.Now;
+                admin.Status = 1;
+                admin.CreatedBy = aspnetUser.AspNetUserId;
+                admin.ModifiedBy = aspnetUser.AspNetUserId;
+
+
+                _context.Admins.Add(admin);
+                _context.SaveChanges();
+
+                AspNetUserRole aspnetUserRole = new AspNetUserRole();
+                aspnetUserRole.UserId = admin.AspNetUserId;
+                aspnetUserRole.RoleId = "1";
+                _context.AspNetUserRoles.Add(aspnetUserRole);
+                _context.SaveChanges();
+
+
+                if (regions != null)
+                {
+                    foreach (var item in regions)
+                    {
+                        AdminRegion adminRegion = new AdminRegion();
+                        adminRegion.AdminId = admin.AdminId;
+                        adminRegion.RegionId = int.Parse(item);
+                        _context.Add(adminRegion);
+                        _context.SaveChanges();
+                    }
+                }
+
+                _notyf.Success("Data Added Successfully");
+                return RedirectToAction("CreateAdminAccount");
+            }
+            else
+            {
+
+                profile.Regions = _context.Regions.ToList();
+                profile.roles = _context.Roles.ToList();
+                return View("CreateAdminAccount", profile);
+            }
+
+        }
+
+        public IActionResult AccountAccess()
+        {
+            var roles = _context.Roles.ToList();
+            var list = roles.Where(item => item.IsDeleted != null && (item.IsDeleted.Length == 0 || !item.IsDeleted[0]));
+            return View(list.ToList());
+        }
+
+        public IActionResult CreateAccess()
+        {
+            return View();
+        }
+
+        public IActionResult GetRoles(int role)
+        {
+            var menu = _context.Menus.Where(item => role == 0 || item.AccountType == role).ToList();
+            return PartialView("_CreateAccessPartial", menu);
+        }
+
+
+        [HttpPost]
+        public IActionResult CreateAccess(int[] rolemenu, string rolename, int accounttype)
+        {
+            Role role = new Role();
+            role.Name = rolename;
+            role.AccountType = (short)accounttype;
+            role.CreatedBy = "admin";
+            role.CreatedDate = DateTime.Now;
+            role.IsDeleted = new BitArray(new[] { false });
+            _context.Roles.Add(role);
+            _context.SaveChanges();
+
+            foreach (var menu in rolemenu)
+            {
+                RoleMenu rolemenu1 = new RoleMenu();
+                rolemenu1.MenuId = menu;
+                rolemenu1.RoleId = role.RoleId;
+                _context.RoleMenus.Add(rolemenu1);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("CreateAccess");
+        }
+
+        public IActionResult EditRolesData(int role, int roleid)
+        {
+            var rolemenu = _context.RoleMenus.Where(item => item.RoleId == roleid).Select(item => item.MenuId).ToList();
+            var menuList = _context.Menus.Where(item => role == 0 || item.AccountType == role).ToList();
+
+            var viewModel = new RoleMenuModel
+            {
+                RoleMenuIds = rolemenu,
+                MenuList = menuList,
+            };
+
+            return PartialView("_EditAccessPartial", viewModel);
+        }
+
+       
+        public IActionResult EditAccess(int roleid)
+        {
+            var rolemenu = _context.RoleMenus.Where(item => item.RoleId == roleid).Select(item => item.MenuId).ToList();
+            var role = _context.Roles.Where(item => item.RoleId == roleid).FirstOrDefault();
+            Access access = new Access();
+            access.Menu = rolemenu;
+            access.Name = role.Name;
+            access.roleid = roleid;
+            access.Accounttype = role.AccountType;
+
+            return View(access);
+        }
+
+       
+        [HttpPost]
+        public IActionResult EditAccess(int id, int[] rolemenu, string rolename, int accounttype)
+        {
+            var role = _context.Roles.FirstOrDefault(item => item.RoleId == id);
+            var menulist = _context.RoleMenus.Where(item => item.RoleId == id).ToList();
+            role.Name = rolename;
+            role.AccountType = (short)accounttype;
+            _context.Roles.Update(role);
+            _context.SaveChanges();
+            _context.RoleMenus.RemoveRange(menulist);
+            _context.SaveChanges();
+            foreach (var item in rolemenu)
+            {
+                RoleMenu rolemenu1 = new RoleMenu();
+                rolemenu1.MenuId = item;
+                rolemenu1.RoleId = id;
+                _context.RoleMenus.Add(rolemenu1);
+            }
+            _context.SaveChanges();
+            return RedirectToAction("EditAccess", new { roleid = id });
+        }
+
+        public IActionResult DeleteRole(int id)
+        {
+
+            Role? role = _context.Roles.Where(item => item.RoleId == id).FirstOrDefault();
+            if (role != null)
+            {
+                role.IsDeleted = new BitArray(new[] { true });
+                _context.Roles.Update(role);
+                _context.SaveChanges();
+                _notyf.Success("Your Role Has Been Deleted");
+            }
+            else
+            {
+                _notyf.Success("Your Role Has Been Not Deleted");
+            }
+            return RedirectToAction("AccountAccess");
+        }
+
+		public IActionResult PhysicianScheduling()
+		{
+			var region = _context.Regions.ToList();
+			ViewBag.regions = region;
+			return View();
+		}
+
+        public IActionResult GetPhysicianShift(int region)
+        {
+
+
+            // Retrieve physicians associated with the specified region
+            var physicians = (from physicianRegion in _context.PhysicianRegions
+                              where region == 0 || physicianRegion.RegionId == region
+                              select physicianRegion.Physician)
+                             .ToList();
+
+            return Ok(physicians);
+        }
+
+
     }
 }
