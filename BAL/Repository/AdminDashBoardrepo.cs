@@ -583,7 +583,30 @@ namespace BAL.Repository
                 return false;
             }
         }
-    }
+		public List<Scheduling> GetEvents(int region)
+		{
+			var eventswithoutdelet = (from s in _context.Shifts
+									  join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
+									  join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
+									  from sd in shiftGroup.DefaultIfEmpty()
+
+									  select new Scheduling
+									  {
+										  Shiftid = sd.ShiftDetailId,
+										  Status = sd.Status,
+										  Starttime = sd.StartTime,
+										  Endtime = sd.EndTime,
+										  Physicianid = pd.PhysicianId,
+										  PhysicianName = pd.FirstName + ' ' + pd.LastName,
+										  Shiftdate = sd.ShiftDate,
+										  ShiftDetailId = sd.ShiftDetailId,
+										  Regionid = sd.RegionId,
+										  ShiftDeleted = sd.IsDeleted[0]
+									  }).Where(item => region == 0 || item.Regionid == region).ToList();
+			var events = eventswithoutdelet.Where(item => !item.ShiftDeleted).ToList();
+			return events;
+		}
+	}
 }
 
 

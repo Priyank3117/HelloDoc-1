@@ -43,5 +43,7 @@ namespace BAL.Interface
         public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
 
         public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid);
-    }
+        public List<Scheduling> GetEvents(int region);
+
+	}
 }

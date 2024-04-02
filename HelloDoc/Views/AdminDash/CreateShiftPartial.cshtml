@@ -5,19 +5,19 @@
         <div class="modal-content border-0">
             <div class="modal-header bg-info text-white">
                 <h5 class="modal-title" id="exampleModalLongTitle">Add New Shift </h5>
-                <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close btn " data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
                 </button>
             </div>
             <form asp-action="CreateShift" class="row p-3">
               
-
+                    
                 <div class="form-floating my-3">
-                    <select asp-for="Regionid" class="p-2 px-3 form-control w-100 regionDropdown" id="selectregion">
+                    <select asp-for="Regionid" class="p-2 px-3 form-control w-100 regionDropdown" onchange="getPhysicianByregion(this.value)">
                         <option value="" selected disabled>Regions</option>
                         @foreach (var region in ViewBag.regions)
                         {
-                            <option value="@region.RegionId">@region.Name - (@region.Abbreviation)</option>
+                            <option value="@region.RegionId">@region.Name</option>
                         }
                     </select>
                 </div>
@@ -182,5 +182,24 @@
         document.querySelector('#checkWeekday').value = repeatDays.join(',');
         console.log(document.querySelector('#checkWeekday').value);
     };
+
+    function getPhysicianByregion(regionid) {
+                    
+        if (regionid != 0) {
+            $.ajax({
+                type: "GET",
+                url: "/AdminDash/GetPhysicianForTransfer",
+                data: { regionid: regionid },
+                success: function (response) {
+               
+                    $('#physicianSelect').empty();
+                    $.each(response, function (index, item) {
+                        $('#physicianSelect').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                    });
+
+                }
+            });
+        }
+    }
 
 </script>

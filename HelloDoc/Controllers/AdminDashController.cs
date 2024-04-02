@@ -15,6 +15,9 @@ using BAL.Repository;
 using DAL.ViewModels;
 using System.ComponentModel;
 
+using System.Web.WebPages;
+
+
 
 
 
@@ -995,20 +998,113 @@ namespace HelloDoc.Controllers
 			ViewBag.regions = region;
 			return View();
 		}
+		[HttpGet]
+		//this action is called with the region from ajax
+		public IActionResult GetPhysicianShift(int region)
+		{
+			// Retrieve physicians associated with the specified region
+			var physicians = (from physicianRegion in _context.PhysicianRegions
+							  where region == 0 || physicianRegion.RegionId == region
+							  select physicianRegion.Physician)
+							 .ToList();
 
-        public IActionResult GetPhysicianShift(int region)
+			return Json(physicians);
+		}
+
+		[HttpGet]
+		public IActionResult GetEvents(int region)
+		{
+			var events = _AdminDashboard.GetEvents(region);
+			var mappedEvents = events.Select(e => new
+			{
+				id = e.Shiftid,
+				resourceId = e.Physicianid,
+				title = e.PhysicianName,
+				start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
+				end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
+				ShiftDetailId = e.ShiftDetailId,
+				region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+				status = e.Status
+			}).ToList();
+
+			return Json(mappedEvents);
+		}
+
+        public IActionResult CreateShift(Scheduling model)
         {
+            var email = HttpContext.Session.GetString("Email");
+            var admin = _context.Admins.FirstOrDefault(s => s.Email == email);
+          
 
+            Shift shift = new Shift();
+            shift.PhysicianId = model.Physicianid;
+            shift.StartDate = model.Startdate;
+            shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
+            shift.RepeatUpto = model.Repeatupto;
+            shift.CreatedDate = DateTime.Now;
+            shift.CreatedBy = admin.AspNetUserId;
+            _context.Shifts.Add(shift);
+            _context.SaveChanges();
 
-            // Retrieve physicians associated with the specified region
-            var physicians = (from physicianRegion in _context.PhysicianRegions
-                              where region == 0 || physicianRegion.RegionId == region
-                              select physicianRegion.Physician)
-                             .ToList();
+            ShiftDetail sd = new ShiftDetail();
+            sd.ShiftId = shift.ShiftId;
+            sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
+            sd.StartTime =model.Starttime;
+            sd.EndTime = model.Endtime;
+            sd.RegionId = model.Regionid;
+            sd.Status = model.Status;
+            sd.IsDeleted = new BitArray(new[] { false });
 
-            return Ok(physicians);
+            
+              _context.ShiftDetails.Add(sd);
+            _context.SaveChanges();
+
+            ShiftDetailRegion sr = new ShiftDetailRegion();
+            sr.ShiftDetailId = sd.ShiftDetailId;
+            sr.RegionId = (int)model.Regionid;
+            sr.IsDeleted = new BitArray(new[] { false });
+            _context.ShiftDetailRegions.Add(sr);
+            _context.SaveChanges();
+
+            if (shift.IsRepeat[0])
+            {
+                var stringArray = model.checkWeekday.Split(",");
+                foreach (var weekday in stringArray)
+                {
+                 
+                    DateTime startDateForWeekday = model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).AddDays((7 + int.Parse(weekday) - (int)model.Startdate.DayOfWeek) % 7);
+
+                
+                    if (startDateForWeekday < model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)))
+                    {
+                        startDateForWeekday = startDateForWeekday.AddDays(7); // Add 7 days to move it to the next occurrence
+                    }
+
+                    // Iterate over Refill times
+                    for (int i = 0; i < shift.RepeatUpto; i++)
+                    {
+                        // Create a new ShiftDetail instance for each occurrence
+                        ShiftDetail shiftDetail = new ShiftDetail
+                        {
+                            ShiftId = shift.ShiftId,
+                            ShiftDate = startDateForWeekday.AddDays(i * 7), // Add i  7 days to get the next occurrence
+                            RegionId = (int)model.Regionid,
+                           StartTime = model.Starttime,
+                            EndTime = model.Endtime,
+                            Status = 0,
+                            IsDeleted = new BitArray(new[] { false })
+                        };
+
+                        // Add the ShiftDetail to the database context
+                        _context.Add(shiftDetail);
+                        _context.SaveChanges();
+                    }
+                }
+            }
+
+            return RedirectToAction("PhysicianScheduling");
         }
+        
 
-
-    }
+	}
 }
