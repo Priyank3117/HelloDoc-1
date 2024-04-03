@@ -426,122 +426,7 @@ namespace BAL.Repository
             return physicanProfile;
         }
 
-        public void CreateProviderAccountPost(CreateProviderAccount CreateProviderAccount, string[] regions)
-        {
-            AspNetUser aspnetUser = new AspNetUser();
-
-            Guid id = Guid.NewGuid();
-            aspnetUser.AspNetUserId = id.ToString();
-
-            aspnetUser.UserName = CreateProviderAccount.Username;
-            aspnetUser.Email = CreateProviderAccount.Email;
-            aspnetUser.PasswordHash = _passwordHasher.HashPassword(null, CreateProviderAccount.Password);
-            aspnetUser.PhoneNumber = CreateProviderAccount.Phone;
-            aspnetUser.CreatedDate = DateTime.Now;
-
-            _context.AspNetUsers.Add(aspnetUser);
-            _context.SaveChanges();
-
-            Physician physician = new Physician();
-            physician.AspNetUserId = aspnetUser.AspNetUserId;
-            physician.RoleId = int.Parse(CreateProviderAccount.Role);
-            physician.FirstName = CreateProviderAccount.Firstname;
-            physician.LastName = CreateProviderAccount.Lastname;
-            physician.Email = CreateProviderAccount.Email;
-            physician.Mobile = CreateProviderAccount.Phone;
-            physician.MedicalLicense = CreateProviderAccount.MedLicense;
-            physician.Npinumber = CreateProviderAccount.NPINum;
-            physician.Address1 = CreateProviderAccount.Address1;
-            physician.Address2 = CreateProviderAccount.Address2;
-            physician.RegionId = int.Parse(CreateProviderAccount.State);
-            physician.Zip = CreateProviderAccount.Zip;
-            physician.BusinessName = CreateProviderAccount.BusinessName;
-            physician.CreatedDate = DateTime.Now;
-            physician.Status = 1;
-            physician.BusinessWebsite = CreateProviderAccount.BusinessWebsite;
-            _context.Physicians.Add(physician);
-            _context.SaveChanges();
-
-            AspNetUserRole aspnetUserRole = new AspNetUserRole();
-            aspnetUserRole.UserId = physician.AspNetUserId;
-            aspnetUserRole.RoleId = "3";
-
-            _context.AspNetUserRoles.Add(aspnetUserRole);
-            _context.SaveChanges();
-
-            if (CreateProviderAccount.Photo != null)
-            {
-                _uploadprovider.UploadPhoto(CreateProviderAccount.Photo, physician.PhysicianId);
-                physician.Photo = CreateProviderAccount.Photo.FileName;
-
-            }
-            if (CreateProviderAccount.ICA != null)
-            {
-                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.ICA, physician.PhysicianId, "ICA");
-                physician.IsAgreementDoc = new BitArray(new[] { true });
-            }
-            else
-            {
-                physician.IsAgreementDoc = new BitArray(new[] { false });
-            }
-            if (CreateProviderAccount.BackgroundCheck != null)
-            {
-                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.BackgroundCheck, physician.PhysicianId, "Background");
-                physician.IsBackgroundDoc = new BitArray(new[] { true });
-            }
-            else
-            {
-                physician.IsBackgroundDoc = new BitArray(new[] { false });
-            }
-            if (CreateProviderAccount.HIPAA != null)
-            {
-                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.HIPAA, physician.PhysicianId, "Hippa");
-                physician.IsTrainingDoc = new BitArray(new[] { true });
-            }
-            else
-            {
-                physician.IsTrainingDoc = new BitArray(new[] { false });
-            }
-            if (CreateProviderAccount.NonDisclosure != null)
-            {
-                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.NonDisclosure, physician.PhysicianId, "NonDiscoluser");
-                physician.IsNonDisclosureDoc = new BitArray(new[] { true });
-            }
-            else
-            {
-                physician.IsNonDisclosureDoc = new BitArray(new[] { false });
-            }
-            if (CreateProviderAccount.License != null)
-            {
-                var docfile = _uploadprovider.UploadDocFile(CreateProviderAccount.License, physician.PhysicianId, "License");
-                physician.IsLicenseDoc = new BitArray(new[] { true });
-            }
-            else
-            {
-                physician.IsLicenseDoc = new BitArray(new[] { false });
-            }
-            _context.Physicians.Update(physician);
-            _context.SaveChanges();
-
-            PhysicianNotification physicianNotification = new PhysicianNotification();
-            physicianNotification.PhysicianId = physician.PhysicianId;
-            physicianNotification.IsNotificationStopped = new BitArray(new[] { true });
-            _context.PhysicianNotifications.Add(physicianNotification);
-            _context.SaveChanges();
-
-
-            if (regions != null)
-            {
-                foreach (var item in regions)
-                {
-                    PhysicianRegion physicianRegion = new PhysicianRegion();
-                    physicianRegion.PhysicianId = physician.PhysicianId;
-                    physicianRegion.RegionId = int.Parse(item);
-                    _context.Add(physicianRegion);
-                    _context.SaveChanges();
-                }
-            }
-        }
+      
 
         public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid)
         {
@@ -606,6 +491,8 @@ namespace BAL.Repository
 			var events = eventswithoutdelet.Where(item => !item.ShiftDeleted).ToList();
 			return events;
 		}
+
+        
 	}
 }
 

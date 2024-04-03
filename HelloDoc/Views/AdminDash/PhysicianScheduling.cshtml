@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_AdminDash.cshtml";
 }
+
 <div class="container-fluid bg-body-secondary" style="height:80vh !important">
 <div class="justify-content-between d-flex container-fluid mb-2 position-relative container my-3">
     <div class="">
@@ -15,7 +16,7 @@
 
     <div class="p-0 m-0 d-flex justify-content-between">
         <div class="d-flex border border-secondary  rounded align-items-center my-2 col-3">
-            <select class="form-control shadow-none border-0" id="AccountTypeId" name="SelectedStateId">
+				<select class="form-control shadow-none border-0" id="SelectedRegion" name="SelectedStateId">
 					<option value="0">All</option>
 					<option value="1">alaska</option>
 					<option value="2">MaryLand</option>
@@ -81,6 +82,7 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js"></script>
 <script>
+
 	var calendar;
 	document.addEventListener('DOMContentLoaded', function () {
 		var calendarEl = document.getElementById('calendar');
@@ -106,7 +108,7 @@
 							const events = data.map(event => ({
 								id: event.id,
 								resourceId: event.resourceId,
-								title: event.title,
+								title: `${event.start.split("T")[1].substr(0, 5)} - ${event.end.split("T")[1].substr(0, 5)}: ${event.title}`,
 								start: event.start,
 								end: event.end,
 								eventBackgroundColor: event.status === 1 ? '#32d97d' : '#e39de8',
@@ -123,9 +125,9 @@
 				.catch(error => console.error(error));
 		}
 
-		debugger
+	
 		function initializeCalendar(resources, events) {
-			$('#regionselect').on('change', function () {
+			$('#SelectedRegion').on('change', function () {
 				const newRegion = $(this).val();
 				getPhysicianShift(newRegion);
 			});
@@ -137,6 +139,7 @@
 				headerToolbar: false,
 				initialView: 'resourceTimelineDay',
 				dayMaxEvents: 4,
+				editable:true,
 				views: {
 					resourceTimelineDay: {
 						buttonText: 'Day',
@@ -196,7 +199,7 @@
 						$.ajax({
 							url: '/AdminDash/ReturnShift',
 							type: 'POST',
-							data: { shiftDetailId: shiftDetailId, region: selectedRegion },
+							data: { shiftDetailId: shiftDetailId, region: region },
 							success: function (response) {
 								// Handle success
 								$('#eventModal').modal('hide');
@@ -204,7 +207,7 @@
 								const events = response.events.map(event => ({
 									id: event.id,
 									resourceId: event.resourceId,
-									title: event.title,
+									title: `${event.start.split("T")[1].substr(0, 5)} - ${event.end.split("T")[1].substr(0, 5)}: ${event.title}`,
 									start: event.start,
 									end: event.end,
 									eventBackgroundColor: event.status == 1 ? '#e39de8' : '#32d97d',
@@ -229,7 +232,7 @@
 						$.ajax({
 							url: '/AdminDash/DeleteShift',
 							type: 'POST',
-							data: { shiftDetailId: shiftDetailId, region: selectedRegion },
+							data: { shiftDetailId: shiftDetailId, region: region },
 							success: function (response) {
 								$('#eventModal').modal('hide');
 
@@ -263,16 +266,17 @@
 						console.log(shiftDetailId);
 						// Call AJAX to save
 						$.ajax({
-							url: '/AdminDash/SaveShift',
+							url: '/AdminDash/ChangeShift',
 							type: 'POST',
 							data: {
 								shiftDetailId: shiftDetailId,
 								startDate: startDate,
 								startTime: startTime,
 								endTime: endTime,
-								region: selectedRegion
+								region: region
 							},
 							success: function (response) {
+								debugger
 								$('#eventModal').modal('hide');
 
 								const events = response.events.map(event => ({
@@ -286,7 +290,7 @@
 									ShiftDetailId: event.shiftDetailId,
 									region: event.region
 								}));
-								calendar.removeAllEvents(); // Remove existing events
+								calendar.removeAllEvents();
 								calendar.addEventSource(events); // Add updated events
 								calendar.refetchEvents(); // Refetch events from the event sources
 
@@ -295,7 +299,7 @@
 								$('#editbtn').removeClass('d-none');
 							},
 							error: function (xhr, status, error) {
-								// Handle error
+								alert(error)
 							}
 						});
 					});
@@ -355,10 +359,14 @@
 					img.style.marginLeft = "8px";
 					resourceObj.el.querySelector('.fc-datagrid-cell-main').appendChild(img);
 				},
+
+			
 				dateClick: function (info) {
+					debugger
 					var shiftedDateISO = info.dateStr;
 					var shiftedDate = shiftedDateISO.split('T')[0];
-					var startTime = new Date(info.date).toISOString().substr(11, 5);
+					var startTime = new Date(info.date).toTimeString().substr(0, 5);
+					
 
 					$('#StartDate').val(shiftedDate);
 					$('#StartTime').val(startTime);

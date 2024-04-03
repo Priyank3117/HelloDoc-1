@@ -18,12 +18,6 @@ using System.ComponentModel;
 using System.Web.WebPages;
 
 
-
-
-
-
-
-
 namespace HelloDoc.Controllers
 {
 
@@ -40,10 +34,13 @@ namespace HelloDoc.Controllers
         private readonly INotyfService _notyf;
         private readonly IUploadProvider _uploadProvider;
         private readonly IAdminAction _adminAction;
+        private readonly IAccountsAccess _acc;
 
 
         public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
-            IPasswordHasher<AdminProfile> passwordHasher, INotyfService notyf,IUploadProvider uploadProvider, IAdminAction adminAction)
+            IPasswordHasher<AdminProfile> passwordHasher,
+            INotyfService notyf,IUploadProvider uploadProvider,
+            IAdminAction adminAction,IAccountsAccess accountsAccess)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
@@ -55,6 +52,7 @@ namespace HelloDoc.Controllers
             _notyf = notyf;
             _uploadProvider = uploadProvider;
             _adminAction = adminAction;
+            _acc = accountsAccess;
         }
         public IActionResult AdminDash()
         {
@@ -722,7 +720,7 @@ namespace HelloDoc.Controllers
         {
             if (ModelState.IsValid)
             {              
-                _AdminDashboard.CreateProviderAccountPost(CreateProviderAccount, regions);
+                _acc.CreateProviderAccountPost(CreateProviderAccount, regions);
                 _notyf.Success("Physician Added Successfully");
                 return RedirectToAction("CreateProviderAccount");
             }
@@ -763,43 +761,9 @@ namespace HelloDoc.Controllers
 
         public IActionResult UserAccessData(int role)
          {
-
-
-            var result = (from aspuser in _context.AspNetUsers
-                          join aspnetuserrole in _context.AspNetUserRoles
-                          on aspuser.AspNetUserId equals aspnetuserrole.UserId
-                          join aspnetrole in _context.AspNetRoles
-                          on aspnetuserrole.RoleId equals aspnetrole.AspNetRoleId
-                          join phy in _context.Physicians
-                          on aspuser.AspNetUserId equals phy.AspNetUserId into phyusers
-                          from totaluser in phyusers.DefaultIfEmpty()
-                          join admin in _context.Admins
-                          on aspuser.AspNetUserId equals admin.AspNetUserId into admins
-                          from totaladmins in admins.DefaultIfEmpty()
-                          where ((role == 0 || aspnetuserrole.RoleId == role.ToString()) && aspnetuserrole.RoleId != "2")
-                          select (role == 1 ? new UserAccess()
-                          {
-                              AccountType = aspnetrole.Name,
-                              AccountPOC = aspuser.UserName,
-                              phonenum = totaladmins.Mobile,
-                              status = totaladmins.AdminId,
-                              roleid = role,
-                              AccountTypeid = role,
-                              useraccessid = totaladmins.AdminId,
-                          } : new UserAccess()
-                          {
-                              AccountType = aspnetrole.Name,
-                              AccountPOC = aspuser.UserName,
-                              phonenum = totaluser.Mobile,
-                              status = totaluser.Status,
-                              roleid = role,
-                              AccountTypeid = role,
-                              useraccessid = totaluser.PhysicianId,
-                          }
-
-                          )).ToList();
+             var result = _acc.GetUserAccessData(role);
             return PartialView("_UserAccessPartial", result);
-        }
+         }
 
         public IActionResult CreateAdminAccount()
         {
@@ -815,59 +779,8 @@ namespace HelloDoc.Controllers
 
             if (ModelState.IsValid)
             {
-                AspNetUser aspnetUser = new AspNetUser();
-
-                Guid id = Guid.NewGuid();
-                aspnetUser.AspNetUserId = id.ToString();
-
-                aspnetUser.UserName = profile.UserName;
-                aspnetUser.Email = profile.Email;
-                aspnetUser.PasswordHash = _passwordHasher.HashPassword(null, profile.Password);
-                aspnetUser.PhoneNumber = profile.PhoneNumAspNetUsers;
-                aspnetUser.CreatedDate = DateTime.Now;
-
-                _context.AspNetUsers.Add(aspnetUser);
-                _context.SaveChanges();
-
-                Admin admin = new Admin();
-                admin.AspNetUserId = aspnetUser.AspNetUserId;
-                admin.FirstName = profile.FirstName;
-                admin.LastName = profile.LastName;
-                admin.Email = profile.Email;
-                admin.Mobile = profile.PhoneNumAspNetUsers;
-                admin.Address1 = profile.Address1;
-                admin.Address2 = profile.Address2;
-                admin.RegionId = profile.state;
-                admin.City = profile.City;
-                admin.Zip = profile.zip;
-                admin.CreatedDate = DateTime.Now;
-                admin.Status = 1;
-                admin.CreatedBy = aspnetUser.AspNetUserId;
-                admin.ModifiedBy = aspnetUser.AspNetUserId;
-
-
-                _context.Admins.Add(admin);
-                _context.SaveChanges();
-
-                AspNetUserRole aspnetUserRole = new AspNetUserRole();
-                aspnetUserRole.UserId = admin.AspNetUserId;
-                aspnetUserRole.RoleId = "1";
-                _context.AspNetUserRoles.Add(aspnetUserRole);
-                _context.SaveChanges();
-
-
-                if (regions != null)
-                {
-                    foreach (var item in regions)
-                    {
-                        AdminRegion adminRegion = new AdminRegion();
-                        adminRegion.AdminId = admin.AdminId;
-                        adminRegion.RegionId = int.Parse(item);
-                        _context.Add(adminRegion);
-                        _context.SaveChanges();
-                    }
-                }
-
+              
+                _acc.CreateAdminAccountPost(profile, regions);
                 _notyf.Success("Data Added Successfully");
                 return RedirectToAction("CreateAdminAccount");
             }
@@ -903,25 +816,21 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult CreateAccess(int[] rolemenu, string rolename, int accounttype)
         {
-            Role role = new Role();
-            role.Name = rolename;
-            role.AccountType = (short)accounttype;
-            role.CreatedBy = "admin";
-            role.CreatedDate = DateTime.Now;
-            role.IsDeleted = new BitArray(new[] { false });
-            _context.Roles.Add(role);
-            _context.SaveChanges();
-
-            foreach (var menu in rolemenu)
+            if (rolemenu.Length != 0 && rolename != null && accounttype != 0)
             {
-                RoleMenu rolemenu1 = new RoleMenu();
-                rolemenu1.MenuId = menu;
-                rolemenu1.RoleId = role.RoleId;
-                _context.RoleMenus.Add(rolemenu1);
-                _context.SaveChanges();
+                _acc.CreateAccess(rolemenu, rolename, accounttype);
+                _notyf.Success("Role Created successfully");
+               
             }
-            return RedirectToAction("CreateAccess");
-        }
+            else if (rolemenu.Length == 0)
+            {
+                _notyf.Error("Please select the roles");
+                _notyf.Error("Role Can not be added");
+             
+            }
+            
+			return RedirectToAction("CreateAccess");
+		}
 
         public IActionResult EditRolesData(int role, int roleid)
         {
@@ -1104,7 +1013,107 @@ namespace HelloDoc.Controllers
 
             return RedirectToAction("PhysicianScheduling");
         }
-        
+
+		[HttpPost]
+		public IActionResult ChangeShift(int shiftDetailId, DateTime startDate, TimeOnly startTime, TimeOnly endTime, int region)
+		{
+			// Find the shift detail by its ID
+			ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
+
+			// If shift detail is not found, return a 404 Not Found response
+			if (shiftdetail == null)
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				// Update the shift detail properties
+				shiftdetail.ShiftDate = startDate;
+				shiftdetail.StartTime = startTime;
+				shiftdetail.EndTime = endTime;
+
+				// Update the database
+				_context.ShiftDetails.Update(shiftdetail);
+				_context.SaveChanges();
+				var events = _AdminDashboard.GetEvents(region);
+				var mappedEvents = events.Select(e => new
+				{
+					id = e.Shiftid,
+					resourceId = e.Physicianid,
+					title = e.PhysicianName,
+					start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
+					end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
+					ShiftDetailId = e.ShiftDetailId,
+					region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+					status = e.Status
+				}).ToList();
+				// Return a 200 OK response
+				return Ok(new { message = "Shift detail updated successfully.", events = mappedEvents });
+			}
+			catch (Exception ex)
+			{
+				// Return a 400 Bad Request response with the error message
+				return BadRequest("Error updating shift detail: " + ex.Message);
+			}
+		}
+		public IActionResult DeleteShift(int shiftDetailId, int region)
+		{
+		   ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
+			if (shiftdetail == null)
+			{
+				return NotFound("Shift detail not found.");
+			}
+			shiftdetail.IsDeleted = new BitArray(new[] {true});
+			_context.ShiftDetails.Update(shiftdetail);
+			_context.SaveChanges();
+			var events = _AdminDashboard.GetEvents(region);
+			var mappedEvents = events.Select(e => new
+			{
+				id = e.Shiftid,
+				resourceId = e.Physicianid,
+				title = e.PhysicianName,
+				start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
+				end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
+				ShiftDetailId = e.ShiftDetailId,
+				region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+				status = e.Status
+			}).ToList();
+			return Ok(new { message = "Shift detail Deleted successfully.", events = mappedEvents });
+
+		}
+
+		public IActionResult ReturnShift(int shiftDetailId, int region)
+		{
+			ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
+
+			// If shift detail is not found, return a 404 Not Found response
+			if (shiftdetail == null)
+			{
+				return NotFound("Shift detail not found.");
+			}
+			shiftdetail.Status = (short)((shiftdetail.Status == 0) ? 1 : 0);
+
+			_context.ShiftDetails.Update(shiftdetail);
+			_context.SaveChanges();
+			var events = _AdminDashboard.GetEvents(region);
+			var mappedEvents = events.Select(e => new
+			{
+				id = e.Shiftid,
+				resourceId = e.Physicianid,
+				title = e.PhysicianName,
+				start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
+				end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
+				ShiftDetailId = e.ShiftDetailId,
+				region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+				status = e.Status
+			}).ToList();
+			return Ok(new { message = "Shift detail updated successfully.", events = mappedEvents });
+
+		}
+
+
+
 
 	}
 }

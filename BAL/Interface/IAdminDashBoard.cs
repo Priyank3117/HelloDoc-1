@@ -39,7 +39,7 @@ namespace BAL.Interface
         public List<Provider> providers(string Region);
         public PhysicianProfile PhysicianProfile(int id);
 
-        public void CreateProviderAccountPost(CreateProviderAccount CreateProviderAccount, string[] regions);
+       
         public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
 
         public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid);

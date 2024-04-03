@@ -35,6 +35,7 @@ builder.Services.AddScoped<IAddFile,AddFilerepo>();
 builder.Services.AddScoped<IHome,HomeRepo>();
 builder.Services.AddScoped<IAdminDashBoard,AdminDashBoardrepo>();
 builder.Services.AddScoped<IAdminAction,AdminAction>();
+builder.Services.AddScoped<IAccountsAccess,AccountsAccess>();
 builder.Services.AddScoped<IUploadProvider,UploadProvider>();
 builder.Services.AddScoped<IEmailService, EmailServicerepo>();
 builder.Services.AddScoped<IPasswordHasher<Patient>,PasswordHasher<Patient>>();
