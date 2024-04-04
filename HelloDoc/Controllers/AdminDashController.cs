@@ -16,6 +16,9 @@ using DAL.ViewModels;
 using System.ComponentModel;
 
 using System.Web.WebPages;
+using System.Collections.Generic;
+using System.Drawing.Printing;
+using static DAL.ViewModel.ProvidersOnCallModel;
 
 
 namespace HelloDoc.Controllers
@@ -1112,8 +1115,100 @@ namespace HelloDoc.Controllers
 
 		}
 
+        public IActionResult ReviewShift()
+        {
+            ShiftDetailModel shiftDetailModel = new ShiftDetailModel();
+            shiftDetailModel.Regions = _context.Regions.ToList();
+            return View(shiftDetailModel);
+        }
+
+        public IActionResult GetShifts(int region)
+        {
+            //0 for APPROVED
+            //1 for Pending
+            var result = (from shiftDetail in _context.ShiftDetails
+                          where ((shiftDetail.RegionId == region || region == 0) &&
+                             shiftDetail.Status != 0 && shiftDetail.IsDeleted != new BitArray(new[] { true }))
+                          select new ShiftDetailModel
+                          {
+                               physicianName = shiftDetail.Shift.Physician.FirstName,
+                               ShiftDetailId = shiftDetail.ShiftDetailId,
+                               day = shiftDetail.ShiftDate.ToString("MMM dd, yyyy"),
+                               starttime = shiftDetail.StartTime,
+                               endtime = shiftDetail.EndTime,
+                               Regioname = _context.Regions.FirstOrDefault(s => s.RegionId == shiftDetail.RegionId).Name,
+
+                          }).ToList();
+            return PartialView("_ReviewShiftPartial", result);
+        }
+
+        [HttpPost]
+        public IActionResult ApprovedSelected(string[] checkedValues)
+        {
+            
+            foreach (var item in checkedValues)
+            {
+                var status = _context.ShiftDetails.FirstOrDefault(s => s.ShiftDetailId == int.Parse(item));
+                status.Status = 0;
+                _context.ShiftDetails.Update(status);
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("ReviewShift");
+
+        }
+        
+        public IActionResult DeleteSelected(string[] checkedValues)
+        {
+            
+            foreach (var item in checkedValues)
+            {
+                var shiftToDelete = _context.ShiftDetails.FirstOrDefault(s => s.ShiftDetailId == int.Parse(item));
+                shiftToDelete.IsDeleted = new BitArray(new[] {true});
+                _context.ShiftDetails.Update(shiftToDelete);
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("ReviewShift");
+
+        }
+
+        public IActionResult MdOnCall()
+        {
+            List<Region> regions = _context.Regions.ToList(); 
+            ViewBag.Regions = regions;
+            return View();
+
+
+        }
+
+
+        public IActionResult GetPhysiciansOnCall(string region)
+        {
+            DateTime today = DateTime.Today;
+            BitArray trueBitArray = new BitArray(new[] { true });
+            var onDuty = (from physician in _context.Physicians
+                          join shift in _context.Shifts on physician.PhysicianId equals shift.PhysicianId into shiftJoin
+                          from shiftRecord in shiftJoin.DefaultIfEmpty()
+                          join shiftDetail in _context.ShiftDetails on shiftRecord.ShiftId equals shiftDetail.ShiftId into shiftDetailJoin
+                          from shiftDetailRecord in shiftDetailJoin.DefaultIfEmpty()
+                          where shiftDetailRecord.IsDeleted != trueBitArray && shiftDetailRecord.ShiftDate.Date == today.Date
+                                                            && shiftDetailRecord.StartTime <= TimeOnly.FromDateTime(DateTime.Now)
+                                                            && shiftDetailRecord.EndTime >= TimeOnly.FromDateTime(DateTime.Now)
+                          select physician).Where(x => region == "0" || x.RegionId == int.Parse(region)).Distinct().ToList();
+
+            var offDuty = _context.Physicians.Where(x => region == "0" || x.RegionId == int.Parse(region)).ToList().Except(onDuty).ToList();
+
+            ProvidersOnCallModel providersOnCall = new ProvidersOnCallModel { OffDuty = offDuty, OnDuty = onDuty };
+
+            return PartialView("_MdOnCallPartial", providersOnCall);
+        }
 
 
 
-	}
+
+
+    }
 }
