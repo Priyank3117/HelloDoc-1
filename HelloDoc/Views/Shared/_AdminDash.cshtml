@@ -30,7 +30,8 @@
 
                     <nav class="navbar d-inline d-sm-none mt-3">
                         <div class="container-fluid">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                         </div>
@@ -104,7 +105,7 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">Partners</a>
+                        <a asp-action="Partners" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">Partners</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "UserAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "AccountAccess" 
@@ -155,7 +156,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer mt-3    bg-dark text-white pe-3   footer position-absolute bottom-0 w-100 align-middle" style="height: 6vh !important;">
+    <footer class="border-top footer mt-3 bg-dark text-white pe-3 footer position-absolute bottom-0 w-100 align-middle" style="height: 6vh !important;">
         <div class="d-flex flex-row justify-content-end align-items-center my-auto h-100 py-auto w-100">
             <span>Terms Of Condition | Privacy Policy</span>
         </div>
@@ -175,6 +176,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/js/UserAccess.js"></script>
+    <script src="~/js/Partner.js"></script>
   
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
