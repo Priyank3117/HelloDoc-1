@@ -1442,7 +1442,7 @@ namespace HelloDoc.Controllers
 		}
 
 		public IActionResult GetSearchRecords(int[] status, string patientName,
-			string providername, string PhoneNum, string email, string requesttype)
+			string providername, string PhoneNum, string email, string requesttype,int pagesize,int currentpage)
 		{
 
 			var record = (from request in _context.Requests
@@ -1488,7 +1488,19 @@ namespace HelloDoc.Controllers
 	   (status.Length == 0 || status.Contains(item.RequestStatus)) && item.IsDelted == false &&
 	   (requesttype == "0" || item.RequestTypeId == int.Parse(requesttype))).ToList();
 
-			return PartialView("RecordsMenu/_SearchrecordPartial", searchRecords);
+            int totalItems = searchRecords.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
+            if (totalPages <= 1)
+            {
+                currentpage = 1;
+            }
+            var paginatedData = searchRecords.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = currentpage;
+
+           
+
+            return PartialView("RecordsMenu/_SearchrecordPartial", paginatedData);
 		}
 
 
@@ -1546,6 +1558,12 @@ namespace HelloDoc.Controllers
             return RedirectToAction("BlockHistory");
         }
 
-	}
+        public IActionResult GetPhysicianLocation()
+        {
+            List<PhysicianLocation> physicianLocations = _context.PhysicianLocations.ToList();
+            return Json(physicianLocations);
+        }
+
+    }
    
 }

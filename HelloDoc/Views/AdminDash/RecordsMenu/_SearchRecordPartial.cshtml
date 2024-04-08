@@ -1,5 +1,5 @@
 ﻿@model List<DAL.ViewModel.SearchRecords>
-<div class="table-responsive mt-4 mb-4">
+
     <table class="table table-hover">
         <thead class="table-light">
             <tr class="text-center">
@@ -67,5 +67,47 @@
             }
         </tbody>
     </table>
-</div>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+
+<div class="pb-3 z-1">
+    <nav id="pagination" class="mb-5" aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-0">
+            @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+            {
+                int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+                int currpage = Convert.ToInt32(ViewBag.CurrentPage);
+                int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+                if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" id="previous" data-page="@(prevpage)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                    </li>
+                }
+                for (int z = 0; z < 3; z++)
+                {
+                    if (currpage + z <= ViewBag.TotalPages)
+                    {
+                        <li class="page-item @(currpage + z ==ViewBag.CurrentPage ?"active":"")">
+                            <a class="page-link" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
+                                <span>@(ViewBag.CurrentPage + z)</span>
+                            </a>
+                        </li>
+                    }
+                }
+                if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" id="next" data-page="@(nextpage)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+</div>

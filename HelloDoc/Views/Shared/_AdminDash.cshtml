@@ -110,8 +110,11 @@
                         <a asp-action="Partners" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">Partners</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "UserAccess" || ViewContext.ActionDescriptor.RouteValues["action"] == "AccountAccess" 
-                        || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateAdminAccount" ? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-info 
+
+                        @(new string[] { "UserAccess", "CreateAdminAccount", "AccountAccess" }
+                            .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Access
                         </a>
                         <ul class="dropdown-menu">
@@ -120,10 +123,10 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Records" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAccount"
-                        || ViewContext.ActionDescriptor.RouteValues["action"] == "PhysicianScheduling"? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Records
-                        </a>
+                        <a class="nav-link dropdown-toggle text-info
+                        @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory" }
+                        .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")" 
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
                         <ul class="dropdown-menu">
                             <li><a asp-action="SearchRecords" class="dropdown-item ">Search Records</a></li>
                             <li><a class="dropdown-item">Email Logs</a></li>
@@ -292,10 +295,10 @@
                 $(activeElement).addClass("active");
             }
 
-
             $(document).on("click", "#pagination a.page-link", function () {
                 console.log("Pagination link clicked!");
-                currentpage = $(this).text().trim();
+                var id = $(this).attr("id");
+                currentpage = $("#" + id).data("page");
                 console.log("Current Page: " + currentpage);
                 filtertable(currentPartialview, currentstatus, currentpage, pagesize);
             });

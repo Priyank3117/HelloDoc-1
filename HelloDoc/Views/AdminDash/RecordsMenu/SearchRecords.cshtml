@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_AdminDash.cshtml";
 }
 
-<div class="container-fluid" style="height:80%!important">
+<div class="container-fluid">
     <div class="d-flex justify-content-between">
         <h4 class="py-3">Search Records</h4>
         <div>
@@ -78,33 +78,50 @@
         <button class="btn btn-outline-info" onclick="RemoveFilters()">Clear</button>
         <button class="btn btn-info mx-3" onclick="GetSearchRecord()">Search</button>
     </div>
-    <div class=" border-top-0 border border-secondary rounded-bottom  px-3 overflow-auto" style="height: 80% !important" id="PatientRecordsPartial">
+    <div class="border-top-0 border table-responsive border-secondary rounded-bottom  px-3 h-50" id="PatientRecordsPartial">
     </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 
-    GetSearchRecord();
+    var currentpage = 1;
+    var pagesize = 5;
+    GetSearchRecord(currentpage, pagesize);
+
 
     function GetSearchRecord() {
-
         var status = $("#status").val();
-
-        if (status == "1") {
-            status = [1];
-        } else if (status == "2") {
-            status = [2];
-        } else if (status == "3") {
-            status = [4, 5];
-        } else if (status == "4") {
-            status = [6];
-        } else if (status == "5") {
-            status = [3, 7, 8];
-        } else if (status == "6") {
-            status = [9];
-        } else {
-            status = [];
+        switch (status) {
+            case "1":
+                status = [1];
+                break;
+            case "2":
+                status = [2];
+                break;
+            case "3":
+                status = [4, 5];
+                break;
+            case "4":
+                status = [6];
+                break;
+            case "5":
+                status = [3, 7, 8];
+                break;
+            case "6":
+                status = [9];
+                break;
+            default:
+                status = [];
+                break;
         }
+
+        $(document).on("click", "#pagination a.page-link", function () {
+            console.log("Pagination link clicked!");
+            var id = $(this).attr("id");
+            currentpage = $("#" + id).data("page");
+            console.log("Current Page: " + currentpage);
+            GetSearchRecord();
+        });
 
         var requesttype = $("#requesttype").val();
         var providername = $("#providername").val();
@@ -121,7 +138,8 @@
             data: {
                 status: status, requesttype: requesttype, providername: providername,
                 PhoneNum: PhoneNum, patientName: patientName, email: email, fromDateOfService
-                    : fromDateOfService, toDateOfService: toDateOfService
+                    : fromDateOfService, toDateOfService: toDateOfService, currentpage: currentpage,
+                pagesize: pagesize
             },
             success: function (response) {
                 $("#PatientRecordsPartial").html(response);
@@ -138,6 +156,6 @@
         $("#PhoneNum").val('');
         $("#providername").val('');
         $("#patientName").val('');
-        GetSearchRecord();
+        GetSearchRecord(currentpage, pagesize);
     }
 </script>
