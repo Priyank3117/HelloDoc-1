@@ -1,0 +1,33 @@
+﻿@model List<DAL.DataModels.User>
+<table class="table mb-0">
+
+    <tbody class="table-secondary text-center">
+        <tr>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Address</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </tbody>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr class="text-center">
+
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.Email</td>
+                <td>@item.Mobile</td>
+                <td>@item.Street, @item.City, @item.ZipCode</td>
+                <td>
+                    <a asp-route-userid="@item.UserId" asp-action="ExploreRecords" class="btn btn-outline-info">Explore</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+
+</table>

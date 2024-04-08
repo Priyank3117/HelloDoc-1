@@ -21,6 +21,10 @@ using System.Drawing.Printing;
 using static DAL.ViewModel.ProvidersOnCallModel;
 using OfficeOpenXml;
 
+using System.Configuration.Provider;
+using System.Net.NetworkInformation;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace HelloDoc.Controllers
 {
@@ -425,6 +429,47 @@ namespace HelloDoc.Controllers
             var adminProfile = _AdminDashboard.GetAdminData(Email);
 
             return View(adminProfile);
+        }
+
+        public IActionResult ExportRequests(string[] currentstatus, int? pagesize = null, int? currentpage = null)
+        {
+            string[] num = currentstatus[0].Split(',');
+            int[] nums = Array.ConvertAll(num, int.Parse);
+
+            var result = _adminAction.GetRequests(nums);
+
+            if (pagesize.HasValue && currentpage.HasValue)
+            {
+                result = result.Skip((currentpage.Value - 1) * pagesize.Value).Take(pagesize.Value);
+            }
+
+            using (var excel = new ExcelPackage())
+            {
+                var worksheet = excel.Workbook.Worksheets.Add("sheet1");
+                worksheet.Cells[1, 1].Value = "PatientName";
+                worksheet.Cells[1, 2].Value = "BirthDate";
+                worksheet.Cells[1, 3].Value = "RequestorName";
+                worksheet.Cells[1, 4].Value = "RequestDate";
+                worksheet.Cells[1, 5].Value = "phone";
+                worksheet.Cells[1, 6].Value = "address";
+                worksheet.Cells[1, 7].Value = "Email";
+
+                var row = 2;
+                foreach (var item in result)
+                {
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.BirthDate;
+                    worksheet.Cells[row, 3].Value = item.Requestor;
+                    worksheet.Cells[row, 4].Value = item.RequestedDate;
+                    worksheet.Cells[row, 5].Value = item.PhoneNumber;
+                    worksheet.Cells[row, 6].Value = item.Address;
+                    worksheet.Cells[row, 7].Value = item.Email;
+                    row++;
+                }
+
+                var excelBytes = excel.GetAsByteArray();
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "export.xlsx");
+            }
         }
 
         public IActionResult AdministratorInformation(AdminProfile adminProfile, List<string> states)
@@ -1219,7 +1264,7 @@ namespace HelloDoc.Controllers
 
             List<HealthProfessionalType> healthProfessionalTypes = _context.HealthProfessionalTypes.ToList();
             ViewBag.HealthProfessionalTypes = healthProfessionalTypes;
-            return View();
+            return View("Partners/Partners");
         }
 
         public IActionResult GetBusinessInfo(string Profession, string searchValue)
@@ -1240,7 +1285,7 @@ namespace HelloDoc.Controllers
                         }).Where(s => (Profession == "0" || s.ProfessionId == Profession) &&
                             (string.IsNullOrEmpty(searchValue) || s.BusinessName.Contains(searchValue))).ToList();
 
-            return PartialView("_PartnersPartial", data);
+            return PartialView("Partners/_PartnersPartial", data);
         }
 
 
@@ -1250,7 +1295,7 @@ namespace HelloDoc.Controllers
             ViewBag.HealthProfessionalTypes = healthProfessionalTypes;
             List<Region> regions = _context.Regions.ToList();
             ViewBag.Regions = regions;
-            return View();
+            return View("Partners/AddBusiness");
         }
 
         [HttpPost]
@@ -1282,12 +1327,12 @@ namespace HelloDoc.Controllers
                 List<Region> regions = _context.Regions.ToList();
                 ViewBag.Regions = regions;
                 _notyf.Error("Data can not be added");
-                return View();
+                return View("Partners/AddBusiness");
             }
         }
 
         public IActionResult EditBusinessData(int id)
-            {
+        {
 
             List<HealthProfessionalType> healthProfessionalTypes = _context.HealthProfessionalTypes.ToList();
             ViewBag.HealthProfessionalTypes = healthProfessionalTypes;
@@ -1303,15 +1348,204 @@ namespace HelloDoc.Controllers
                 businessModel.BusinessContact = vendor.BusinessContact;
                 businessModel.FaxNumber = vendor.FaxNumber;
                 businessModel.PhoneNum = vendor.PhoneNumber;
-                businessModel.state = vendor.State;
-                return View(businessModel);
+                businessModel.state = _context.Regions.FirstOrDefault(s => s.Name == vendor.State).RegionId.ToString();
+                businessModel.city = vendor.City;
+                businessModel.Email = vendor.Email;
+                businessModel.street = vendor.City;
+                businessModel.vendorid = id;
+                return View("Partners/EditBusinessData",businessModel);
             }
             else
             {
                 return BadRequest();
             }
+
         }
 
-    }
+        [HttpPost]
+		public IActionResult EditBusinessPost(AddBusiness addBusiness, int id)
+		{
+			var healthProfessional = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == id);
+			healthProfessional.VendorName = addBusiness.BusinessName;
+			healthProfessional.Profession = int.Parse(addBusiness.Profession);
+			healthProfessional.BusinessContact = addBusiness.BusinessContact;
+			healthProfessional.FaxNumber = addBusiness.FaxNumber;
+			healthProfessional.Address = addBusiness.city + addBusiness.street;
+			healthProfessional.City = addBusiness.city;
+			healthProfessional.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(addBusiness.state)).Name;
+			healthProfessional.RegionId = int.Parse(addBusiness.state);
+			healthProfessional.CreatedDate = DateTime.Now;
+			healthProfessional.PhoneNumber = addBusiness.PhoneNum;
+			healthProfessional.Email = addBusiness.Email;
+			_context.HealthProfessionals.Update(healthProfessional);
+			_context.SaveChanges();
+			_notyf.Success("Data Updated Successfully");
+			return RedirectToAction("EditBusinessData", new { id = id });
+		}
+
+		public IActionResult DeleteBusinessData(int vendorid)
+		{
+			var vendor = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == vendorid);
+
+			if (vendor != null)
+			{
+				vendor.IsDeleted = new BitArray(new[] { true });
+				_context.Update(vendor);
+				_context.SaveChanges();
+			}
+
+			return RedirectToAction("Partners");
+		}
+
+
+		public IActionResult PatientHistory()
+		{
+			return View("RecordsMenu/PatientHistory");
+		}
+
+		public IActionResult GetPatientRecords(string firstName, string lastName, string email, string phoneNum)
+		{
+			var records = _context.Users.Where(s => (string.IsNullOrEmpty(firstName) || s.FirstName.ToLower().Contains(firstName))
+			  && (string.IsNullOrEmpty(lastName) || s.LastName.ToLower().Contains(lastName))
+			  && (string.IsNullOrEmpty(email) || s.Email.ToLower().Contains(email))
+			  && (string.IsNullOrEmpty(phoneNum) || s.Mobile.Contains(phoneNum))).ToList();
+
+			return PartialView("RecordsMenu/_PatientHistoryPartial", records);
+		}
+
+		public IActionResult ExploreRecords(int userid)
+		{
+			var records = (from requestClient in _context.RequestClients
+						   join encounterForm in _context.EncounterForms
+						   on requestClient.RequestId equals encounterForm.RequestId
+						   into Records
+						   from allPatient in Records.DefaultIfEmpty()
+						   where requestClient.Request.UserId == userid
+						   select new PatientHistory
+						   {
+							   ClientName = requestClient.Request.FirstName,
+							   CreatedDate = requestClient.Request.CreatedDate,
+							   ConfirmationNumber = requestClient.Request.ConfirmationNumber,
+							   ProvideName = requestClient.Request.Physician.FirstName,
+							   Status = requestClient.Request.Status,
+							   IsFinalize = allPatient.IsFinalize,
+							   RequestId = requestClient.Request.RequestId,
+							   RequestClientId = requestClient.RequestClientId
+						   }).ToList();
+
+			return View("RecordsMenu/ExploreRecords", records);
+		}
+
+		public IActionResult SearchRecords()
+		{
+			return View("RecordsMenu/SearchRecords");
+		}
+
+		public IActionResult GetSearchRecords(int[] status, string patientName,
+			string providername, string PhoneNum, string email, string requesttype)
+		{
+
+			var record = (from request in _context.Requests
+						  join requestclient in _context.RequestClients
+						  on request.RequestId equals requestclient.RequestId
+						  join physician in _context.Physicians
+						  on request.PhysicianId equals physician.PhysicianId into physicians
+						  from allphysician in physicians.DefaultIfEmpty()
+						  select new
+						  {
+							  Request = request,
+							  RequestClient = requestclient,
+							  Physician = allphysician,
+							  // RequestNote = rn
+						  }).ToList();
+
+			var searchRecords = record.Select(item => new SearchRecords
+			{
+				PatientName = $"{item.RequestClient.FirstName} {item.RequestClient.LastName}",
+				Requestor = $"{item.Request.FirstName} {item.Request.LastName}",
+				// DateOfService = GetDateofService(item.Request.Requestid),
+				//ServiceDate = GetDateofService(item.Request.Requestid)?.ToString("MMMM dd, yyyy") ?? "",
+				//DateofClose = GetCloseDate(item.Request.Requestid)?.ToString("MMMM dd, yyyy") ?? "",
+				//CloseDate = GetCloseDate(item.Request.Requestid),
+				Email = item.RequestClient.Email,
+				PhoneNumber = item.RequestClient.PhoneNumber,
+				Address = item.RequestClient.Location,
+				Zip = item.RequestClient.ZipCode,
+				RequestStatus = item.Request.Status,
+				PhysicianName = item.Physician != null ? $"{item.Physician.FirstName} {item.Physician.LastName}" : "",
+				//PhysicianNote = item.RequestNote?.Physiciannotes,
+				//CancelledByProvidor = GetPatientCancellationNotes(item.Request.Requestid),
+				PatientNote = item.RequestClient.Notes,
+				RequestTypeId = item.Request.RequestTypeId,
+				//AdminNotes = item.RequestNote?.Adminnotes,
+				RequestId = item.Request.RequestId,
+				IsDelted = item.Request.IsDeleted[0]
+			}).Where(item =>
+	   (string.IsNullOrEmpty(email) || item.Email.Contains(email)) &&
+	   (string.IsNullOrEmpty(PhoneNum) || item.PhoneNumber.Contains(PhoneNum)) &&
+	   (string.IsNullOrEmpty(patientName) || item.PatientName.ToLower().Contains(patientName.ToLower())) &&
+	   (string.IsNullOrEmpty(providername) || item.PhysicianName.ToLower().Contains(providername.ToLower())) &&
+	   (status.Length == 0 || status.Contains(item.RequestStatus)) && item.IsDelted == false &&
+	   (requesttype == "0" || item.RequestTypeId == int.Parse(requesttype))).ToList();
+
+			return PartialView("RecordsMenu/_SearchrecordPartial", searchRecords);
+		}
+
+
+		public IActionResult DeleteRecord(int id)
+		{
+			Request? request = _context.Requests.Find(id);
+			if (request != null)
+			{
+				request.IsDeleted = new BitArray(new[] { true });
+				_context.Requests.Update(request);
+			}
+			_notyf.Success("The patient deleted successfully");
+			_context.SaveChanges();
+			return RedirectToAction("SearchRecords");
+		}
+
+		public IActionResult BlockHistory()
+		{
+			return View("RecordsMenu/BlockHistory");
+		}
+
+		public IActionResult GetBlockedPatientRecords(string email, string name, string phone, DateTime date)
+		{
+			var list = (from br in _context.BlockRequests
+						join r in _context.Requests on br.RequestId equals r.RequestId.ToString()
+						join rc in _context.RequestClients on r.RequestId equals rc.RequestId
+						select new BlockHistory
+						{
+							BlockedRequestID = br.BlockRequestId,
+							RequestId = r.RequestId,
+							PatientName = rc.FirstName + " " + rc.LastName,
+							CreatedDate = br.CreatedDate,
+							PhoneNumber = br.PhoneNumber,
+							Email = br.Email,
+							Notes = "Notes",
+							IsActive = br.IsActive[0]
+						}).Where(item =>
+       (string.IsNullOrEmpty(email) || item.Email.Contains(email)) &&
+       (string.IsNullOrEmpty(name) || item.PatientName.ToLower().Contains(name.ToLower()) &&
+        (string.IsNullOrEmpty(phone) || item.PatientName.Contains(phone)))).ToList();
+
+			return PartialView("RecordsMenu/_BlockHistoryPartial", list);
+		}
+
+        public IActionResult Unblock(int id)
+        {
+            var user = _context.BlockRequests.FirstOrDefault(s => s.RequestId ==  id.ToString());
+
+            if (user != null)
+            {
+                _context.BlockRequests.Remove(user);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("BlockHistory");
+        }
+
+	}
    
 }

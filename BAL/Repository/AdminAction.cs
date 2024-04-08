@@ -152,6 +152,10 @@ namespace BAL.Repository
                 blockRequest.Email = user.Email;
                 blockRequest.PhoneNumber = user.PhoneNumber;
                 blockRequest.Reason = blocknotes ?? "--";
+                blockRequest.IsActive = new System.Collections.BitArray(new[] { true });
+
+                _context.Add(blockRequest);
+                _context.SaveChanges();
             }
         }
 
@@ -381,6 +385,38 @@ namespace BAL.Repository
             {
                 return false;
             }
+
+
+        }
+
+        public IQueryable<Admin_DashBoard> GetRequests(int[] status)
+        {
+           
+            var result = (from req in _context.Requests
+                          join reqclient in _context.RequestClients
+                          on req.RequestId equals reqclient.RequestId
+                          orderby req.CreatedDate
+                          select new Admin_DashBoard()
+                          {
+                              Name = reqclient.FirstName,
+                              Requestor = req.FirstName,
+                              BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
+                              RequestedDate = req.CreatedDate,
+                              Email = reqclient.Email,
+                              PhoneNumber = req.PhoneNumber,
+                              requesttypeid = req.RequestTypeId,
+                              PhoneNumber_P = reqclient.PhoneNumber,
+                              regionid = reqclient.RegionId,
+                              Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
+                              status = req.Status,
+                              requestid = reqclient.RequestId,
+                              cases = _context.CaseTags.ToList(),
+                              region = _context.Regions.ToList(),
+                              Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
+                          }).Where(item => status.Any(s => item.status == s));
+
+
+            return result;
         }
     }
 }

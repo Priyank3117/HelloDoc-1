@@ -21,5 +21,7 @@ namespace BAL.Interface
         public void EncounterPost(int id, Encounter enc);
         public bool CloseInstance(int reqid);
         public ViewCase ViewCase(int id, int status);
+
+        public IQueryable<Admin_DashBoard> GetRequests(int[] status);
     }
 }

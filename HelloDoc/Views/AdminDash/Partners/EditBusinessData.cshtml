@@ -24,7 +24,7 @@
                         <span class="text-danger error-BusinessName" asp-validation-for="BusinessName"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                        <select class="form-control py-2 changable" asp-for="Profession">
+                        <select class="form-control py-2 changable" asp-for="Profession" disabled>
                             <option value="0" selected disabled>Select Profession</option>
                             @foreach (var item in ViewBag.HealthProfessionalTypes)
                             {
