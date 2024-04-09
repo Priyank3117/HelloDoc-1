@@ -20,9 +20,9 @@ namespace BAL.Repository
         {
 
 
-            private readonly string _role;
+            private readonly string[] _role;
             private readonly ApplicationDbContext _context;
-            public CustomAuthorize(string role = "")
+            public CustomAuthorize(string[] role)
             {
                 this._role = role;
             }
@@ -56,7 +56,7 @@ namespace BAL.Repository
                     return;
                 }
                 //Redirect to Access Denied only if roles mismatch      
-                if (string.IsNullOrWhiteSpace(_role) || roleClaim.Value != _role)
+                if (_role.Length < 1 || !_role.Contains (roleClaim.Value))
                 {
                     context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Home", action = "AccessDenied" }));
                     return;

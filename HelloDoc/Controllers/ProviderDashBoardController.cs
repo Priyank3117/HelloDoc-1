@@ -7,8 +7,7 @@ using static BAL.Repository.Authorizationrepo;
 
 namespace HelloDoc.Controllers
 {
-
-    [CustomAuthorize("Physician")]
+    [CustomAuthorize(new string[] { "Physician" })]
     public class ProviderDashBoardController : Controller
     {
         private readonly ApplicationDbContext _context;

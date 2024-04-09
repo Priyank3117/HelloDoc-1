@@ -9,7 +9,8 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 namespace HelloDoc.Controllers
 {
 
-    [CustomAuthorize("Patient")]
+   
+    [CustomAuthorize(new string[] { "Patient" })]
     public class DashBoardController : Controller
     {
 

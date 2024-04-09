@@ -30,7 +30,7 @@ using System.Web.Helpers;
 namespace HelloDoc.Controllers
 {
 
-    [CustomAuthorize("Admin")]
+    [CustomAuthorize(new string[] {"Admin"})]
     public class AdminDashController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -65,6 +65,10 @@ namespace HelloDoc.Controllers
             _acc = accountsAccess;
             _adminDashboardRecords = adminDashboardRecords;
         }
+
+
+
+        #region AdminDashboard
         public IActionResult AdminDash()
         {
             var email = HttpContext.Session.GetString("Email");
@@ -110,7 +114,9 @@ namespace HelloDoc.Controllers
             return PartialView(partialName, paginatedData);
 
         }
+        #endregion AdminDashboard
 
+        #region viewcase,viewnotes,cancel,assign,teansfer,block,viewupload
         public IActionResult ViewCase(int id, int status)
         {
             var viewCase = _adminAction.ViewCase(id, status);
@@ -189,6 +195,9 @@ namespace HelloDoc.Controllers
             return View(result);
         }
 
+        #endregion viewcase,viewnotes,cancel,assign,teansfer,block,viewupload
+
+        #region Uploadfile,deleteindividual,deleteselected,sendselected
 
         [HttpPost]
         public IActionResult uploadfile(int reqid)
@@ -287,6 +296,10 @@ namespace HelloDoc.Controllers
                 return StatusCode(500, new { message = $"Error Sending  files: {ex.Message}" });
             }
         }
+
+        #endregion Uploadfile,deleteindividual,deleteselected,sendselected
+
+
 
         public JsonResult CheckSession()
         {
