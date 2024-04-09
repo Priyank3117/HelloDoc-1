@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_AdminDash.cshtml";
 }
 
-<div class="container-fluid" style="height:80%!important">
+<div class="container-fluid bg-light" style="height:80%!important">
     <h4 class="py-3">Patient history</h4>
     <div class="mx-0 row px-4 border-bottom-0 border border-secondary rounded-top pt-3 pb-4 ">
         <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
@@ -46,10 +46,19 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-
+    var currentpage = 1;
+    var pagesize = 6;
     GetPatientRecord();
 
     function GetPatientRecord() {
+
+        $(document).on("click", "#pagination a.page-link", function () {
+            console.log("Pagination link clicked!");
+            var id = $(this).attr("id");
+            currentpage = $("#" + id).data("page");
+            console.log("Current Page: " + currentpage);
+            GetPatientRecord();
+        });
 
         var firstName = $("#FirstName").val();
         var phone = $("#PhoneNum").val();
@@ -59,7 +68,8 @@
         $.ajax({
             type: 'GET',
             url: '/AdminDash/GetPatientRecords',
-            data: { firstName: firstName, lastName: lastName, email: email, phone: phone },
+            data: { firstName: firstName, lastName: lastName, email: email, phone: phone,currentpage:currentpage,
+            pagesize:pagesize},
             success: function (response) {
                 $("#PatientHistoryPartial").html(response);
             },

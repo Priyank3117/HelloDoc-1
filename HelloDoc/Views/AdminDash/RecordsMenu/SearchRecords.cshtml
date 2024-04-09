@@ -4,14 +4,14 @@
     Layout = "~/Views/Shared/_AdminDash.cshtml";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between">
-        <h4 class="py-3">Search Records</h4>
+<div class="container-fluid bg-light">
+    <div class="d-flex justify-content-between ">
+        <h4 class="my-3">Search Records</h4>
         <div>
-            <button class="btn btn-outline-info mt-3">Export Data to Excle</button>
+            <button class="btn btn-outline-info mt-3" onclick="ExportFile()">Export Data to Excle</button>
         </div>
     </div>
-    <div class="mx-0 row px-4 border-bottom-0 border border-secondary rounded-top pt-3">
+    <div class="mx-0 row px-4 border-bottom-0 border border-secondary rounded-top mt-3">
         <div class="col-sm-12 col-md-12 col-lg-3 form-floating my-3">
             <select class="form-select shadow-none statusSelect p-3" id="status" aria-label="Floating label select example">
                 <option value="0">Select Request Status</option>
@@ -86,8 +86,46 @@
 
     var currentpage = 1;
     var pagesize = 5;
-    GetSearchRecord(currentpage, pagesize);
+    GetSearchRecord();
 
+    
+    function ExportFile() {
+        alert("call")
+        var status = $("#status").val();
+        switch (status) {
+            case "1":
+                status = [1];
+                break;
+            case "2":
+                status = [2];
+                break;
+            case "3":
+                status = [4, 5];
+                break;
+            case "4":
+                status = [6];
+                break;
+            case "5":
+                status = [3, 7, 8];
+                break;
+            case "6":
+                status = [9];
+                break;
+            default:
+                status = [];
+                break;
+        }
+        var requesttype = $("#requesttype").val();
+        var providername = $("#providername").val();
+        var email = $("#Email").val();
+        var PhoneNum = $("#PhoneNum").val();
+        var patientName = $("#patientName").val();
+        var fromDateOfService = $("#FromDateOfService").val();
+        var toDateOfService = $("#ToDateOfService").val();
+
+        var downloadUrl = "/AdminDash/ExcleFromRecords?status=" + status + "&requesttype=" + requesttype + "&providername=" + providername + "&Email=" + email + "&PhoneNum=" + PhoneNum + "&patientName=" + patientName ;
+        window.location.href = downloadUrl;
+    }
 
     function GetSearchRecord() {
         var status = $("#status").val();
@@ -123,6 +161,9 @@
             GetSearchRecord();
         });
 
+     
+
+
         var requesttype = $("#requesttype").val();
         var providername = $("#providername").val();
         var email = $("#Email").val();
@@ -156,6 +197,6 @@
         $("#PhoneNum").val('');
         $("#providername").val('');
         $("#patientName").val('');
-        GetSearchRecord(currentpage, pagesize);
+        GetSearchRecord();
     }
 </script>

@@ -24,6 +24,7 @@ using OfficeOpenXml;
 using System.Configuration.Provider;
 using System.Net.NetworkInformation;
 using Microsoft.EntityFrameworkCore;
+using System.Web.Helpers;
 
 
 namespace HelloDoc.Controllers
@@ -43,12 +44,13 @@ namespace HelloDoc.Controllers
         private readonly IUploadProvider _uploadProvider;
         private readonly IAdminAction _adminAction;
         private readonly IAccountsAccess _acc;
+        private readonly IAdminDashboardRecords _adminDashboardRecords;
 
 
         public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
             IPasswordHasher<AdminProfile> passwordHasher,
             INotyfService notyf, IUploadProvider uploadProvider,
-            IAdminAction adminAction, IAccountsAccess accountsAccess)
+            IAdminAction adminAction, IAccountsAccess accountsAccess, IAdminDashboardRecords adminDashboardRecords)
         {
             _context = context;
             _AdminDashboard = adminDashboard;
@@ -61,6 +63,7 @@ namespace HelloDoc.Controllers
             _uploadProvider = uploadProvider;
             _adminAction = adminAction;
             _acc = accountsAccess;
+            _adminDashboardRecords = adminDashboardRecords;
         }
         public IActionResult AdminDash()
         {
@@ -273,6 +276,8 @@ namespace HelloDoc.Controllers
                     var body = "Docs";
 
                     _emailService.SendEmail("patelpriyank3112002@gmail.com", subject, body, files);
+                    _notyf.Success("Email sent successfully");
+                    _emailService.EmailLog("template", subject, req.Email, id);
                 }
                 return Ok(new { message = "Files Send successfully" });
 
@@ -805,13 +810,13 @@ namespace HelloDoc.Controllers
 
         public IActionResult UserAccess()
         {
-            return View();
+            return View("Access/UserAccess");
         }
 
         public IActionResult UserAccessData(int role)
         {
             var result = _acc.GetUserAccessData(role);
-            return PartialView("_UserAccessPartial", result);
+            return PartialView("Access/_UserAccessPartial", result);
         }
 
         public IActionResult CreateAdminAccount()
@@ -819,7 +824,7 @@ namespace HelloDoc.Controllers
             AdminProfile profile = new AdminProfile();
             profile.Regions = _context.Regions.ToList();
             profile.roles = _context.Roles.ToList();
-            return View(profile);
+            return View("Access/CreateAdminAccount", profile);
         }
 
         [HttpPost]
@@ -838,7 +843,7 @@ namespace HelloDoc.Controllers
 
                 profile.Regions = _context.Regions.ToList();
                 profile.roles = _context.Roles.ToList();
-                return View("CreateAdminAccount", profile);
+                return View("Access/CreateAdminAccount", profile);
             }
 
         }
@@ -847,18 +852,18 @@ namespace HelloDoc.Controllers
         {
             var roles = _context.Roles.ToList();
             var list = roles.Where(item => item.IsDeleted != null && (item.IsDeleted.Length == 0 || !item.IsDeleted[0]));
-            return View(list.ToList());
+            return View("Access/AccountAccess", list.ToList());
         }
 
         public IActionResult CreateAccess()
         {
-            return View();
+            return View("Access/CreateAccess");
         }
 
         public IActionResult GetRoles(int role)
         {
             var menu = _context.Menus.Where(item => role == 0 || item.AccountType == role).ToList();
-            return PartialView("_CreateAccessPartial", menu);
+            return PartialView("Access/_CreateAccessPartial", menu);
         }
 
 
@@ -892,7 +897,7 @@ namespace HelloDoc.Controllers
                 MenuList = menuList,
             };
 
-            return PartialView("_EditAccessPartial", viewModel);
+            return PartialView("Access/_EditAccessPartial", viewModel);
         }
 
 
@@ -906,7 +911,7 @@ namespace HelloDoc.Controllers
             access.roleid = roleid;
             access.Accounttype = role.AccountType;
 
-            return View(access);
+            return View("Access/EditAccess",access);
         }
 
 
@@ -1403,37 +1408,30 @@ namespace HelloDoc.Controllers
 			return View("RecordsMenu/PatientHistory");
 		}
 
-		public IActionResult GetPatientRecords(string firstName, string lastName, string email, string phoneNum)
+		public IActionResult GetPatientRecords(string firstName, string lastName, string email, string phone,int currentpage,int pagesize)
 		{
 			var records = _context.Users.Where(s => (string.IsNullOrEmpty(firstName) || s.FirstName.ToLower().Contains(firstName))
 			  && (string.IsNullOrEmpty(lastName) || s.LastName.ToLower().Contains(lastName))
 			  && (string.IsNullOrEmpty(email) || s.Email.ToLower().Contains(email))
-			  && (string.IsNullOrEmpty(phoneNum) || s.Mobile.Contains(phoneNum))).ToList();
+			  && (string.IsNullOrEmpty(phone) || s.Mobile.Contains(phone))).ToList();
 
-			return PartialView("RecordsMenu/_PatientHistoryPartial", records);
+            int totalItems = records.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
+            if (totalPages <= 1)
+            {
+                currentpage = 1;
+            }
+            var paginatedData = records.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = currentpage;
+
+            return PartialView("RecordsMenu/_PatientHistoryPartial", paginatedData);
 		}
 
-		public IActionResult ExploreRecords(int userid)
+		public IActionResult ExploreRecords(int userid) 
 		{
-			var records = (from requestClient in _context.RequestClients
-						   join encounterForm in _context.EncounterForms
-						   on requestClient.RequestId equals encounterForm.RequestId
-						   into Records
-						   from allPatient in Records.DefaultIfEmpty()
-						   where requestClient.Request.UserId == userid
-						   select new PatientHistory
-						   {
-							   ClientName = requestClient.Request.FirstName,
-							   CreatedDate = requestClient.Request.CreatedDate,
-							   ConfirmationNumber = requestClient.Request.ConfirmationNumber,
-							   ProvideName = requestClient.Request.Physician.FirstName,
-							   Status = requestClient.Request.Status,
-							   IsFinalize = allPatient.IsFinalize,
-							   RequestId = requestClient.Request.RequestId,
-							   RequestClientId = requestClient.RequestClientId
-						   }).ToList();
-
-			return View("RecordsMenu/ExploreRecords", records);
+			var records = _adminDashboardRecords.ExploreRecords(userid);
+            return View("RecordsMenu/ExploreRecords", records);
 		}
 
 		public IActionResult SearchRecords()
@@ -1445,48 +1443,8 @@ namespace HelloDoc.Controllers
 			string providername, string PhoneNum, string email, string requesttype,int pagesize,int currentpage)
 		{
 
-			var record = (from request in _context.Requests
-						  join requestclient in _context.RequestClients
-						  on request.RequestId equals requestclient.RequestId
-						  join physician in _context.Physicians
-						  on request.PhysicianId equals physician.PhysicianId into physicians
-						  from allphysician in physicians.DefaultIfEmpty()
-						  select new
-						  {
-							  Request = request,
-							  RequestClient = requestclient,
-							  Physician = allphysician,
-							  // RequestNote = rn
-						  }).ToList();
-
-			var searchRecords = record.Select(item => new SearchRecords
-			{
-				PatientName = $"{item.RequestClient.FirstName} {item.RequestClient.LastName}",
-				Requestor = $"{item.Request.FirstName} {item.Request.LastName}",
-				// DateOfService = GetDateofService(item.Request.Requestid),
-				//ServiceDate = GetDateofService(item.Request.Requestid)?.ToString("MMMM dd, yyyy") ?? "",
-				//DateofClose = GetCloseDate(item.Request.Requestid)?.ToString("MMMM dd, yyyy") ?? "",
-				//CloseDate = GetCloseDate(item.Request.Requestid),
-				Email = item.RequestClient.Email,
-				PhoneNumber = item.RequestClient.PhoneNumber,
-				Address = item.RequestClient.Location,
-				Zip = item.RequestClient.ZipCode,
-				RequestStatus = item.Request.Status,
-				PhysicianName = item.Physician != null ? $"{item.Physician.FirstName} {item.Physician.LastName}" : "",
-				//PhysicianNote = item.RequestNote?.Physiciannotes,
-				//CancelledByProvidor = GetPatientCancellationNotes(item.Request.Requestid),
-				PatientNote = item.RequestClient.Notes,
-				RequestTypeId = item.Request.RequestTypeId,
-				//AdminNotes = item.RequestNote?.Adminnotes,
-				RequestId = item.Request.RequestId,
-				IsDelted = item.Request.IsDeleted[0]
-			}).Where(item =>
-	   (string.IsNullOrEmpty(email) || item.Email.Contains(email)) &&
-	   (string.IsNullOrEmpty(PhoneNum) || item.PhoneNumber.Contains(PhoneNum)) &&
-	   (string.IsNullOrEmpty(patientName) || item.PatientName.ToLower().Contains(patientName.ToLower())) &&
-	   (string.IsNullOrEmpty(providername) || item.PhysicianName.ToLower().Contains(providername.ToLower())) &&
-	   (status.Length == 0 || status.Contains(item.RequestStatus)) && item.IsDelted == false &&
-	   (requesttype == "0" || item.RequestTypeId == int.Parse(requesttype))).ToList();
+            var searchRecords = _adminDashboardRecords.SearchRecords(status, patientName, providername, PhoneNum, email
+                , requesttype, pagesize, currentpage);
 
             int totalItems = searchRecords.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
@@ -1497,14 +1455,49 @@ namespace HelloDoc.Controllers
             var paginatedData = searchRecords.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = currentpage;
-
-           
-
             return PartialView("RecordsMenu/_SearchrecordPartial", paginatedData);
 		}
 
+        public IActionResult ExcleFromRecords(int[] status,string requesttype,string providername,
+            string email,string PhoneNum,string patientName)
+        {
+            var searchRecords = _adminDashboardRecords.SearchRecords(status, patientName, providername, PhoneNum, email
+                , requesttype);
 
-		public IActionResult DeleteRecord(int id)
+            using (var excel = new ExcelPackage())
+            {
+                var worksheet = excel.Workbook.Worksheets.Add("sheet1");
+                worksheet.Cells[1, 1].Value = "PatientName";
+                worksheet.Cells[1, 3].Value = "RequestorName";
+                worksheet.Cells[1, 4].Value = "RequestDate";
+                worksheet.Cells[1, 5].Value = "phone";
+                worksheet.Cells[1, 6].Value = "address";
+                worksheet.Cells[1, 7].Value = "Email";
+                worksheet.Cells[1, 8].Value = "Zip";
+                worksheet.Cells[1, 9].Value = "Physician";
+
+                var row = 2;
+                foreach (var item in searchRecords)
+                {
+                    worksheet.Cells[row, 1].Value = item.PatientName;
+                    worksheet.Cells[row, 3].Value = item.Requestor;
+                    worksheet.Cells[row, 4].Value = item.DateOfService;
+                    worksheet.Cells[row, 5].Value = item.PhoneNumber;
+                    worksheet.Cells[row, 6].Value = item.Address;
+                    worksheet.Cells[row, 7].Value = item.Email;
+                    worksheet.Cells[row, 8].Value = item.Zip;
+                    worksheet.Cells[row, 9].Value = item.PhysicianName;
+                    row++;
+                }
+
+                var excelBytes = excel.GetAsByteArray();
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "export.xlsx");
+            }
+        }
+
+
+
+        public IActionResult DeleteRecord(int id)
 		{
 			Request? request = _context.Requests.Find(id);
 			if (request != null)
@@ -1524,24 +1517,7 @@ namespace HelloDoc.Controllers
 
 		public IActionResult GetBlockedPatientRecords(string email, string name, string phone, DateTime date)
 		{
-			var list = (from br in _context.BlockRequests
-						join r in _context.Requests on br.RequestId equals r.RequestId.ToString()
-						join rc in _context.RequestClients on r.RequestId equals rc.RequestId
-						select new BlockHistory
-						{
-							BlockedRequestID = br.BlockRequestId,
-							RequestId = r.RequestId,
-							PatientName = rc.FirstName + " " + rc.LastName,
-							CreatedDate = br.CreatedDate,
-							PhoneNumber = br.PhoneNumber,
-							Email = br.Email,
-							Notes = "Notes",
-							IsActive = br.IsActive[0]
-						}).Where(item =>
-       (string.IsNullOrEmpty(email) || item.Email.Contains(email)) &&
-       (string.IsNullOrEmpty(name) || item.PatientName.ToLower().Contains(name.ToLower()) &&
-        (string.IsNullOrEmpty(phone) || item.PatientName.Contains(phone)))).ToList();
-
+			var list = _adminDashboardRecords.BlockedPatientRecords(email, name, phone, date);  
 			return PartialView("RecordsMenu/_BlockHistoryPartial", list);
 		}
 

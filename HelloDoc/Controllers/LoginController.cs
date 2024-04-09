@@ -68,6 +68,11 @@ namespace HelloDoc.Controllers
                         _notyf.Success("Successfully Login");
                         return RedirectToAction("AdminDash", "AdminDash");
                     }
+                    else if(role == "Physician")
+                    {
+                        _notyf.Success("Successfully Login");
+                        return RedirectToAction("ProviderDashBoard", "ProviderDashBoard");
+                    }
                 }
                 else if(Email == null || verifiedpassword == false)
                 {

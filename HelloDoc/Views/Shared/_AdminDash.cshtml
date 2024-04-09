@@ -1,4 +1,6 @@
-﻿
+﻿@{
+    string userName = ViewBag.username;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,7 +45,7 @@
                     </div>
 
                     <div class=" float-end ">
-                        <span class="fw-bold me-2 d-none d-sm-inline"> Welcome:@ViewBag.username</span>
+                        <span class="fw-bold me-2 d-none d-sm-inline">Welcome:@userName</span>
                         <a asp-action="Logout" asp-controller="Login">
 
                             <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"
@@ -96,7 +98,7 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAccount"
+                        <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAccount"
                         || ViewContext.ActionDescriptor.RouteValues["action"] == "PhysicianScheduling"? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Provider
                         </a>
@@ -110,7 +112,7 @@
                         <a asp-action="Partners" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">Partners</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-info 
+                        <a class="nav-link  text-info 
 
                         @(new string[] { "UserAccess", "CreateAdminAccount", "AccountAccess" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
@@ -123,7 +125,7 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-info
+                        <a class="nav-link  text-info
                         @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory" }
                         .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")" 
                         role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
@@ -165,13 +167,13 @@
                 </div>
             </div>
     </header>
-    <div class="container-fluid">
+    <div class="container-fluid pb-1 rounded-3 shadow">
         <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer mt-3 bg-dark text-white pe-3 footer position-absolute bottom-0 w-100 align-middle" style="height: 6vh !important;">
+    <footer class="border-top footer  bg-dark text-white pe-3 footer position-absolute  w-100 align-middle bottom-0" style="height: 6vh !important;">
         <div class="d-flex flex-row justify-content-end align-items-center my-auto h-100 py-auto w-100">
             <span>Terms Of Condition | Privacy Policy</span>
         </div>
@@ -192,6 +194,7 @@
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/js/UserAccess.js"></script>
     <script src="~/js/Partner.js"></script>
+
   
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

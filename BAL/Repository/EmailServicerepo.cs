@@ -1,4 +1,6 @@
 ﻿using BAL.Interface;
+using DAL.DataContext;
+using DAL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,36 @@ namespace BAL.Repository
 {
     public class EmailServicerepo : IEmailService
     {
+        private readonly ApplicationDbContext _context;
+
+        public EmailServicerepo(ApplicationDbContext context)
+        {
+            _context = context;
+
+        }
+
+        public void EmailLog(string template, string subject, string email, int requestid = 0, int adminId = 0, int physicianId = 0, string confirmationnum = null, string filePath = null)
+        {
+            EmailLog emailLog = new EmailLog();
+
+            emailLog.EmailTemplate = template;
+            emailLog.SubjectName = subject;
+            emailLog.EmailId = email;
+            emailLog.RequestId = requestid;
+            emailLog.AdminId = adminId;
+            emailLog.PhysicianId = physicianId;
+            emailLog.ConfirmationNumber = confirmationnum;
+            emailLog.FilePath = filePath;
+            emailLog.SentTries = 1;
+            emailLog.SentDate = DateTime.Now;
+            emailLog.CreateDate = DateTime.Now;
+            emailLog.IsEmailSent = new System.Collections.BitArray(new[] { true });
+            emailLog.RoleId = 1;
+
+            _context.EmailLogs.Add(emailLog);
+            _context.SaveChanges();
+        }
+
         public void SendEmail(string email, string subject, string message, List<Attachment> attachments = null)
         {
 
@@ -30,7 +62,7 @@ namespace BAL.Repository
 
             try
             {
-           
+
                 smtpClient.Send(mail);
                 Console.WriteLine("Email sent successfully!");
             }
@@ -40,6 +72,5 @@ namespace BAL.Repository
             }
         }
     }
-    
-}
 
+}
