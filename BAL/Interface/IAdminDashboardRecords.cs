@@ -1,4 +1,5 @@
-﻿using DAL.ViewModel;
+﻿using DAL.DataModels;
+using DAL.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace BAL.Interface
         public List<PatientHistory> ExploreRecords(int userid);
 
         public List<BlockHistory> BlockedPatientRecords(string email, string name, string phone, DateTime date);
+
+        public List<User> PatientRecords(string firstName, string lastName, string email, string phone, int currentpage, int pagesize)
     }
 }

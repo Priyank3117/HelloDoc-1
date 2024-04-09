@@ -23,5 +23,12 @@ namespace BAL.Interface
         public ViewCase ViewCase(int id, int status);
 
         public IQueryable<Admin_DashBoard> GetRequests(int[] status);
+
+
+
+        #region Scheduling methods
+
+
+        #endregion
     }
 }

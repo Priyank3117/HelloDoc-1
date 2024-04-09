@@ -1423,10 +1423,7 @@ namespace HelloDoc.Controllers
 
 		public IActionResult GetPatientRecords(string firstName, string lastName, string email, string phone,int currentpage,int pagesize)
 		{
-			var records = _context.Users.Where(s => (string.IsNullOrEmpty(firstName) || s.FirstName.ToLower().Contains(firstName))
-			  && (string.IsNullOrEmpty(lastName) || s.LastName.ToLower().Contains(lastName))
-			  && (string.IsNullOrEmpty(email) || s.Email.ToLower().Contains(email))
-			  && (string.IsNullOrEmpty(phone) || s.Mobile.Contains(phone))).ToList();
+            var records = _adminDashboardRecords.PatientRecords(firstName, lastName, email, phone, currentpage, pagesize);
 
             int totalItems = records.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
