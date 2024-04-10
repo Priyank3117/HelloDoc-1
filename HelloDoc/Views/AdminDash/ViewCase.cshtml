@@ -1,9 +1,15 @@
 ﻿@model DAL.ViewModel.ViewCase;
  
-
 @{
     ViewData["Title"] = "viewCase";
-     Layout = "~/Views/Shared/_AdminDash.cshtml";
+    if (ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_ProviderDashBoard.cshtml";
+    }
+    if (!ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_AdminDash.cshtml";
+    }
 }
 
 
@@ -13,7 +19,15 @@
     <div class="mx-auto pt-4  pb-3" style="width:70%;">
         <div class="d-flex justify-content-between my-2">
             <h3>New Request</h3><br />
-            <a><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+            @if (!ViewBag.IsPhysican)
+            {
+                <a asp-action="AdminDash" asp-controller="AdminDash"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+
+            }
+            else
+            {
+                <a asp-action="ProviderDashBoard" asp-controller="ProviderDashBoard"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+            }
         </div>
         <div class=" shadow bg-white p-4">
             <h4 class="pt-3 mb-4">Patient Information</h4>

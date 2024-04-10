@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Routing;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using BAL.Interface;
 

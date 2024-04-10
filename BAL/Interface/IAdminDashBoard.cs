@@ -1,13 +1,5 @@
-﻿using DAL.DataModels;
-using DAL.ViewModel;
-using DAL.ViewModels;
+﻿using DAL.ViewModel;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BAL.Interface
 {

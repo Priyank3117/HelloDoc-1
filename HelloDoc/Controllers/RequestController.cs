@@ -211,9 +211,9 @@ namespace HelloDoc.Controllers
             }
             else
             {
-                RedirectToAction("Patient_login", "Login");
+              return  RedirectToAction("Patient_login", "Login");
             }
-            return BadRequest();
+        
         }
 
         public IActionResult Agree(int id)
@@ -236,7 +236,7 @@ namespace HelloDoc.Controllers
                 _context.SaveChanges();
 
             }
-            return View("ReviewAgreement");
+           return  RedirectToAction("Patient_login", "Login");
         }
 
         public IActionResult CancelAgreement(string Notes, int id)

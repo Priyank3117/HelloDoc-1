@@ -1,10 +1,7 @@
 ﻿using BAL.Interface;
-using BAL.Repository;
 using DAL.DataContext;
 using DAL.DataModels;
-using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using static BAL.Repository.Authorizationrepo;
 
 namespace HelloDoc.Controllers
@@ -123,8 +120,20 @@ namespace HelloDoc.Controllers
 
         public IActionResult ViewCase(int id, int status)
         {
-            var viewCase = _adminAction.ViewCase(id, status);
-            return RedirectToAction("ViewCase", "AdminDash", new { id = id ,status = status});
+            return RedirectToAction("ViewCase", "AdminDash", new { id = id, status = status });
         }
+
+        public IActionResult ViewNotes(int id)
+        {
+            return RedirectToAction("ViewNotes", "AdminDash", new { id = id });
+        }
+
+        public IActionResult ViewUpload(int id)
+        {
+            return RedirectToAction("ViewUpload", "AdminDash", new { id = id });
+        }
+
+        //public IActionResult SendAgreement(int id) {
+        //}
     }
 }

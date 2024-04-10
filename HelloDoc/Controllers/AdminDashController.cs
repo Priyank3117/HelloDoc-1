@@ -27,6 +27,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Web.Helpers;
 
 
+
+
+
 namespace HelloDoc.Controllers
 {
 
@@ -117,17 +120,53 @@ namespace HelloDoc.Controllers
         #endregion AdminDashboard
 
         #region viewcase,viewnotes,cancel,assign,teansfer,block,viewupload
+
+
+        [HttpGet("ProviderDashBoard/ViewCase/{id}", Name = "ProviderCase")]
+        [HttpGet("AdminDash/ViewCase/{id}/{status}", Name = "AdminCase")]
         public IActionResult ViewCase(int id, int status)
         {
-            var viewCase = _adminAction.ViewCase(id, status);
-            return View(viewCase);
+            string email = HttpContext.Session.GetString("Email");
+           
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+
+            if (admin != null)
+            {
+                ViewBag.IsPhysican = false;
+                
+            }
+            else
+            {
+                ViewBag.IsPhysican = true;
+                
+            }
+            var ViewCase = _adminAction.ViewCase(id, status);
+            return View(ViewCase);
         }
 
+
+
+        [HttpGet("ProviderDashBoard/ViewNotes/{id}", Name = "ProviderNotes")]
+        [HttpGet("AdminDash/ViewNotes/{id}", Name = "AdminCaseNotes")]
         public ActionResult ViewNotes(int id)
         {
 
             //if admin add notes in transfer request that will added in the requeststatus log
             //tables notes it will known as the transfer notes
+
+            string email = HttpContext.Session.GetString("Email");
+
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            if (admin != null)
+            {
+                ViewBag.IsPhysican = false;
+
+            }
+            else
+            {
+                ViewBag.IsPhysican = true;
+
+            }
             var result = _AdminDashboard.GetViewNotes(id).ToList();
             return View(result);
         }
@@ -178,9 +217,24 @@ namespace HelloDoc.Controllers
             return Ok();
         }
 
+
+        [HttpGet("ProviderDashBoard/ViewUpload/{id}", Name = "ProviderUploads")]
+        [HttpGet("AdminDash/ViewUpload/{id}", Name = "AdminCaseNotesUploads")]
         public IActionResult ViewUpload(int id)
         {
+            string email = HttpContext.Session.GetString("Email");
 
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            if (admin != null)
+            {
+                ViewBag.IsPhysican = false;
+
+            }
+            else
+            {
+                ViewBag.IsPhysican = true;
+
+            }
             bool[] bitValues = { true };
             BitArray bits = new BitArray(bitValues);
             var reque = _context.RequestWiseFiles.Where(u => u.RequestId == id && u.IsDeleted != bits).ToList();

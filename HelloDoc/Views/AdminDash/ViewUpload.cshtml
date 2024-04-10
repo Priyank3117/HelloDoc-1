@@ -2,14 +2,29 @@
 
 @{
     ViewData["Title"] = "ViewUpload";
-    Layout = "~/Views/Shared/_AdminDash.cshtml";
+    if (ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_ProviderDashBoard.cshtml";
+    }
+    if (!ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_AdminDash.cshtml";
+    }
 }
 
 <div class="bg-body-secondary">
     <div class="mx-auto pt-4  pb-3" style="width:70%;">
         <div class="d-flex justify-content-between my-2">
             <h3>View Documents</h3><br />
-            <a asp-action="index"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none">Back</button></a>
+            @if (!ViewBag.IsPhysican)
+            {
+                <a asp-action="AdminDash" asp-controller="AdminDash"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+
+            }
+            else
+            {
+                <a asp-action="ProviderDashBoard" asp-controller="ProviderDashBoard"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+            }
         </div>
         <div class="PatientInfoTable border rounded shadow bg-white p-4">
             <span> patient name</span>

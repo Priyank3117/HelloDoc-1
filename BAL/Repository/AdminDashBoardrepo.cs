@@ -28,9 +28,6 @@ namespace BAL.Repository
 
         public IQueryable<Admin_DashBoard> GetList()
         {
-
-
-
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                            on req.RequestId equals reqclient.RequestId
@@ -52,10 +49,10 @@ namespace BAL.Repository
                                 requestid = reqclient.RequestId,
                                 cases = _context.CaseTags.ToList(),
                                 region = _context.Regions.ToList(),
-                                Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
+                                Isfinalise = _context.EncounterForms.Where(x => x.RequestId == req.RequestId).Select(x => x.IsFinalize).FirstOrDefault()
                             }); ;
 
-            return DashData;
+                            return DashData;   
         }
 
         public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect,
@@ -88,8 +85,8 @@ namespace BAL.Repository
                                 requestid = reqclient.RequestId,
                                 physicianName = totalreqs.FirstName,
                                 physicianid = req.PhysicianId,
-                                Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
-                                
+                                Isfinalise = _context.EncounterForms.Where(x => x.RequestId == req.RequestId).Select(x => x.IsFinalize).FirstOrDefault()
+
 
                             }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
                               (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
@@ -125,8 +122,7 @@ namespace BAL.Repository
                                 Notes = reqclient.Notes,
                                 confirmationnum = req.ConfirmationNumber,
                                 requestid = reqclient.RequestId,
-                                Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
-
+                                Isfinalise = _context.EncounterForms.Where(x => x.RequestId == req.RequestId).Select(x => x.IsFinalize).FirstOrDefault()
 
                             }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
                               (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
@@ -163,8 +159,7 @@ namespace BAL.Repository
                                 regionname = region.Name,
                                 confirmationnum = req.ConfirmationNumber,
                                 requestid = reqclient.RequestId,
-                                Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
-
+                                Isfinalise = _context.EncounterForms.Where(x => x.RequestId == req.RequestId).Select(x => x.IsFinalize).FirstOrDefault()
                             });
 
             return DashData;
