@@ -15,6 +15,8 @@ namespace DAL.ViewModel
 
          public string? LastName { get; set; }
 
+        public int? physicianid { get; set; }
+
         public string? BirthDate { get; set;}
 
         public string? Email { get; set; }
@@ -33,7 +35,11 @@ namespace DAL.ViewModel
 
         public int? requesttypeid { get; set; }
 
-        public int? regionid { get; set;}
+        public int? regionid { get; set; }
+
+        public string? physicianName {  get; set; }
+
+        public string? dateOfService {  get; set; }
 
         public string regionname { get; set; }
 

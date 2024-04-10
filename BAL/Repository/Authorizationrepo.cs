@@ -56,7 +56,7 @@ namespace BAL.Repository
                     return;
                 }
                 //Redirect to Access Denied only if roles mismatch      
-                if (_role.Length < 1 || !_role.Contains (roleClaim.Value))
+                if (_role.Length < 1 || !_role.Contains(roleClaim.Value))
                 {
                     context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Home", action = "AccessDenied" }));
                     return;

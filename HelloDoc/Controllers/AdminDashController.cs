@@ -30,7 +30,7 @@ using System.Web.Helpers;
 namespace HelloDoc.Controllers
 {
 
-    [CustomAuthorize(new string[] {"Admin"})]
+    [CustomAuthorize(new string[] {"Admin","Physician"})]
     public class AdminDashController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -990,7 +990,7 @@ namespace HelloDoc.Controllers
         [HttpGet]
         public IActionResult GetEvents(int region)
         {
-            var events = _AdminDashboard.GetEvents(region);
+            var events = _adminAction.GetEvents(region);
             var mappedEvents = events.Select(e => new
             {
                 id = e.Shiftid,
@@ -1009,75 +1009,7 @@ namespace HelloDoc.Controllers
         public IActionResult CreateShift(Scheduling model)
         {
             var email = HttpContext.Session.GetString("Email");
-            var admin = _context.Admins.FirstOrDefault(s => s.Email == email);
-
-
-            Shift shift = new Shift();
-            shift.PhysicianId = model.Physicianid;
-            shift.StartDate = model.Startdate;
-            shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
-            shift.RepeatUpto = model.Repeatupto;
-            shift.CreatedDate = DateTime.Now;
-            shift.CreatedBy = admin.AspNetUserId;
-            _context.Shifts.Add(shift);
-            _context.SaveChanges();
-
-            ShiftDetail sd = new ShiftDetail();
-            sd.ShiftId = shift.ShiftId;
-            sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
-            sd.StartTime = model.Starttime;
-            sd.EndTime = model.Endtime;
-            sd.RegionId = model.Regionid;
-            sd.Status = model.Status;
-            sd.IsDeleted = new BitArray(new[] { false });
-
-
-            _context.ShiftDetails.Add(sd);
-            _context.SaveChanges();
-
-            ShiftDetailRegion sr = new ShiftDetailRegion();
-            sr.ShiftDetailId = sd.ShiftDetailId;
-            sr.RegionId = (int)model.Regionid;
-            sr.IsDeleted = new BitArray(new[] { false });
-            _context.ShiftDetailRegions.Add(sr);
-            _context.SaveChanges();
-
-            if (shift.IsRepeat[0])
-            {
-                var stringArray = model.checkWeekday.Split(",");
-                foreach (var weekday in stringArray)
-                {
-
-                    DateTime startDateForWeekday = model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).AddDays((7 + int.Parse(weekday) - (int)model.Startdate.DayOfWeek) % 7);
-
-
-                    if (startDateForWeekday < model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)))
-                    {
-                        startDateForWeekday = startDateForWeekday.AddDays(7); // Add 7 days to move it to the next occurrence
-                    }
-
-                    // Iterate over Refill times
-                    for (int i = 0; i < shift.RepeatUpto; i++)
-                    {
-                        // Create a new ShiftDetail instance for each occurrence
-                        ShiftDetail shiftDetail = new ShiftDetail
-                        {
-                            ShiftId = shift.ShiftId,
-                            ShiftDate = startDateForWeekday.AddDays(i * 7), // Add i  7 days to get the next occurrence
-                            RegionId = (int)model.Regionid,
-                            StartTime = model.Starttime,
-                            EndTime = model.Endtime,
-                            Status = 0,
-                            IsDeleted = new BitArray(new[] { false })
-                        };
-
-                        // Add the ShiftDetail to the database context
-                        _context.Add(shiftDetail);
-                        _context.SaveChanges();
-                    }
-                }
-            }
-
+            _adminAction.CreateShift(model, email);
             return RedirectToAction("PhysicianScheduling");
         }
 
@@ -1103,7 +1035,7 @@ namespace HelloDoc.Controllers
                 // Update the database
                 _context.ShiftDetails.Update(shiftdetail);
                 _context.SaveChanges();
-                var events = _AdminDashboard.GetEvents(region);
+                var events = _adminAction.GetEvents(region);
                 var mappedEvents = events.Select(e => new
                 {
                     id = e.Shiftid,
@@ -1134,7 +1066,7 @@ namespace HelloDoc.Controllers
             shiftdetail.IsDeleted = new BitArray(new[] { true });
             _context.ShiftDetails.Update(shiftdetail);
             _context.SaveChanges();
-            var events = _AdminDashboard.GetEvents(region);
+            var events = _adminAction.GetEvents(region);
             var mappedEvents = events.Select(e => new
             {
                 id = e.Shiftid,
@@ -1163,7 +1095,7 @@ namespace HelloDoc.Controllers
 
             _context.ShiftDetails.Update(shiftdetail);
             _context.SaveChanges();
-            var events = _AdminDashboard.GetEvents(region);
+            var events = _adminAction.GetEvents(region);
             var mappedEvents = events.Select(e => new
             {
                 id = e.Shiftid,

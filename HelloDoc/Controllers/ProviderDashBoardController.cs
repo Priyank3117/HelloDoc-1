@@ -1,5 +1,7 @@
 ﻿using BAL.Interface;
+using BAL.Repository;
 using DAL.DataContext;
+using DAL.DataModels;
 using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,31 +9,35 @@ using static BAL.Repository.Authorizationrepo;
 
 namespace HelloDoc.Controllers
 {
-    [CustomAuthorize(new string[] { "Physician" })]
+    [CustomAuthorize(new string[] {"Physician"})]
     public class ProviderDashBoardController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IProviderDashBoard _providerDashBoard;
         private readonly IAdminDashBoard _AdminDashBoard;
+        private readonly IAdminAction _adminAction;
 
-        public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,IAdminDashBoard adminDashBoard) { 
+        public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,IAdminDashBoard adminDashBoard,IAdminAction adminAction) { 
            
 
            _context = context;
             _providerDashBoard = providerDashBoard;
             _AdminDashBoard = adminDashBoard;
+            _adminAction = adminAction;
         }
      
         public IActionResult ProviderDashBoard()
         {
             var email = HttpContext.Session.GetString("Email");
+            int phyId = 0;
             if (email != null)
             {
                 ViewBag.username = _context.AspNetUsers.First(u => u.Email == email).UserName;
+                phyId = _context.Physicians.First(u => u.Email == email).PhysicianId;
             }
             var DashData = _AdminDashBoard.GetList();
 
-            var dashboardData = _providerDashBoard.GetCount();
+            var dashboardData = _providerDashBoard.GetCount(phyId);
 
             // Set ViewBag properties
             ViewBag.NewCount = dashboardData.NewCount;
@@ -62,9 +68,15 @@ namespace HelloDoc.Controllers
         public IActionResult SearchPatient(string SearchValue, string Filterselect,
            string selectvalue, string partialName, int[] currentstatus, int currentpage, int pagesize)
         {
+            var email = HttpContext.Session.GetString("Email");
+            int phyId = 0;
+            if (email != null)
+            {
+                 phyId = _context.Physicians.First(u => u.Email == email).PhysicianId;
+            }
 
-            var FilterData = _AdminDashBoard.GetRequestData(SearchValue, Filterselect, selectvalue,
-            partialName, currentstatus).ToList();
+            var FilterData = _AdminDashBoard.GetRequestDataPhy(SearchValue, Filterselect, selectvalue,
+            partialName, currentstatus, phyId).ToList();
 
             int totalItems = FilterData.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
@@ -80,6 +92,39 @@ namespace HelloDoc.Controllers
             ViewBag.CurrentPage = currentpage;
             return PartialView(partialName, paginatedData);
 
+        }
+
+        public IActionResult Accept(int id)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == id);
+
+            if (user != null)
+            {
+                user.Status = 2;
+                user.ModifiedDate = DateTime.Now;
+             
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+
+                requeststatuslog.RequestId = id;
+                requeststatuslog.Status = 2;
+                requeststatuslog.CreatedDate = DateTime.Now;
+
+
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+
+            return RedirectToAction("ProviderDashBoard");
+        }
+
+        public IActionResult ViewCase(int id, int status)
+        {
+            var viewCase = _adminAction.ViewCase(id, status);
+            return RedirectToAction("ViewCase", "AdminDash", new { id = id ,status = status});
         }
     }
 }

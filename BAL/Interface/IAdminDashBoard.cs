@@ -14,7 +14,10 @@ namespace BAL.Interface
     public interface IAdminDashBoard
     {
         public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect, 
-            string selectvalue, string partialName, int[] currentstatus);  
+            string selectvalue, string partialName, int[] currentstatus);
+
+        public List<Admin_DashBoard> GetRequestDataPhy(string SearchValue, string Filterselect,
+           string selectvalue, string partialName, int[] currentstatus, int phyId);
         public IQueryable<Admin_DashBoard> getregionwise();
 
         public int CountByStatus(int[] status);
@@ -43,7 +46,7 @@ namespace BAL.Interface
         public void UpdateProviderProfile(int id, string businessName, string businessWebsite, IFormFile signatureFile, IFormFile photoFile);
 
         public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid);
-        public List<Scheduling> GetEvents(int region);
+      
 
 	}
 }

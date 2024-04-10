@@ -64,7 +64,9 @@ namespace BAL.Repository
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
-
+                             join phy in _context.Physicians on
+                             req.PhysicianId equals phy.PhysicianId into phys
+                             from totalreqs in phys.DefaultIfEmpty()
 
                             select new Admin_DashBoard()
                             {
@@ -84,8 +86,47 @@ namespace BAL.Repository
                                 Notes = reqclient.Notes,
                                 confirmationnum = req.ConfirmationNumber,
                                 requestid = reqclient.RequestId,
+                                physicianName = totalreqs.FirstName,
+                                physicianid = req.PhysicianId,
                                 Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
                                 
+
+                            }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
+                              (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
+                              (string.IsNullOrEmpty(selectvalue) || item.regionid == int.Parse(selectvalue)) &&
+                               currentstatus.Any(status => item.status == status)).ToList();
+
+            return DashData;
+
+        }
+
+        public List<Admin_DashBoard> GetRequestDataPhy(string SearchValue, string Filterselect,
+            string selectvalue, string partialName, int[] currentstatus,int PhyId)
+        {
+            var DashData = (from req in _context.Requests
+                            join reqclient in _context.RequestClients
+                             on req.RequestId equals reqclient.RequestId
+                             where req.PhysicianId == PhyId
+                            select new Admin_DashBoard()
+                            {
+                                Name = reqclient.FirstName.ToLower(),
+                                LastName = reqclient.LastName,
+                                Requestor = req.FirstName,
+                                BirthDate = (new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate)).ToString("MMM dd,yyyy"),
+                                RequestedDate = req.CreatedDate,
+                                PhoneNumber = req.PhoneNumber,
+                                requesttypeid = req.RequestTypeId,
+                                PhoneNumber_P = reqclient.PhoneNumber,
+                                regionid = reqclient.RegionId,
+                                Address = reqclient.Street + " " + reqclient.City + " " + reqclient.State + " " + reqclient.ZipCode,
+                                status = req.Status,
+                                reqclientid = reqclient.RequestClientId,
+                                Email = reqclient.Email,
+                                Notes = reqclient.Notes,
+                                confirmationnum = req.ConfirmationNumber,
+                                requestid = reqclient.RequestId,
+                                Isfinalise = _context.EncounterForms.FirstOrDefault(s => s.RequestId == req.RequestId).IsFinalize
+
 
                             }).Where(item => (string.IsNullOrEmpty(SearchValue) || item.Name.Contains(SearchValue)) &&
                               (string.IsNullOrEmpty(Filterselect) || item.requesttypeid == int.Parse(Filterselect)) &&
@@ -468,29 +509,7 @@ namespace BAL.Repository
                 return false;
             }
         }
-		public List<Scheduling> GetEvents(int region)
-		{
-			var eventswithoutdelet = (from s in _context.Shifts
-									  join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
-									  join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
-									  from sd in shiftGroup.DefaultIfEmpty()
-
-									  select new Scheduling
-									  {
-										  Shiftid = sd.ShiftDetailId,
-										  Status = sd.Status,
-										  Starttime = sd.StartTime,
-										  Endtime = sd.EndTime,
-										  Physicianid = pd.PhysicianId,
-										  PhysicianName = pd.FirstName + ' ' + pd.LastName,
-										  Shiftdate = sd.ShiftDate,
-										  ShiftDetailId = sd.ShiftDetailId,
-										  Regionid = sd.RegionId,
-										  ShiftDeleted = sd.IsDeleted[0]
-									  }).Where(item => region == 0 || item.Regionid == region).ToList();
-			var events = eventswithoutdelet.Where(item => !item.ShiftDeleted).ToList();
-			return events;
-		}
+		
 
         
 	}

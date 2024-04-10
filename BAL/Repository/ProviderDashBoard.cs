@@ -20,9 +20,9 @@ namespace BAL.Repository
         {
             _context = context;
         }
-        public GetCount GetCount()
+        public GetCount GetCount(int phyId)
         {
-            var newcount = (_context.Requests.Where(item => item.Status == 1)).Count();
+            var newcount = (_context.Requests.Where(item => item.Status == 1 && item.PhysicianId == phyId)).Count();
             var pendingcount = (_context.Requests.Where(item => item.Status == 2)).Count();
             var activecount = (_context.Requests.Where(item => item.Status == 4 || item.Status == 5)).Count();
             var conclude = (_context.Requests.Where(item => item.Status == 6)).Count();

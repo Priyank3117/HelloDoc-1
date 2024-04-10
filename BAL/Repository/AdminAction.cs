@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
+using System.Collections;
 
 namespace BAL.Repository
 {
@@ -77,7 +78,7 @@ namespace BAL.Repository
 
             if (user != null)
             {
-                user.Status = 2;
+     
                 user.ModifiedDate = DateTime.Now;
                 user.PhysicianId = int.Parse(phyid);
 
@@ -89,7 +90,7 @@ namespace BAL.Repository
                 requeststatuslog.RequestId = req;
                 requeststatuslog.Notes = Description;
                 requeststatuslog.CreatedDate = DateTime.Now;
-                requeststatuslog.Status = 2;
+            
 
                 _context.Add(requeststatuslog);
                 _context.SaveChanges();
@@ -238,6 +239,7 @@ namespace BAL.Repository
             }
         }
 
+        #region Encounterform
         public Encounter EncounterForm(int id)
         {
             var result = (from req in _context.Requests
@@ -359,6 +361,7 @@ namespace BAL.Repository
                 _context.SaveChanges();
             }
         }
+        #endregion Encounterform
 
         public bool CloseInstance(int reqid)
         {
@@ -418,5 +421,106 @@ namespace BAL.Repository
 
             return result;
         }
+
+        public List<Scheduling> GetEvents(int region)
+        {
+            var eventswithoutdelet = (from s in _context.Shifts
+                                      join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
+                                      join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
+                                      from sd in shiftGroup.DefaultIfEmpty()
+
+                                      select new Scheduling
+                                      {
+                                          Shiftid = sd.ShiftDetailId,
+                                          Status = sd.Status,
+                                          Starttime = sd.StartTime,
+                                          Endtime = sd.EndTime,
+                                          Physicianid = pd.PhysicianId,
+                                          PhysicianName = pd.FirstName + ' ' + pd.LastName,
+                                          Shiftdate = sd.ShiftDate,
+                                          ShiftDetailId = sd.ShiftDetailId,
+                                          Regionid = sd.RegionId,
+                                          ShiftDeleted = sd.IsDeleted[0]
+                                      }).Where(item => region == 0 || item.Regionid == region).ToList();
+            var events = eventswithoutdelet.Where(item => !item.ShiftDeleted).ToList();
+            return events;
+        }
+
+        #region Creatshift
+        public void CreateShift(Scheduling model, string email)
+        {
+            var admin = _context.Admins.FirstOrDefault(s => s.Email == email);
+
+
+            Shift shift = new Shift();
+            shift.PhysicianId = model.Physicianid;
+            shift.StartDate = model.Startdate;
+            shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
+            shift.RepeatUpto = model.Repeatupto;
+            shift.CreatedDate = DateTime.Now;
+            shift.CreatedBy = admin.AspNetUserId;
+            _context.Shifts.Add(shift);
+            _context.SaveChanges();
+
+            ShiftDetail sd = new ShiftDetail();
+            sd.ShiftId = shift.ShiftId;
+            sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
+            sd.StartTime = model.Starttime;
+            sd.EndTime = model.Endtime;
+            sd.RegionId = model.Regionid;
+            sd.Status = model.Status;
+            sd.IsDeleted = new BitArray(new[] { false });
+
+
+            _context.ShiftDetails.Add(sd);
+            _context.SaveChanges();
+
+            ShiftDetailRegion sr = new ShiftDetailRegion();
+            sr.ShiftDetailId = sd.ShiftDetailId;
+            sr.RegionId = (int)model.Regionid;
+            sr.IsDeleted = new BitArray(new[] { false });
+            _context.ShiftDetailRegions.Add(sr);
+            _context.SaveChanges();
+
+            if (shift.IsRepeat[0])
+            {
+                var stringArray = model.checkWeekday.Split(",");
+                foreach (var weekday in stringArray)
+                {
+
+                    DateTime startDateForWeekday = model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).AddDays((7 + int.Parse(weekday) - (int)model.Startdate.DayOfWeek) % 7);
+
+
+                    if (startDateForWeekday < model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)))
+                    {
+                        startDateForWeekday = startDateForWeekday.AddDays(7); // Add 7 days to move it to the next occurrence
+                    }
+
+                    // Iterate over Refill times
+                    for (int i = 0; i < shift.RepeatUpto; i++)
+                    {
+                        // Create a new ShiftDetail instance for each occurrence
+                        ShiftDetail shiftDetail = new ShiftDetail
+                        {
+                            ShiftId = shift.ShiftId,
+                            ShiftDate = startDateForWeekday.AddDays(i * 7), // Add i  7 days to get the next occurrence
+                            RegionId = (int)model.Regionid,
+                            StartTime = model.Starttime,
+                            EndTime = model.Endtime,
+                            Status = 0,
+                            IsDeleted = new BitArray(new[] { false })
+                        };
+
+                        // Add the ShiftDetail to the database context
+                        _context.Add(shiftDetail);
+                        _context.SaveChanges();
+                    }
+                }
+            }
+        }
+
+        #endregion Creatshift
+
+
     }
 }

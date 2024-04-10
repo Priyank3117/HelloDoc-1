@@ -9,6 +9,6 @@ namespace BAL.Interface
 {
     public interface IProviderDashBoard
     {
-        public GetCount GetCount();
+        public GetCount GetCount(int phyId);
     }
 }
