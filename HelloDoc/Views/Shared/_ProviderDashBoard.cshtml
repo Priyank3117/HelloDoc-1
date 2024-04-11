@@ -479,57 +479,57 @@
     //         $(this).find('form')[0].reset();
     //     });
     //     // -------------------------------------------------------------
-    //     $('#TransferModalSubmit').submit(function (event) {
-    //         event.preventDefault();
+        $('#TransferModalSubmit').submit(function (event) {
+            event.preventDefault();
 
-    //         var formData = $(this).serialize();
-    //         console.log(formData);
-    //         $.ajax({
-    //             url: '/AdminDash/TransferCase',
-    //             type: 'POST',
-    //             data: formData,
-    //             success: function (response) {
+            var formData = $(this).serialize();
+            console.log(formData);
+            $.ajax({
+                url: '/ProviderDashBoard/TransferCase',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
 
-    //                 $('#TransferModalSubmit').modal('hide');
-    //                 window.location.href = "/AdminDash/AdminDash";
-    //             },
-    //             error: function (xhr, status, error) {
+                    $('#TransferModalSubmit').modal('hide');
+                    window.location.href = "/ProviderDashBoard/ProviderDashBoard";
+                },
+                error: function (xhr, status, error) {
 
-    //                 console.error('Error submitting form:', error);
-    //             }
-    //         });
-    //     });
-    //     $('#TransferModal').on('hidden.bs.modal', function () {
-    //         $(this).find('form')[0].reset();
-    //     });
+                    console.error('Error submitting form:', error);
+                }
+            });
+        });
+        $('#TransferModal').on('hidden.bs.modal', function () {
+            $(this).find('form')[0].reset();
+        });
 
     //     // -------------------
     //     // -------------------
-    //     $('#SendAgreementModalSubmit').submit(function (event) {
-    //         event.preventDefault();
+        $('#SendAgreementModalSubmit').submit(function (event) {
+            event.preventDefault();
 
-    //         console.log("jk")
+            console.log("jk")
 
-    //         var formData = $(this).serialize();
-    //         console.log(formData);
-    //         $.ajax({
-    //             url: '/AdminDash/SendAgreement',
-    //             type: 'POST',
-    //             data: formData,
-    //             success: function (response) {
+            var formData = $(this).serialize();
+            console.log(formData);
+            $.ajax({
+                url: '/ProviderDashBoard/SendAgreement',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
 
-    //                 $('#SendAgreementModalSubmit').modal('hide');
-    //                 window.location.href = "/AdminDash/AdminDash";
-    //             },
-    //             error: function (xhr, status, error) {
+                    $('#SendAgreementModalSubmit').modal('hide');
+                        window.location.href = "/ProviderDashBoard/ProviderDashBoard";
+                },
+                error: function (xhr, status, error) {
 
-    //                 console.error('Error submitting form:', error);
-    //             }
-    //         });
-    //     });
-    //     $('#SendAgreementModal').on('hidden.bs.modal', function () {
-    //         $(this).find('form')[0].reset();
-    //     });
+                    console.error('Error submitting form:', error);
+                }
+            });
+        });
+        $('#SendAgreementModal').on('hidden.bs.modal', function () {
+            $(this).find('form')[0].reset();
+        });
 
     //     // -------------------
     //     $('#regiondropdownoftra').change(function () {
@@ -556,62 +556,62 @@
     //     });
     //     // -------------------------------------------------------------
 
-    //     $('#ProfessionNameDropDown').change(function () {
-    //         var professionId = $(this).val();
+        $('#ProfessionNameDropDown').change(function () {
+            var professionId = $(this).val();
 
-    //         if (professionId != 0) {
-    //             $.ajax({
-    //                 type: "GET",
-    //                 url: "/AdminDash/GetBusinessName", // Controller action to fetch models based on brand ID
-    //                 data: { professionId: professionId },
-    //                 success: function (response) {
-    //                     // Clear existing options
-    //                     $('#BusinessDropDown').empty();
-    //                     $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value', 0));
-    //                     console.log("kpodkcosdk");
-    //                     $.each(response, function (index, item) {
+            if (professionId != 0) {
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminDash/GetBusinessName", // Controller action to fetch models based on brand ID
+                    data: { professionId: professionId },
+                    success: function (response) {
+                        // Clear existing options
+                        $('#BusinessDropDown').empty();
+                        $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value', 0));
+                        console.log("kpodkcosdk");
+                        $.each(response, function (index, item) {
 
-    //                         $('#BusinessDropDown').append($('<option>').text(item.vendorName).attr('value', item.vendorId));
-    //                     });
+                            $('#BusinessDropDown').append($('<option>').text(item.vendorName).attr('value', item.vendorId));
+                        });
 
-    //                 }
-    //             });
-    //         }
-    //         else {
-    //             $('#BusinessDropDown').empty();
-    //             $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value', 0));
-    //             $('#Contact').val("");
-    //             $('#Email').val("");
-    //             $('#Fax').val("");
-    //         }
-    //     });
+                    }
+                });
+            }
+            else {
+                $('#BusinessDropDown').empty();
+                $('#BusinessDropDown').append($('<option>').text("Select BusinessMan").attr('value', 0));
+                $('#Contact').val("");
+                $('#Email').val("");
+                $('#Fax').val("");
+            }
+        });
 
-    //     $('#BusinessDropDown').change(function () {
-    //         var vendorId = $(this).val();
+        $('#BusinessDropDown').change(function () {
+            var vendorId = $(this).val();
 
-    //         if (vendorId != 0) {
-    //             $.ajax({
-    //                 type: "GET",
-    //                 url: "/AdminDash/GetBusinessData", // Controller action to fetch models based on brand ID
-    //                 data: { vendorId: vendorId },
-    //                 success: function (response) {
-    //                     console.log(response);
-    //                     console.log(response.faxNumber);
-    //                     $('#Contact').val(response.phoneNumber);
-    //                     $('#Email').val(response.email);
-    //                     $('#Fax').val(response.faxNumber);
+            if (vendorId != 0) {
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminDash/GetBusinessData", // Controller action to fetch models based on brand ID
+                    data: { vendorId: vendorId },
+                    success: function (response) {
+                        console.log(response);
+                        console.log(response.faxNumber);
+                        $('#Contact').val(response.phoneNumber);
+                        $('#Email').val(response.email);
+                        $('#Fax').val(response.faxNumber);
 
-    //                 }
-    //             });
+                    }
+                });
 
-    //         }
-    //         else {
-    //             console.log("gbdjsd")
-    //             $('#Contact').val("");
-    //             $('#Email').val("");
-    //             $('#Fax').val("");
-    //         }
-    //     });
+            }
+            else {
+                console.log("gbdjsd")
+                $('#Contact').val("");
+                $('#Email').val("");
+                $('#Fax').val("");
+            }
+        });
 
     //     // -------------------------------------------------------------
     //     // -------------------------------------------------------------

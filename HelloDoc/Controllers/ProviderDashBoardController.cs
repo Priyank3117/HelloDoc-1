@@ -1,6 +1,7 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using DAL.DataModels;
+using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using static BAL.Repository.Authorizationrepo;
 
@@ -13,14 +14,16 @@ namespace HelloDoc.Controllers
         private readonly IProviderDashBoard _providerDashBoard;
         private readonly IAdminDashBoard _AdminDashBoard;
         private readonly IAdminAction _adminAction;
+        private readonly IEmailService _emailService;
 
-        public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,IAdminDashBoard adminDashBoard,IAdminAction adminAction) { 
+        public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,IAdminDashBoard adminDashBoard,IAdminAction adminAction,IEmailService emailService) { 
            
 
            _context = context;
             _providerDashBoard = providerDashBoard;
             _AdminDashBoard = adminDashBoard;
             _adminAction = adminAction;
+            _emailService = emailService;
         }
      
         public IActionResult ProviderDashBoard()
@@ -118,22 +121,76 @@ namespace HelloDoc.Controllers
             return RedirectToAction("ProviderDashBoard");
         }
 
-        public IActionResult ViewCase(int id, int status)
-        {
-            return RedirectToAction("ViewCase", "AdminDash", new { id = id, status = status });
-        }
+        //public IActionResult ViewCase(int id, int status)
+        //{
+        //    return RedirectToAction("ViewCase", "AdminDash", new { id = id, status = status });
+        //}
 
-        public IActionResult ViewNotes(int id)
-        {
-            return RedirectToAction("ViewNotes", "AdminDash", new { id = id });
-        }
+        //public IActionResult ViewNotes(int id)
+        //{
+        //    return RedirectToAction("ViewNotes", "AdminDash", new { id = id });
+        //}
 
-        public IActionResult ViewUpload(int id)
-        {
-            return RedirectToAction("ViewUpload", "AdminDash", new { id = id });
-        }
+        //public IActionResult ViewUpload(int id)
+        //{
+        //    return RedirectToAction("ViewUpload", "AdminDash", new { id = id });
+        //}
 
         //public IActionResult SendAgreement(int id) {
         //}
+
+        public IActionResult TransferCase(int transferid, string Descriptionoftra)
+        {
+            var user = _context.Requests.FirstOrDefault(h => h.RequestId == transferid);
+
+            if (user != null)
+            {
+                user.Status = 1;
+                user.PhysicianId = null;
+                user.ModifiedDate = DateTime.Now;
+                _context.Update(user);
+                _context.SaveChanges();
+
+                RequestStatusLog requeststatuslog = new RequestStatusLog();
+                requeststatuslog.RequestId = transferid;
+                requeststatuslog.Notes = Descriptionoftra;
+                requeststatuslog.CreatedDate = DateTime.Now;
+                requeststatuslog.Status = 1;
+                _context.Add(requeststatuslog);
+                _context.SaveChanges();
+
+            }
+
+            return Ok();
+        }
+
+
+        public IActionResult SendAgreement(int sendagreementid)
+        {
+            var agreementLink = Url.Action("ReviewAgreement", "Request", new { requestid = sendagreementid }, protocol: HttpContext.Request.Scheme);
+            var subject = "Acceptance of the agreement";
+
+            if (agreementLink != null)
+            {
+                _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
+                    $"<a href='{agreementLink}'>Click here </a> for further procedure");
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        //public IActionResult SendOrder(int id)
+        //{
+        //    return RedirectToAction("SendOrder", "AdminDash", new { id = id });
+        //}
+
+
+        //public IActionResult SendOrder(SendOrder sendOrder, int id)
+        //{
+        //    return RedirectToAction("SendOrder", "AdminDash", new { id = id });
+        //}
+
+
     }
 }

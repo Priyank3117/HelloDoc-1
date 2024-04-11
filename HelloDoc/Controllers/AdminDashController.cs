@@ -30,10 +30,12 @@ using System.Web.Helpers;
 
 
 
+
 namespace HelloDoc.Controllers
 {
 
-    [CustomAuthorize(new string[] {"Admin","Physician"})]
+   
+   
     public class AdminDashController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -121,7 +123,7 @@ namespace HelloDoc.Controllers
 
         #region viewcase,viewnotes,cancel,assign,teansfer,block,viewupload
 
-
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
         [HttpGet("ProviderDashBoard/ViewCase/{id}", Name = "ProviderCase")]
         [HttpGet("AdminDash/ViewCase/{id}/{status}", Name = "AdminCase")]
         public IActionResult ViewCase(int id, int status)
@@ -145,7 +147,7 @@ namespace HelloDoc.Controllers
         }
 
 
-
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
         [HttpGet("ProviderDashBoard/ViewNotes/{id}", Name = "ProviderNotes")]
         [HttpGet("AdminDash/ViewNotes/{id}", Name = "AdminCaseNotes")]
         public ActionResult ViewNotes(int id)
@@ -170,6 +172,8 @@ namespace HelloDoc.Controllers
             var result = _AdminDashboard.GetViewNotes(id).ToList();
             return View(result);
         }
+
+
         public ActionResult CancelCase(int Requestid, string Reason, string Notes)
         {
             if (_adminAction.CancelCase(Requestid, Reason, Notes))
@@ -196,6 +200,7 @@ namespace HelloDoc.Controllers
             return Ok();
         }
 
+
         public IActionResult TransferCase(int transferid, string Descriptionoftra, string phyidtra)
         {
             _adminAction.TransferCase(transferid, Descriptionoftra, phyidtra);
@@ -217,7 +222,7 @@ namespace HelloDoc.Controllers
             return Ok();
         }
 
-
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
         [HttpGet("ProviderDashBoard/ViewUpload/{id}", Name = "ProviderUploads")]
         [HttpGet("AdminDash/ViewUpload/{id}", Name = "AdminCaseNotesUploads")]
         public IActionResult ViewUpload(int id)
@@ -369,8 +374,27 @@ namespace HelloDoc.Controllers
             }
         }
 
+
+
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [HttpGet("AdminDash/SendOrder/{id}", Name = "AdminCaseNotesorder")]
+        [HttpGet("ProviderDashBoard/SendOrder/{id}", Name = "Providerorder")]
         public IActionResult SendOrder(int id)
         {
+            bool controllerName = Request.Path.ToString().Contains("ProviderDashBoard");
+            string email = HttpContext.Session.GetString("Email");
+
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            if (admin != null)
+            {
+                ViewBag.IsPhysican = false;
+
+            }
+            else
+            {
+                ViewBag.IsPhysican = true;
+
+            }
             var Profession = _context.HealthProfessionalTypes.ToList();
 
             SendOrder sendOrder = new SendOrder();
@@ -380,14 +404,28 @@ namespace HelloDoc.Controllers
             return View(sendOrder);
         }
 
-        [HttpPost]
-        public IActionResult SendOrder(SendOrder sendOrder)
-        {
 
-            _adminAction.SendOrder(sendOrder);
-            return RedirectToAction("SendOrder", new { id = sendOrder.requestid });
+        [CustomAuthorize(new string[] {"Admin", "Physician"})]
+        [HttpPost("AdminDash/SendOrder/{id}", Name = "AdminCaseNotesorderr")]
+        [HttpPost("ProviderDashBoard/SendOrder/{id}", Name = "Providerorderr")]
+        public IActionResult SendOrder(SendOrder sendOrder,int id)
+        {
+            bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
+            string controllerName = null;
+            if (controller)
+            {
+               controllerName = "ProviderDashBoard";
+            }
+            else
+            {
+                controllerName = "AdminDash";
+            }
+
+            // _adminAction.SendOrder(sendOrder);
+            return RedirectToAction("SendOrder", controllerName,new { id = id });
         }
 
+          [CustomAuthorize(new string[] { "Admin", "Physician" })]
         public IActionResult GetBusinessName(string professionId)
         {
             var result = _context.HealthProfessionals.Where(r => r.Profession == int.Parse(professionId)).ToList();
@@ -423,18 +461,46 @@ namespace HelloDoc.Controllers
             return BadRequest();
         }
 
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [HttpGet("ProviderDashBoard/EncounterForm/{id}", Name = "ProviderForms")]
+        [HttpGet("AdminDash/EncounterForm/{id}", Name = "AdminForms")]
         public IActionResult EncounterForm(int id)
         {
+            string email = HttpContext.Session.GetString("Email");
+
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            if (admin != null)
+            {
+                ViewBag.IsPhysican = false;
+
+            }
+            else
+            {
+                ViewBag.IsPhysican = true;
+
+            }
 
             var result = _adminAction.EncounterForm(id);
             return View(result);
         }
 
-        [HttpPost]
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [HttpPost("ProviderDashBoard/EncounterForm/{id}", Name = "ProviderForms")]
+        [HttpPost("AdminDash/EncounterForm/{id}", Name = "AdminForms")]
         public IActionResult EncounterForm(int id, Encounter enc)
         {
+            bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
+            string controllerName = null;
+            if (controller)
+            {
+                controllerName = "ProviderDashBoard";
+            }
+            else
+            {
+                controllerName = "AdminDash";
+            }
             _adminAction.EncounterPost(id, enc);
-            return RedirectToAction("EncounterForm", new { id = id });
+            return RedirectToAction("EncounterForm", controllerName, new { id = id });
         }
 
         public IActionResult Finalize(int id)
@@ -449,7 +515,7 @@ namespace HelloDoc.Controllers
             }
 
 
-            return RedirectToAction("AdminDash");
+            return RedirectToAction("ProviderDashBoard");
         }
 
 

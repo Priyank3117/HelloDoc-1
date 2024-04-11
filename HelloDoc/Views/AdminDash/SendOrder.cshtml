@@ -1,8 +1,17 @@
 ﻿@model DAL.ViewModel.SendOrder;
-
 @{
     ViewData["Title"] = "SendOrder";
-    Layout = "~/Views/Shared/_AdminDash.cshtml";
+    string controller = null;
+    if (ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_ProviderDashBoard.cshtml";
+         controller = "ProviderDashBoard";
+    }
+    if (!ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_AdminDash.cshtml";
+         controller = "AdminDash";
+    }
 }
 
 
@@ -10,11 +19,19 @@
 <div class="mx-auto pt-4  pb-3" style="width:70%;">
     <div class="d-flex justify-content-between my-2">
         <h3>Send Order</h3><br />
-        <a><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none"> < Back</button></a>
+            @if (!ViewBag.IsPhysican)
+            {
+                <a asp-action="AdminDash" asp-controller="AdminDash"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+
+            }
+            else
+            {
+                <a asp-action="ProviderDashBoard" asp-controller="ProviderDashBoard"><button type="button" class="btn btn-primary btn  border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+            }
     </div>
     <div class="shadow bg-white p-4">
 
-            <form method="post" asp-action="SendOrder"  enctype="multipart/form-data">
+            <form method="post" asp-action="SendOrder" asp-route-id="@Model.requestid" asp-controller="@controller" enctype="multipart/form-data">
 
             <div class="row">
                 <div class="col col-12 col-sm-6">
