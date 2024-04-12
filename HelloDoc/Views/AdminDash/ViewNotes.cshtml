@@ -1,5 +1,4 @@
-﻿@model List<DAL.ViewModel.ViewNotes>
-
+﻿@model DAL.ViewModel.ViewNotes
 @{
     ViewData["Title"] = "viewCase";
     if (ViewBag.IsPhysican)
@@ -44,9 +43,9 @@
                             </svg>Transfer Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.TransferNotes)
                             {
-                                @item.TransferNotes
+                                @item
                             } 
                         </p>
                     </div>
@@ -60,9 +59,9 @@
                             </svg>Physician Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                             @foreach (var item in Model)
+                             @foreach (var item in Model.PhysicianNotes)
                             {
-                                @item.PhysicianNotes
+                                @item
                             } 
                         </p>
                     </div>
@@ -75,9 +74,9 @@
                             </svg>Admin Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.AdminNotes)
                             {
-                                @item.AdminNotes
+                                @item
                             }   
                         </p>
                     </div>

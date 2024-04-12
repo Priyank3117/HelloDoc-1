@@ -16,7 +16,7 @@ namespace BAL.Interface
 
         public IQueryable<Admin_DashBoard> GetList();
 
-        public IQueryable<ViewNotes> GetViewNotes(int id);
+        public ViewNotes GetViewNotes(int id);
 
        
 

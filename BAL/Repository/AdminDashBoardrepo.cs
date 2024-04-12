@@ -165,7 +165,7 @@ namespace BAL.Repository
             return DashData;
         }
 
-        public IQueryable<ViewNotes> GetViewNotes(int id)
+        public ViewNotes GetViewNotes(int id)
         {
             var result = (from reqnote in _context.RequestNotes
                           join
@@ -176,11 +176,10 @@ namespace BAL.Repository
                           from reqstatuslog in grp.DefaultIfEmpty()
                           select new ViewNotes
                           {
-                              AdminNotes = reqnote.AdminNotes,
-                              PhysicianNotes = reqnote.PhysicianNotes,
-                              TransferNotes = reqstatuslog.Notes ?? "-----"
-
-                          });
+                              AdminNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.AdminNotes).ToList(),
+                              PhysicianNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.PhysicianNotes).ToList(),
+                              TransferNotes = _context.RequestStatusLogs.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.Notes).ToList()
+                          }).FirstOrDefault();
 
             return result;
         }

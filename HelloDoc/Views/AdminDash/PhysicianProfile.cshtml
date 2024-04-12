@@ -1,25 +1,47 @@
 ﻿@model DAL.ViewModel.PhysicianProfile;
 
 @{
-    ViewData["Title"] = "PhysicianProfile";
+
     Layout = "~/Views/Shared/_AdminDash.cshtml";
 }
+@{
+    ViewData["Title"] = "PhysicianProfile";
+    string controller = null;
+    if (ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_ProviderDashBoard.cshtml";
+        controller = "ProviderDashBoard";
+    }
+    if (!ViewBag.IsPhysican)
+    {
+        Layout = "~/Views/Shared/_AdminDash.cshtml";
+        controller = "AdminDash";
+    }
+}
 <section>
-    <div class="container-fluid bg-body-secondary">
+    <div class="container-fluid bg-body-secondary" style="margin-bottom:3.5rem">
         <div class="container bg-body-secondary">
             <div class="d-flex justify-content-between  ">
                 <div class="d-flex">
                     <span class="fs-2  mt-3">Edit Physician Profile</span>
                 </div>
                 <div>
-                    <a asp-action="AdminDashboard" class="btn btn-outline-info mt-4"> ❮  Back </a>
+                    @if (!ViewBag.IsPhysican)
+                    {
+                        <a asp-action="AdminDash" asp-controller="AdminDash"><button type="button" class="btn btn-primary btn  mt-4 border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+
+                    }
+                    else
+                    {
+                        <a asp-action="ProviderDashBoard" asp-controller="ProviderDashBoard"><button type="button" class="btn btn-primary btn  mt-4 border border-info bg-transparent text-info shadow-none text-decoration-none ">Back</button></a>
+                    }
                 </div>
             </div>
        </div>
        
         <div class="container border rounded-3 p-3 p-md-5 mb-3 d-flex flex-column  bg-white mt-3">
             <h5 class="fw-bold my-3">Account Information</h5>
-            <form method="post" asp-controller="AdminDash" asp-action="ResetPhysicianPassword" id="ResetPhysicianPassword">
+            <form method="post" asp-controller="@controller" asp-action="ResetPhysicianPassword" id="ResetPhysicianPassword">
                 <input value="@Model.physicianid" class="d-none" asp-for="physicianid" />
                 <div class="row row-cols-1 row-cols-md-2 g-3">
                     <div class="col">
@@ -139,9 +161,12 @@
                 </div>
                 <div class="row">
                     <div class="d-flex justify-content-end my-1">
+                        @if (!ViewBag.IsPhysican)
+                        {
                         <button onclick="toggleEdit()" type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn">
                             Edit
-                        </button>
+                        </button>      
+                        }
                         <button onclick="toggleSave()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="SaveBtn">
                             Save
                         </button>
@@ -216,10 +241,14 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-content-end my-1">
-                        <button onclick="toggleEdit1()"
-                            type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn1">
-                            Edit
-                        </button>
+                        @if (!ViewBag.IsPhysican)
+                        {
+                            <button onclick="toggleEdit1()"
+                                    type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn1">
+                                Edit
+                            </button>
+                        }
+                       
                         <button onclick="toggleSave()1"
                             type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="SaveBtn1">
                             Save
@@ -314,10 +343,14 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-content-end my-1">
-                        <button onclick="toggleEdit2()"
-                                type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn2">
-                            Edit
-                        </button>
+                        @if (!ViewBag.IsPhysican)
+                        {
+                            <button onclick="toggleEdit2()"
+                                    type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn2">
+                                Edit
+                            </button>
+                        }
+                      
                         <button onclick="toggleSave()1"
                                 type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="SaveBtn2">
                             Save
@@ -330,7 +363,7 @@
                 </div>
             </form>
             <h5>Onboarding</h5>
-            <form class="mb-5 ">
+            <form class="">
 
 
                 <div class="d-flex align-items-center gap-3 mb-3">

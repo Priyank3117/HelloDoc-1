@@ -10,13 +10,13 @@ namespace DAL.ViewModel
     {
 
 
-        public String? AdminNotes { get; set; }
+        public List<String>? AdminNotes { get; set; }
 
-        public String? TransferNotes { get; set; }
+        public List<String>? TransferNotes { get; set; }
 
-        public String? PhysicianNotes { get; set; }
+        public List<String>? PhysicianNotes { get; set; }
 
-        public String AdditionalNotes { get; set; }
+        public String? AdditionalNotes { get; set; }
 
         public int RequestId { get; set; }
     }

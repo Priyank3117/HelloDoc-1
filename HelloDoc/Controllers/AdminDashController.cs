@@ -157,7 +157,7 @@ namespace HelloDoc.Controllers
                 ViewBag.IsPhysican = true;
 
             }
-            var result = _AdminDashboard.GetViewNotes(id).ToList();
+            var result = _AdminDashboard.GetViewNotes(id);
             return View(result);
         }
 
@@ -737,12 +737,34 @@ namespace HelloDoc.Controllers
             return PartialView("_ProviderTable", result);
         }
 
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [HttpGet("AdminDash/PhysicianProfile/{id}", Name = "Profileviewbyadmin")]
+        [HttpGet("ProviderDashBoard/PhysicianProfile", Name = "Profileviewbyprovider")]
         public IActionResult PhysicianProfile(int id)
         {
+
+            string email = HttpContext.Session.GetString("Email");
+            string physicianid = HttpContext.Session.GetString("PhysicianId");
+
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            if (admin != null)
+            {
+                ViewBag.IsPhysican = false;
+
+            }
+            else
+            {
+                id = int.Parse(physicianid);
+                ViewBag.IsPhysican = true;
+
+            }
             var physicanProfile = _AdminDashboard.PhysicianProfile(id);
             return View(physicanProfile);
         }
 
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [HttpPost("ProviderDashBoard/ResetPhysicianPassword", Name = "ProviderRequestss")]
+        [HttpPost("AdminDash/ResetPhysicianPassword", Name = "AdminRequestss")]
         public IActionResult ResetPhysicianPassword(string Password, int physicianid)
         {
 

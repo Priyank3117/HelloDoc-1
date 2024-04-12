@@ -2,8 +2,13 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
+using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using static BAL.Repository.Authorizationrepo;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
+
 
 namespace HelloDoc.Controllers
 {
@@ -12,11 +17,15 @@ namespace HelloDoc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IProviderDashBoard _providerDashBoard;
+        private readonly IHostingEnvironment _environment;
         private readonly IAdminDashBoard _AdminDashBoard;
         private readonly IAdminAction _adminAction;
         private readonly IEmailService _emailService;
+        private readonly IAddFile _files;
+        private readonly IPatient_Request _patient;
 
-        public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,IAdminDashBoard adminDashBoard,IAdminAction adminAction,IEmailService emailService) { 
+        public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,
+            IAdminDashBoard adminDashBoard,IAdminAction adminAction,IEmailService emailService, IHostingEnvironment hostEnvironment, IAddFile files, IPatient_Request patient) { 
            
 
            _context = context;
@@ -24,6 +33,9 @@ namespace HelloDoc.Controllers
             _AdminDashBoard = adminDashBoard;
             _adminAction = adminAction;
             _emailService = emailService;
+            _environment = hostEnvironment;
+            _patient = patient;
+            _files = files;
         }
      
         public IActionResult ProviderDashBoard()
@@ -202,12 +214,71 @@ namespace HelloDoc.Controllers
             return RedirectToAction("ProviderDashBoard");
         }
 
-        public IActionResult ConcludeCare()
+        public IActionResult ConcludeCare(int id)
         {
 
-            return View("DashBoard/ConcludeCare");
+            bool[] bitValues = { true };
+            BitArray bits = new BitArray(bitValues);
+            var reque = _context.RequestWiseFiles.Where(u => u.RequestId == id && u.IsDeleted != bits).ToList();
+            ViewBag.username = _context.RequestClients.FirstOrDefault(s => s.RequestId == id).FirstName;
+              var result = new ViewDoc
+            {
+                requestwisefile = reque,
+                requestid = id,
+
+                //confirmationnum = _context.Requests.FirstOrDefault(s => s.RequestId == requestid).ConfirmationNumber,
+            };
+
+            return View("DashBoard/ConcludeCare",result);
+           
         }
 
+        [HttpPost]
+        public IActionResult uploadfile(int reqid)
+        {
+            var file = Request.Form.Files["file"];
+            var uniquefilesavetoken = Guid.NewGuid().ToString();
+
+            string fileName = Path.GetFileName(file.FileName);
+            fileName = $"{uniquefilesavetoken}_{fileName}";
+            string path = Path.Combine(_environment.WebRootPath, "Files");
+            _files.AddFile(file, path, fileName);
+
+            _patient.RequestWiseFile(fileName, reqid);
+            return RedirectToAction("ConcludeCare", new { id = reqid });
+
+        }
+
+        public IActionResult ConcludeCareSubmit(int id)
+        {
+            var Notes = Request.Form["ProviderNote"];
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+
+            var request = _context.Requests.FirstOrDefault(u => u.RequestId == id);
+            request.Status = 8;
+            request.ModifiedDate = DateTime.Now;
+            _context.Requests.Update(request);
+            _context.SaveChanges();
+
+            RequestStatusLog log = new RequestStatusLog()
+            {
+                RequestId = id,
+                Status = request.Status,
+                PhysicianId = physicianId,
+                CreatedDate = DateTime.Now,
+               
+
+            };
+            _context.RequestStatusLogs.Add(log);
+            _context.SaveChanges();
+
+            RequestNote note = _context.RequestNotes.FirstOrDefault(u => u.RequestId == id);
+            note.PhysicianNotes = Notes;
+            _context.RequestNotes.Update(note); 
+            _context.SaveChanges();
+
+            return RedirectToAction("ProviderDashBoard");
+        }
 
     }
 }

@@ -15,14 +15,10 @@
         <tr class="fs-5">
             <th scope="col">Name</th>
             <th scope="col"></th>
-            <th scope="col">Date of Birth</th>
-            <th scope="col">requestor</th>
-            <th scope="col">Physician Name</th>
-            <th scope="col">Date Of Service</th>
+            
             <th scope="col">Phone</th>
             <th scope="col">Address</th>
-            <th scope="col">Notes</th>
-            <th scope="col">Chatwith</th>
+           
             <th scope="col">Action</th>
         </tr>
     </thead>
@@ -66,11 +62,7 @@
                         </button>
                     </a>
                 </td>
-                <td class="my-auto"> @item.BirthDate</td>
-                <td class="my-auto"><span>Patient </span>@item.Requestor</td>
-
-                <td class="my-auto">physician Name</td>
-                <td class="my-auto">Date Of Service</td>
+               
                 <td class="my-auto ">
                     @if (item.requesttypeid == 1)
                     {
@@ -108,18 +100,7 @@
                     }
                 </td>
                 <td class="my-auto">@item.Address</td>
-                <td class="my-auto">@item.Notes</td>
-                <td class="my-auto">
-                    <button class="btn border rounded text-white ">
-                        <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
-                        </svg>Patient
-                    </button>  <button class="btn border rounded text-white">
-                        <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
-                        </svg>Provider
-                    </button>
-                </td>
+             
                 <td class="my-auto">
                     <button type="button" class="btn border border-2 rounded  dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
                         Action

@@ -2,6 +2,7 @@
 using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -55,6 +56,7 @@ namespace HelloDoc.Controllers
 
                     HttpContext.Session.SetString("Email", patient.Email);
                     HttpContext.Session.SetString("Role", role);
+                  
                     var jwt = _jwtService.Generatetoken(patient.Email, role);
                     Response.Cookies.Append("jwt", jwt);
                     if (role == "Patient")
@@ -70,6 +72,8 @@ namespace HelloDoc.Controllers
                     }
                     else if(role == "Physician")
                     {
+                        string physicianid = _context.Physicians.FirstOrDefault(i => i.Email == patient.Email).PhysicianId.ToString();
+                        HttpContext.Session.SetString("PhysicianId", physicianid);
                         _notyf.Success("Successfully Login");
                         return RedirectToAction("ProviderDashBoard", "ProviderDashBoard");
                     }
