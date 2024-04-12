@@ -203,6 +203,39 @@
         </div>
     </div>
     @* -----------Modals------------------------ *@
+    @*Select Care Type model*@
+
+    <div class="modal fade rounded-2" id="SelectCareTypeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Select Type of Care</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="SelectCareTypeId" name="SelectCareTypeReqId" hidden />
+
+                    <div class="d-flex justify-content-center my-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radio" id="houseCallRadio" required>
+                            <label class="form-check-label btn btn-outline-info" for="flexRadioDefault1">
+                                House Call
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radio" id="consultRadio" required>
+                            <label class="form-check-label btn btn-outline-info" for="flexRadioDefault2">
+                                Consult
+                            </label>
+                        </div>
+
+                    </div>
+                    <button type="button" class="btn btn-info" onclick="TypeOfCare()"> Save </button>
+                    <button class="btn btn-info text-white" data-bs-dismiss="modal"> cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
     @* -----------Modals------------------------ *@
     @* -----------SendAgreement Modal  --------------------------- *@
     <div class="modal" id="SendAgreementModal" tabindex="-1" role="dialog" aria-labelledby="SendAgreementCase" aria-hidden="true">

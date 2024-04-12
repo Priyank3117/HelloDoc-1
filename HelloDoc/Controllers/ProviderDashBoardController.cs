@@ -121,23 +121,6 @@ namespace HelloDoc.Controllers
             return RedirectToAction("ProviderDashBoard");
         }
 
-        //public IActionResult ViewCase(int id, int status)
-        //{
-        //    return RedirectToAction("ViewCase", "AdminDash", new { id = id, status = status });
-        //}
-
-        //public IActionResult ViewNotes(int id)
-        //{
-        //    return RedirectToAction("ViewNotes", "AdminDash", new { id = id });
-        //}
-
-        //public IActionResult ViewUpload(int id)
-        //{
-        //    return RedirectToAction("ViewUpload", "AdminDash", new { id = id });
-        //}
-
-        //public IActionResult SendAgreement(int id) {
-        //}
 
         public IActionResult TransferCase(int transferid, string Descriptionoftra)
         {
@@ -180,16 +163,50 @@ namespace HelloDoc.Controllers
             return BadRequest();
         }
 
-        //public IActionResult SendOrder(int id)
-        //{
-        //    return RedirectToAction("SendOrder", "AdminDash", new { id = id });
-        //}
+       public IActionResult HouseCall(int requestid)
+        {
+            var  user = _context.Requests.FirstOrDefault(s => s.RequestId == requestid);
 
+            if (user != null)
+            {
+                user.Status = 5;
+                _context.Update(user) ;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ProviderDashBoard");
+        }
+        
+        public IActionResult Consult(int requestid)
+        {
+            var  user = _context.Requests.FirstOrDefault(s => s.RequestId == requestid);
 
-        //public IActionResult SendOrder(SendOrder sendOrder, int id)
-        //{
-        //    return RedirectToAction("SendOrder", "AdminDash", new { id = id });
-        //}
+            if (user != null)
+            {
+                user.Status = 6;
+                _context.Update(user);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ProviderDashBoard");
+        }
+
+        public IActionResult HouseCalled(int id)
+        {
+            var user = _context.Requests.FirstOrDefault(s => s.RequestId == id);
+
+            if (user != null)
+            {
+                user.Status = 6;
+                _context.Update(user);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ProviderDashBoard");
+        }
+
+        public IActionResult ConcludeCare()
+        {
+
+            return View("DashBoard/ConcludeCare");
+        }
 
 
     }

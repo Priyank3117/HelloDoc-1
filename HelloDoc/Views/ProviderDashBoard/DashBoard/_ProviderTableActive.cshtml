@@ -20,14 +20,11 @@
         <tr class="fs-5">
             <th scope="col">Name</th>
             <th scope="col"></th>
-            <th scope="col">Date of Birth</th>
-            <th scope="col">requestor</th>
-            <th scope="col">Physician Name</th>
-            <th scope="col">Date Of Service</th>
+           
             <th scope="col">Phone</th>
             <th scope="col">Address</th>
-            <th scope="col">Notes</th>
-            <th scope="col">Chatwith</th>
+            <th scope="col">status</th>
+      
             <th scope="col">Action</th>
         </tr>
     </thead>
@@ -73,11 +70,7 @@
                         </button>
                     </a>
                 </td>
-                <td class="my-auto"> @item.BirthDate</td>
-                <td class="my-auto"><span>@requestor </span>@item.Requestor</td>
-
-                <td class="my-auto">physician Name</td>
-                <td class="my-auto">Date Of Service</td>
+                
                 <td class="my-auto ">
                     @if (item.requesttypeid == 1)
                     {
@@ -115,18 +108,21 @@
                     }
                 </td>
                 <td class="my-auto">@item.Address</td>
-                <td class="my-auto">@item.Notes</td>
-                <td class="my-auto">
-                    <button class="btn border rounded text-white ">
-                        <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
-                        </svg>Patient
-                    </button>  <button class="btn border rounded text-white ">
-                        <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
-                        </svg>Provider
-                    </button>
-                </td>
+
+                @if(item.status == 5)
+                {
+                    <td class="my-auto">
+                        <a type="button" asp-action="HouseCalled" asp-route-id="@item.requestid" class="btn btn-info border border-2 text-white " aria-expanded="false">
+                      Housecall
+                        </a>
+                    </td>
+
+                }
+                else
+                {
+                    <td class="my-auto"> </td>
+                }
+               
                 <td class="my-auto">
                     <button type="button" class="btn border border-2 text-white rounded  dropdown-toggle " data-bs-toggle="dropdown" aria-expanded="false">
                         Action
@@ -190,14 +186,26 @@
                             }
                             else
                             {
-                                <a asp-action="EncounterForm" asp-route-id="@item.requestid">
-                                    <button class="dropdown-item" href="#">
+                                @if(item.status == 5)
+                                {
+                                    <a asp-action="EncounterForm" asp-route-id="@item.requestid">
+                                        <button class="dropdown-item" href="#">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ban me-3" viewBox="0 0 16 16">
+                                                <path d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0" />
+                                            </svg>Encounter
+                                        </button>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="dropdown-item" onclick="openmodelSelectCareTypeModal(this)" data-reqsid="@item.requestid">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ban me-3" viewBox="0 0 16 16">
                                             <path d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0" />
                                         </svg>Encounter
                                     </button>
-                                </a>
-                            }
+                                }
+
+                           }
 
                         </li>
                     </ul>
@@ -442,6 +450,31 @@
 
         const requestid = btn.getAttribute('data-requestid');
         document.getElementById('requid').value = requestid;
+    }
+    
+    function openmodelSelectCareTypeModal(btn) {
+        console.log("Button clicked");
+
+        const myModal = document.getElementById("SelectCareTypeModal");
+        var bsModal = new bootstrap.Modal(myModal);
+        bsModal.show();
+
+        const requestid = btn.getAttribute('data-reqsid');
+        document.getElementById('SelectCareTypeId').value = requestid;
+    }
+
+    function TypeOfCare() {
+        var requestid = $("#SelectCareTypeId").val();
+        var houseCall = $("#houseCallRadio").is(":checked");
+        var consult = $("#consultRadio").is(":checked");
+        if (houseCall) {
+            var url = "/ProviderDashBoard/HouseCall?requestId=" + requestid;
+            window.location.href = url;
+        }
+        if (consult) {
+            var url = "/ProviderDashBoard/Consult?requestId=" + requestid;
+            window.location.href = url;
+        }
     }
 
 </script>

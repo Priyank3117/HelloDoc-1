@@ -81,8 +81,9 @@
                     <li class="nav-item ">
                         <a asp-action="ProviderDashBoard" asp-controller="ProviderDashBoard" style="text-decoration:none">
                             <button class="nav-link  text-info
-                             @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderDashBoard" ||
-                            ViewContext.ActionDescriptor.RouteValues["action"] == "ViewCase"? "active" : "")">
+                
+                            @(new string[] { "ProviderDashBoard", "ViewCase", "AccountAccess" }
+                                .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">
                                 Dashboard
                             </button>
                         </a>

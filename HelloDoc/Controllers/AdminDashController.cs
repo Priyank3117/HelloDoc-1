@@ -11,20 +11,8 @@ using Rotativa.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using DAL.DataModels;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using BAL.Repository;
-using DAL.ViewModels;
-using System.ComponentModel;
-
-using System.Web.WebPages;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using static DAL.ViewModel.ProvidersOnCallModel;
 using OfficeOpenXml;
-
-using System.Configuration.Provider;
-using System.Net.NetworkInformation;
 using Microsoft.EntityFrameworkCore;
-using System.Web.Helpers;
 
 
 
@@ -34,8 +22,8 @@ using System.Web.Helpers;
 namespace HelloDoc.Controllers
 {
 
-   
-   
+
+
     public class AdminDashController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -677,19 +665,48 @@ namespace HelloDoc.Controllers
             return RedirectToAction("AdminDash");
         }
 
+
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [HttpGet("AdminDash/CreateRequest", Name = "AdminRequest")]
+        [HttpGet("ProviderDashBoard/CreateRequest", Name = "ProviderRequest")]
         public IActionResult CreateRequest()
         {
+            string email = HttpContext.Session.GetString("Email");
+
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            if (admin != null)
+            {
+                ViewBag.IsPhysican = false;
+
+            }
+            else
+            {
+                ViewBag.IsPhysican = true;
+
+            }
             CreateRequest createRequest = new CreateRequest();
             createRequest.Region = _context.Regions.ToList();
             return View(createRequest);
         }
 
-        [HttpPost]
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [HttpPost("ProviderDashBoard/CreateRequest", Name = "ProviderRequests")]
+        [HttpPost("AdminDash/CreateRequest", Name = "AdminRequests")]
         public IActionResult CreateRequest(CreateRequest createRequest, string SelectedStateId)
         {
+            string email = HttpContext.Session.GetString("Email");
+
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            ViewBag.IsPhysican = admin != null ? false : true;
+
+            bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
+            string controllerName = (controller) ? "ProviderDashBoard" : "AdminDash";
+
             var Email = HttpContext.Session.GetString("Email");
             var subject = "Creat Patient Request";
             var formLink = Url.ActionLink("Patient_Request", "Request", protocol: HttpContext.Request.Scheme);
+
+
             if (ModelState.IsValid)
             {
                 _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId);
@@ -700,7 +717,7 @@ namespace HelloDoc.Controllers
                      $"<a href='{formLink}'>Click here </a> for Request");
                     _notyf.Success("Email Sent Successfully");
                 }
-                return RedirectToAction("CreateRequest");
+                return RedirectToAction("CreateRequest", controllerName);
             }
 
             createRequest.Region = _context.Regions.ToList();
