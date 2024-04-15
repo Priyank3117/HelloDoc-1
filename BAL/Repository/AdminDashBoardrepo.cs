@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections;
 using DAL.ViewModel;
 using DAL.DataModels;
+using System.Drawing;
+using AspNetCoreHero.ToastNotification.Notyf;
 
 
 
@@ -167,21 +169,17 @@ namespace BAL.Repository
 
         public ViewNotes GetViewNotes(int id)
         {
-            var result = (from reqnote in _context.RequestNotes
-                          join
-                          reqstatuslog in _context.RequestStatusLogs
-                          on reqnote.RequestId equals reqstatuslog.RequestId
-                          into grp
-                          where reqnote.RequestId == id
-                          from reqstatuslog in grp.DefaultIfEmpty()
-                          select new ViewNotes
-                          {
-                              AdminNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.AdminNotes).ToList(),
-                              PhysicianNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.PhysicianNotes).ToList(),
-                              TransferNotes = _context.RequestStatusLogs.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.Notes).ToList()
-                          }).FirstOrDefault();
-
-            return result;
+            Request? request = _context.Requests.FirstOrDefault(x => x.RequestId == id);
+            ViewNotes viewNotes = new();
+         
+            if(request != null)
+            {
+                viewNotes.AdminNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.AdminNotes).ToList();
+                viewNotes.PhysicianNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.PhysicianNotes).ToList();
+                viewNotes.TransferNotes = _context.RequestStatusLogs.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.Notes).ToList();
+                        
+            }
+            return viewNotes;
         }
 
       
@@ -503,10 +501,33 @@ namespace BAL.Repository
                 return false;
             }
         }
-		
 
-        
-	}
+        public Admin GetAdminByEmail(string email)
+        {
+            var admin= _context.Admins.FirstOrDefault(item => item.Email == email);
+            return admin;
+        }
+
+        public List<Physician> GetPhysiciansByRegionId(string regionId)
+        {
+           var result = (from physician in _context.Physicians
+             join
+              region in _context.PhysicianRegions on
+              physician.PhysicianId equals region.PhysicianId into phy
+             select physician).Where(s => s.RegionId == int.Parse(regionId)).ToList();
+
+            return result;
+        }
+
+        public List<RequestWiseFile> GetRequestWiseFilesWithoutDelete(int id)
+        {
+            bool[] bitValues = { true };
+            BitArray bits = new BitArray(bitValues);
+
+          var req=  _context.RequestWiseFiles.Where(u => u.RequestId == id && u.IsDeleted != bits).ToList();
+            return req;
+        }
+    }
 }
 
 

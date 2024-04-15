@@ -22,8 +22,10 @@ namespace DAL.ViewModel
         [Column(TypeName = "timestamp without time zone")]
         public DateTime? BirthDate { get; set; }
 
-
+        [Required]
         [StringLength(256)]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Enter email in correct format (mailto:example@email.com)")]
+
         public string? Email { get; set; }
 
 

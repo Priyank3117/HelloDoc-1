@@ -15,8 +15,8 @@
 }
 
 
-<div class="bg-body-secondary">
-<div class="mx-auto pt-4  pb-3" style="width:70%;">
+<div class="bg-body-secondary" >
+<div class="mx-auto pt-4  pb-3" style="width:70%;height:77vh !important">
     <div class="d-flex justify-content-between my-2">
         <h3>Send Order</h3><br />
             @if (!ViewBag.IsPhysican)
@@ -37,13 +37,14 @@
                 <div class="col col-12 col-sm-6">
                    
                     <select class="form-select py-3 form-select" asp-for="Name" aria-label="Select Profession" id="ProfessionNameDropDown">
-                            <option selected value="0">Select Profession</option>
+                            <option selected value="0" >Select Profession</option>
                      @foreach (var item in Model.ProfessionName)
                             {
                                 <option value="@item.HealthProfessionalId">@item.ProfessionName</option>
                             }
                        
                     </select>
+                        <span asp-validation-for="Name" class="mt-2   text-danger"></span>
                 </div>
               <div class="col col-12 col-sm-6 mb-3">
 
@@ -61,6 +62,7 @@
                                id="Contact"
                                placeholder="Password" />
                         <label for="floatingPassword">Business Contact</label>
+                            <span asp-validation-for="BusinessContact" class="mt-2   text-danger"></span>
                     </div>
                 </div>
                 <div class="col col-sm-6  col-12">
@@ -69,8 +71,9 @@
                             asp-for="Email"
                                class="form-control"
                                id="Email"
-                               placeholder="Password" />
+                               placeholder="Password" required />
                         <label for="floatingPassword">Email</label>
+                            <span asp-validation-for="Email" class="mt-2 text-danger"></span>
                     </div>
                 </div>
             </div>

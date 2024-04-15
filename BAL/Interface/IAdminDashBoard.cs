@@ -1,10 +1,16 @@
-﻿using DAL.ViewModel;
+﻿using DAL.DataModels;
+using DAL.ViewModel;
 using Microsoft.AspNetCore.Http;
 
 namespace BAL.Interface
 {
     public interface IAdminDashBoard
     {
+
+
+       
+        public Admin GetAdminByEmail(string email);
+
         public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect, 
             string selectvalue, string partialName, int[] currentstatus);
 
@@ -39,6 +45,8 @@ namespace BAL.Interface
 
         public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid);
       
+        public List<Physician> GetPhysiciansByRegionId(string regionId);
 
+        public List<RequestWiseFile> GetRequestWiseFilesWithoutDelete(int id);
 	}
 }

@@ -280,5 +280,67 @@ namespace HelloDoc.Controllers
             return RedirectToAction("ProviderDashBoard");
         }
 
+        public IActionResult Scheduling()
+        {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var region = (from regions in _context.Regions 
+                         join physicianRegion in _context.PhysicianRegions
+                         on regions.RegionId equals physicianRegion.RegionId
+                         where physicianRegion.PhysicianId == physicianId 
+                         select regions).ToList();
+            ViewBag.regions = region;
+            return View("Scheduling/Scheduling");
+        }
+
+        public IActionResult GetPhysicianShift()
+        {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var physicians = (from physician in _context.Physicians
+                              where physician.PhysicianId == physicianId
+                              select physician)
+                             .FirstOrDefault();
+            return Json(physicians);
+        }
+
+        public IActionResult GetEvents()
+        {
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+
+            var events = (from s in _context.Shifts
+                          join pd in _context.Physicians on s.PhysicianId equals pd.PhysicianId
+                          join sd in _context.ShiftDetails on s.ShiftId equals sd.ShiftId into shiftGroup
+                          from sd in shiftGroup.DefaultIfEmpty()
+
+
+                          select new Scheduling
+                          {
+							  Shiftid = sd.ShiftDetailId,
+							  Status = sd.Status,
+							  Starttime = sd.StartTime,
+							  Endtime = sd.EndTime,
+							  Physicianid = pd.PhysicianId,
+							  PhysicianName = pd.FirstName + ' ' + pd.LastName,
+							  Shiftdate = sd.ShiftDate,
+							  ShiftDetailId = sd.ShiftDetailId,
+							  Regionid = sd.RegionId,
+							  ShiftDeleted = sd.IsDeleted[0]
+
+						  }).ToList();
+            events = events.Where(item => item.Physicianid == physicianId && !item.ShiftDeleted).ToList();
+
+            var mappedEvents = events.Select(e => new
+            {
+                id = e.Shiftid,
+                resourceId = e.Physicianid,
+                title = e.PhysicianName,
+                start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
+                end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
+                ShiftDetailId = e.ShiftDetailId,
+                region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+                status = e.Status
+            }).ToList();
+
+            return Json(mappedEvents);
+        }
     }
 }

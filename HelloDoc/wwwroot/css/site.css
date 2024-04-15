@@ -16,7 +16,10 @@ html {
   position: relative;
   min-height: 100%;
 }
-
+a{
+    text-decoration: none !important;
+   
+}
 body {
   margin-bottom: 60px;
 }

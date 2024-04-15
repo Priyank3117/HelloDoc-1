@@ -13,8 +13,8 @@
 
 
 
-<div class="row justify-content-center">
-    <div class="col-10 col-md-8 col-lg-6  d-inline-flex justify-content-between">
+<div class="row justify-content-center bg-body-secondary" >
+    <div class="col-10 col-md-8 col-lg-6  d-inline-flex justify-content-between" >
         <div class="d-flex">
             <h4 class="h4 mt-5 mb-3">Notes</h4>
         </div>
@@ -31,27 +31,36 @@
         </div>
     </div>
 </div>
-<div class="row justify-content-center">
+<div class="row justify-content-center bg-body-secondary" style="height:70vh !important">
     <div class="col-10 col-md-8 col-lg-6">
         <form>
-            <div class="row justify-content-between">
+            <div class="row justify-content-between  white-bag">
                 <div class="col-md-6 my-2">
-                    <div class=" rounded shadow p-2">
+                    <div class=" rounded shadow p-2 mt-4 ms-2 ">
                         <h6 class="h6 mt-1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-right me-2" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5m14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5" />
                             </svg>Transfer Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                            @foreach (var item in Model.TransferNotes)
-                            {
-                                @item
-                            } 
+                            <ul>
+                                @if (Model.TransferNotes != null)
+                                {
+                                    @foreach (var item in Model.TransferNotes)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>No Transfer notes found.</li>
+                                }
+                            </ul>
                         </p>
                     </div>
                 </div>
                 <div class="col-md-6 my-2 ">
-                    <div class=" rounded shadow p-2">
+                    <div class="rounded shadow mt-4 p-2 white-bag">
                         <h6 class="h6 mt-1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-badge me-2" viewBox="0 0 16 16">
                                 <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -59,40 +68,58 @@
                             </svg>Physician Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                             @foreach (var item in Model.PhysicianNotes)
-                            {
-                                @item
-                            } 
+                            <ul>
+                                @if (Model.PhysicianNotes != null)
+                                {
+                                    @foreach (var item in Model.PhysicianNotes)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>No Physician notes found.</li>
+                                }
+                            </ul>
                         </p>
                     </div>
                 </div>
-                <div class="col-md-6 my-2">
-                    <div class=" rounded shadow p-2">
+                <div class="col-md-6 my-2 white-bag">
+                    <div class=" rounded shadow p-2 ms-2">
                         <h6 class="h6 mt-1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person me-2" viewBox="0 0 16 16">
                                 <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
                             </svg>Admin Notes
                         </h6>
                         <p class="ms-4 text-muted">
-                            @foreach (var item in Model.AdminNotes)
-                            {
-                                @item
-                            }   
+                            <ul>
+                                @if (Model.AdminNotes != null)
+                                {
+                                    @foreach (var item in Model.AdminNotes)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>No admin notes found.</li>
+                                }
+                            </ul>
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12 shadow my-3">
+            <div class="row white-bag pt-3">
+                <div class="col-12 shadow white-bag ">
 
-                    <div class="form-floating my-3">
+                    <div class="form-floating ">
                         <textarea class="form-control" placeholder="Patient Notes" id="patientNotes"
                                   style="height: 15vh;"></textarea>
                         <label class="text-muted floating-label ms-2">
                             Additional Notes
                         </label>
                     </div>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2" >
                         <button class="btn btn-info text-white me-md-2 my-2" type="submit">Save Changes</button>
                     </div>
                 </div>

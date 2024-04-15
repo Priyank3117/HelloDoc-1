@@ -88,13 +88,11 @@
                             </button>
                         </a>
                     </li>
-                    <li class="nav-item ">
-                        <a asp-action="ProviderLocation" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "" ? "active" : "")">Invoice</a>
-                    </li>
+                 
                    
                    
                     <li class="nav-item">
-                        <a asp-action="Partners" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">My Schedule</a>
+                        <a asp-action="Scheduling" asp-controller="ProviderDashBoard" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" ? "active" : "")">My Schedule</a>
                     </li>
         
                     <li class="nav-item">
@@ -167,6 +165,7 @@
     @await RenderSectionAsync("Scripts", required: false)
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery/jquery.min.js"></script>
+  
     
 
 

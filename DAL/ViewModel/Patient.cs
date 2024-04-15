@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DAL.DataModels;
 
 namespace DAL.ViewModels
@@ -29,10 +24,13 @@ namespace DAL.ViewModels
 
         [Required]
         [StringLength(256)]
-        public string? Email { get; set;}
+        [DataType(DataType.EmailAddress, ErrorMessage = "Enter email in correct format (mailto:example@email.com)")]
+        public string Email { get; set; } = null!;
 
         public List<Region>? regions { get; set; }
+
         [Column(TypeName = "character varying")]
+        [RegularExpression(@"^(?:(\+?91|0)?[ ]?([\-\s]?[6-9]\d{9})|(\+?91|0)?[ ]?(\d{5})[ ]?(\d{5}))$", ErrorMessage = "Enter a valid Phone number")]
         public string? PhoneNumber { get; set; }
 
         [Column(TypeName = "timestamp without time zone")]
@@ -58,7 +56,7 @@ namespace DAL.ViewModels
         [StringLength(100)]
         public string? State { get; set; }
 
-        [StringLength(10)]
+        [RegularExpression(@"^\d{5}$", ErrorMessage = "Zip code must be 5 digits")]
         public string? ZipCode { get; set; }
 
         public int? Typeid { get; set; }

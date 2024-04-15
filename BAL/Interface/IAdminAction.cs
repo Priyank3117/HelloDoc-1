@@ -29,7 +29,7 @@ namespace BAL.Interface
         #region Scheduling methods
         public List<Scheduling> GetEvents(int region);
 
-        public void CreateShift(Scheduling model,string email);
+        public void CreateShift(Scheduling model,string email,int physicianId);
 
         #endregion
     }
