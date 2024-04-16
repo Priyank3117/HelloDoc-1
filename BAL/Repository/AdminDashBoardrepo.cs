@@ -511,10 +511,10 @@ namespace BAL.Repository
         public List<Physician> GetPhysiciansByRegionId(string regionId)
         {
            var result = (from physician in _context.Physicians
-             join
-              region in _context.PhysicianRegions on
-              physician.PhysicianId equals region.PhysicianId into phy
-             select physician).Where(s => s.RegionId == int.Parse(regionId)).ToList();
+                         join region in _context.PhysicianRegions on
+                        physician.PhysicianId equals region.PhysicianId
+                        where region.RegionId == int.Parse(regionId)
+                       select physician).ToList();
 
             return result;
         }

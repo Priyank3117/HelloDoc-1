@@ -118,18 +118,18 @@ namespace HelloDoc.Controllers
         public IActionResult ViewCase(int id, int status)
         {
             string email = HttpContext.Session.GetString("Email");
-           
+
             Admin? admin = _AdminDashboard.GetAdminByEmail(email);
 
             if (admin != null)
             {
                 ViewBag.IsPhysican = false;
-                
+
             }
             else
             {
                 ViewBag.IsPhysican = true;
-                
+
             }
             var ViewCase = _adminAction.ViewCase(id, status);
             return View(ViewCase);
@@ -182,6 +182,7 @@ namespace HelloDoc.Controllers
         public IActionResult AssignCase(int req, string Description, string phyid)
         {
             _adminAction.AssignCase(req, Description, phyid);
+
             return Ok();
         }
 
@@ -387,18 +388,18 @@ namespace HelloDoc.Controllers
             return View(sendOrder);
         }
 
-      
 
-        [CustomAuthorize(new string[] {"Admin", "Physician"})]
+
+        [CustomAuthorize(new string[] { "Admin", "Physician" })]
         [HttpPost("AdminDash/SendOrder/{id}", Name = "AdminCaseNotesorderr")]
         [HttpPost("ProviderDashBoard/SendOrder/{id}", Name = "Providerorderr")]
-        public IActionResult SendOrder(SendOrder sendOrder,int id)
+        public IActionResult SendOrder(SendOrder sendOrder, int id)
         {
             bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
             string controllerName = null;
             if (controller)
             {
-               controllerName = "ProviderDashBoard";
+                controllerName = "ProviderDashBoard";
             }
             else
             {
@@ -406,8 +407,8 @@ namespace HelloDoc.Controllers
             }
 
 
-             //_adminAction.SendOrder(sendOrder);
-            return RedirectToAction("SendOrder", controllerName,new { id = id });
+            //_adminAction.SendOrder(sendOrder);
+            return RedirectToAction("SendOrder", controllerName, new { id = id });
         }
 
         [CustomAuthorize(new string[] { "Admin", "Physician" })]
@@ -547,15 +548,25 @@ namespace HelloDoc.Controllers
         #endregion
 
         #region Adminprofile
-        public IActionResult AdminProfile()
+        public IActionResult AdminProfile(string email)
         {
             var Email = HttpContext.Session.GetString("Email");
-            var adminProfile = _AdminDashboard.GetAdminData(Email);
 
-            return View(adminProfile);
+            if (email != null)
+            {
+                var adminProfile = _AdminDashboard.GetAdminData(email);
+                return View(adminProfile);
+
+            }
+            else
+            {
+                var adminProfile = _AdminDashboard.GetAdminData(Email);
+                return View(adminProfile);
+            }
+
         }
 
-        
+
 
         public IActionResult AdministratorInformation(AdminProfile adminProfile, List<string> states)
 
@@ -663,7 +674,7 @@ namespace HelloDoc.Controllers
                 }
             }
 
-            return RedirectToAction("AdminDash"); 
+            return RedirectToAction("AdminDash");
         }
 
 
@@ -977,7 +988,7 @@ namespace HelloDoc.Controllers
             }
         }
 
-       
+
         public IActionResult SendEmailSMS(string id, string Message, string radioForprovider)
         {
 
@@ -1282,7 +1293,7 @@ namespace HelloDoc.Controllers
             }).ToList();
             return Ok(new { message = "Shift detail Deleted successfully.", events = mappedEvents });
 
-        }     
+        }
 
         public IActionResult ReturnShift(int shiftDetailId, int region)
         {
@@ -1346,10 +1357,10 @@ namespace HelloDoc.Controllers
 
             foreach (var item in checkedValues)
             {
-                if(item != "0")
+                if (item != "0")
                 {
                     var status = _context.ShiftDetails.FirstOrDefault(s => s.ShiftDetailId == int.Parse(item));
-                    status.Status = 0;  
+                    status.Status = 0;
                     _context.ShiftDetails.Update(status);
                 }
             }
@@ -1455,9 +1466,9 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult AddBusiness(AddBusiness addBusiness)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                HealthProfessional healthProfessional =  new HealthProfessional();
+                HealthProfessional healthProfessional = new HealthProfessional();
                 healthProfessional.VendorName = addBusiness.BusinessName;
                 healthProfessional.Profession = int.Parse(addBusiness.Profession);
                 healthProfessional.BusinessContact = addBusiness.BusinessContact;
@@ -1466,13 +1477,13 @@ namespace HelloDoc.Controllers
                 healthProfessional.City = addBusiness.city;
                 healthProfessional.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(addBusiness.state)).Name;
                 healthProfessional.RegionId = int.Parse(addBusiness.state);
-                healthProfessional.CreatedDate=DateTime.Now;
+                healthProfessional.CreatedDate = DateTime.Now;
                 healthProfessional.PhoneNumber = addBusiness.PhoneNum;
                 healthProfessional.Email = addBusiness.Email;
                 _context.HealthProfessionals.Add(healthProfessional);
                 _context.SaveChanges();
                 _notyf.Success("Data Added Successfully");
-               return RedirectToAction("AddBusiness");
+                return RedirectToAction("AddBusiness");
             }
             else
             {
@@ -1507,7 +1518,7 @@ namespace HelloDoc.Controllers
                 businessModel.Email = vendor.Email;
                 businessModel.street = vendor.City;
                 businessModel.vendorid = id;
-                return View("Partners/EditBusinessData",businessModel);
+                return View("Partners/EditBusinessData", businessModel);
             }
             else
             {
@@ -1517,39 +1528,39 @@ namespace HelloDoc.Controllers
         }
 
         [HttpPost]
-		public IActionResult EditBusinessPost(AddBusiness addBusiness, int id)
-		{
-			var healthProfessional = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == id);
-			healthProfessional.VendorName = addBusiness.BusinessName;
-			healthProfessional.Profession = int.Parse(addBusiness.Profession);
-			healthProfessional.BusinessContact = addBusiness.BusinessContact;
-			healthProfessional.FaxNumber = addBusiness.FaxNumber;
-			healthProfessional.Address = addBusiness.city + addBusiness.street;
-			healthProfessional.City = addBusiness.city;
-			healthProfessional.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(addBusiness.state)).Name;
-			healthProfessional.RegionId = int.Parse(addBusiness.state);
-			healthProfessional.CreatedDate = DateTime.Now;
-			healthProfessional.PhoneNumber = addBusiness.PhoneNum;
-			healthProfessional.Email = addBusiness.Email;
-			_context.HealthProfessionals.Update(healthProfessional);
-			_context.SaveChanges();
-			_notyf.Success("Data Updated Successfully");
-			return RedirectToAction("EditBusinessData", new { id = id });
-		}
+        public IActionResult EditBusinessPost(AddBusiness addBusiness, int id)
+        {
+            var healthProfessional = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == id);
+            healthProfessional.VendorName = addBusiness.BusinessName;
+            healthProfessional.Profession = int.Parse(addBusiness.Profession);
+            healthProfessional.BusinessContact = addBusiness.BusinessContact;
+            healthProfessional.FaxNumber = addBusiness.FaxNumber;
+            healthProfessional.Address = addBusiness.city + addBusiness.street;
+            healthProfessional.City = addBusiness.city;
+            healthProfessional.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(addBusiness.state)).Name;
+            healthProfessional.RegionId = int.Parse(addBusiness.state);
+            healthProfessional.CreatedDate = DateTime.Now;
+            healthProfessional.PhoneNumber = addBusiness.PhoneNum;
+            healthProfessional.Email = addBusiness.Email;
+            _context.HealthProfessionals.Update(healthProfessional);
+            _context.SaveChanges();
+            _notyf.Success("Data Updated Successfully");
+            return RedirectToAction("EditBusinessData", new { id = id });
+        }
 
-		public IActionResult DeleteBusinessData(int vendorid)
-		{
-			var vendor = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == vendorid);
+        public IActionResult DeleteBusinessData(int vendorid)
+        {
+            var vendor = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == vendorid);
 
-			if (vendor != null)
-			{
-				vendor.IsDeleted = new BitArray(new[] { true });
-				_context.Update(vendor);
-				_context.SaveChanges();
-			}
+            if (vendor != null)
+            {
+                vendor.IsDeleted = new BitArray(new[] { true });
+                _context.Update(vendor);
+                _context.SaveChanges();
+            }
 
-			return RedirectToAction("Partners");
-		}
+            return RedirectToAction("Partners");
+        }
 
         #endregion
 
@@ -1557,12 +1568,12 @@ namespace HelloDoc.Controllers
 
         #region Patienthistory,Explorerecord
         public IActionResult PatientHistory()
-		{
-			return View("RecordsMenu/PatientHistory");
-		}
+        {
+            return View("RecordsMenu/PatientHistory");
+        }
 
-		public IActionResult GetPatientRecords(string firstName, string lastName, string email, string phone,int currentpage,int pagesize)
-		{
+        public IActionResult GetPatientRecords(string firstName, string lastName, string email, string phone, int currentpage, int pagesize)
+        {
             var records = _adminDashboardRecords.PatientRecords(firstName, lastName, email, phone, currentpage, pagesize);
 
             int totalItems = records.Count();
@@ -1576,25 +1587,25 @@ namespace HelloDoc.Controllers
             ViewBag.CurrentPage = currentpage;
 
             return PartialView("RecordsMenu/_PatientHistoryPartial", paginatedData);
-		}
+        }
 
-		public IActionResult ExploreRecords(int userid) 
-		{
-			var records = _adminDashboardRecords.ExploreRecords(userid);
+        public IActionResult ExploreRecords(int userid)
+        {
+            var records = _adminDashboardRecords.ExploreRecords(userid);
             return View("RecordsMenu/ExploreRecords", records);
-		}
+        }
         #endregion
 
 
         #region SearchRecords,ExcleFile
         public IActionResult SearchRecords()
-		{
-			return View("RecordsMenu/SearchRecords");
-		}
+        {
+            return View("RecordsMenu/SearchRecords");
+        }
 
-		public IActionResult GetSearchRecords(int[] status, string patientName,
-			string providername, string PhoneNum, string email, string requesttype,int pagesize,int currentpage)
-		{
+        public IActionResult GetSearchRecords(int[] status, string patientName,
+            string providername, string PhoneNum, string email, string requesttype, int pagesize, int currentpage)
+        {
 
             var searchRecords = _adminDashboardRecords.SearchRecords(status, patientName, providername, PhoneNum, email
                 , requesttype, pagesize, currentpage);
@@ -1609,10 +1620,10 @@ namespace HelloDoc.Controllers
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = currentpage;
             return PartialView("RecordsMenu/_SearchrecordPartial", paginatedData);
-		}
+        }
 
-        public IActionResult ExcleFromRecords(int[] status,string requesttype,string providername,
-            string email,string PhoneNum,string patientName)
+        public IActionResult ExcleFromRecords(int[] status, string requesttype, string providername,
+            string email, string PhoneNum, string patientName)
         {
             var searchRecords = _adminDashboardRecords.SearchRecords(status, patientName, providername, PhoneNum, email
                 , requesttype);
@@ -1651,34 +1662,34 @@ namespace HelloDoc.Controllers
 
 
         public IActionResult DeleteRecord(int id)
-		{
-			Request? request = _context.Requests.Find(id);
-			if (request != null)
-			{
-				request.IsDeleted = new BitArray(new[] { true });
-				_context.Requests.Update(request);
-			}
-			_notyf.Success("The patient deleted successfully");
-			_context.SaveChanges();
-			return RedirectToAction("SearchRecords");
-		}
+        {
+            Request? request = _context.Requests.Find(id);
+            if (request != null)
+            {
+                request.IsDeleted = new BitArray(new[] { true });
+                _context.Requests.Update(request);
+            }
+            _notyf.Success("The patient deleted successfully");
+            _context.SaveChanges();
+            return RedirectToAction("SearchRecords");
+        }
         #endregion
 
         #region blockhistory
         public IActionResult BlockHistory()
-		{
-			return View("RecordsMenu/BlockHistory");
-		}
+        {
+            return View("RecordsMenu/BlockHistory");
+        }
 
-		public IActionResult GetBlockedPatientRecords(string email, string name, string phone, DateTime date)
-		{
-			var list = _adminDashboardRecords.BlockedPatientRecords(email, name, phone, date);  
-			return PartialView("RecordsMenu/_BlockHistoryPartial", list);
-		}
+        public IActionResult GetBlockedPatientRecords(string email, string name, string phone, DateTime date)
+        {
+            var list = _adminDashboardRecords.BlockedPatientRecords(email, name, phone, date);
+            return PartialView("RecordsMenu/_BlockHistoryPartial", list);
+        }
 
         public IActionResult Unblock(int id)
         {
-            var user = _context.BlockRequests.FirstOrDefault(s => s.RequestId ==  id.ToString());
+            var user = _context.BlockRequests.FirstOrDefault(s => s.RequestId == id.ToString());
 
             if (user != null)
             {
@@ -1693,5 +1704,5 @@ namespace HelloDoc.Controllers
         #endregion     
 
     }
-   
+
 }

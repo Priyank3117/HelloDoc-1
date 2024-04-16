@@ -12,6 +12,7 @@ namespace DAL.ViewModel
         public string AccountType { get; set; }
         public int AccountTypeid { get; set; }
 
+        public string? Email { get; set; }
         public string phonenum { get; set; }
         public int roleid { get; set; }
 

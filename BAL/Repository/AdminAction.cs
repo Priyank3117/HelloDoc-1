@@ -80,7 +80,7 @@ namespace BAL.Repository
         {
             var user = _context.Requests.FirstOrDefault(h => h.RequestId == req);
 
-            if (user != null)
+            if (user != null && phyid != null)
             {
      
                 user.ModifiedDate = DateTime.Now;
@@ -96,10 +96,11 @@ namespace BAL.Repository
                 requeststatuslog.CreatedDate = DateTime.Now;
             
 
-                _context.Add(requeststatuslog);
-                _context.SaveChanges();
+               _context.Add(requeststatuslog);
+               _context.SaveChanges();
 
             }
+            _notyf.Error("Please Select the Physician before submit");
         }
 
         public void TransferCase(int transferid, string Descriptionoftra, string phyidtra)

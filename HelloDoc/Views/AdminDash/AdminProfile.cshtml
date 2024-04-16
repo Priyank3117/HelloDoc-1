@@ -9,7 +9,7 @@
 <div class="container bg-body-secondary px-0  backbtn d-flex align-items-center py-3  justify-content-between">
 
     <h4 class="text-body align-middle my-0 ">My Profile</h4>
-    <a class="p-2 border text-decoration-none border-info rounded bg-body-secondary">
+    <a asp-action="AdminDash" class="p-2 border text-decoration-none border-info rounded bg-body-secondary">
         <svg xmlns="http://www.w3.org/2000/svg"
              width="16"
              height="16"
@@ -40,11 +40,11 @@
                        class="form-control shadow-none"
                        placeholder="Password" />
                 <label for="floatingInput" class="ms-2">Password</label>
-
+                    <span asp-validation-for="Password" class="mt-2 text-danger"></span>
             </div>
             <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
 
-                <select class="form-control py-2" name="SelectedStateId">
+                <select class="form-control py-2" name="SelectedStateId" disabled>
                     <option selected>Select Status</option>
                     @*  <option>Select State</option>
                     @foreach (var state in Model.Regions)
@@ -55,7 +55,7 @@
             </div>
             <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
 
-                <select class="form-control py-2"
+                <select class="form-control py-2" disabled>
                     <option selected>Select Role</option>
                     @*@foreach (var state in Model.Region)
                     {

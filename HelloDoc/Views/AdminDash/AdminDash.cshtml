@@ -276,8 +276,8 @@
                     <div class="modal-body">
                         <p> To assign this request search and select another physician</p>
 
-                        <select class="form-select py-2 my-3 shadow-none border" name="Region" id="regiondropdown">
-                            <option value="0" selected>Narrow Search By Region</option>
+                        <select class="form-select py-2 my-3 shadow-none border" name="Region" id="regiondropdown" required >
+                            <option value="0" disabled selected>Narrow Search By Region</option>
                             @foreach (var item in Model)
                             {
                                 @if (j == 0)
@@ -292,13 +292,13 @@
                         </select>
                         <input id="request" name="req" hidden />
 
-                        <select class="form-select py-2 my-3 shadow-none border" name="phyid" id="physiciandropdown">
-                         
+                        <select class="form-select py-2 my-3 shadow-none border" name="phyid" id="physiciandropdown" required>
+                            <option  disabled >Select region first to search physician</option>
                           
                           </select>
 
                         <div class="form-floating mt-3">
-                            <textarea class="form-control border border-info" name="Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <textarea class="form-control border border-info"  name="Description" placeholder="Leave a comment here" id="Notes" style="height: 100px;resize:none"  required ></textarea>
                             <label for="floatingTextarea2">Description</label>
                         </div>
 
@@ -331,7 +331,7 @@
 
                         <input id="blockid" name="blocknameid" hidden />
                         <div class="form-floating mt-3">
-                            <textarea class="form-control" name="blocknotes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <textarea class="form-control" name="blocknotes" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px;resize:none"></textarea>
                             <label for="floatingTextarea2">Reason For Block</label>
                         </div>
 
@@ -359,8 +359,8 @@
                     <div class="modal-body">
                         <p> To assign this request search and select another physician</p>
 
-                        <select class="form-select py-2 my-3 shadow-none border" name="Regionoftra" id="regiondropdownoftra">
-                            <option value="0" selected>Narrow Search By Region</option>
+                        <select class="form-select py-2 my-3 shadow-none border" name="Regionoftra" id="regiondropdownoftra" required>
+                            <option value="0" selected disabled>Narrow Search By Region</option>
                             @foreach (var item in Model)
                             {
                                 @if (a == 0)
@@ -375,11 +375,13 @@
                         </select>
                         <input id="trarequest" name="transferid" hidden />
 
-                        <select class="form-select py-2 my-3 shadow-none border" name="phyidtra" id="physiciandropdownoftra">
+                    
+                        <select class="form-select py-2 my-3 shadow-none border" name="phyidtra" id="physiciandropdownoftra" required>
+                            <option disabled>Please Select region first to get physician</option>
                         </select>
 
                         <div class="form-floating mt-3">
-                            <textarea class="form-control border border-info" name="Descriptionoftra" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <textarea class="form-control border border-info" name="Descriptionoftra" placeholder="Leave a comment here" required id="floatingTextarea2" style="height: 100px;resize:none"></textarea>
                             <label for="floatingTextarea2">Description</label>
                         </div>
 

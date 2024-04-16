@@ -235,7 +235,8 @@ namespace BAL.Repository
 							  phonenum = totaladmins.Mobile,
 							  status = totaladmins.AdminId,
 							  roleid = role,
-							  AccountTypeid = role,
+							  Email = totaladmins.Email,
+							  AccountTypeid = int.Parse(aspnetuserrole.RoleId),
 							  useraccessid = totaladmins.AdminId,
 						  } : new UserAccess()
 						  {
@@ -244,8 +245,9 @@ namespace BAL.Repository
 							  phonenum = totaluser.Mobile,
 							  status = totaluser.Status,
 							  roleid = role,
-							  AccountTypeid = role,
-							  useraccessid = totaluser.PhysicianId,
+                              AccountTypeid = int.Parse(aspnetuserrole.RoleId),
+                              Email = totaluser.Email,
+                              useraccessid = totaluser.PhysicianId
 						  }
 
 						  )).ToList();

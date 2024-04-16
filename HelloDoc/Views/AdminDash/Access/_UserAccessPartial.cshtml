@@ -1,4 +1,4 @@
-﻿
+﻿@model List<DAL.ViewModel.UserAccess>
 <div class="bg-white border justify-content-center">
     <table class="table">
 
@@ -31,13 +31,13 @@
                         }
                         <td>@item.status</td>
                         <td>0</td>
-                        @if (item.AccountTypeid == 2)
+                        @if (item.AccountTypeid == 3)
                         {
-                            <td><a class="btn btn-outline-info" asp-action="PhysicanProfile" asp-controller="AdminDash" asp-route-id="@item.useraccessid">Edit</a></td>
+                            <td><a class="btn btn-outline-info" asp-action="PhysicianProfile" asp-controller="AdminDash" asp-route-id="@item.useraccessid">Edit</a></td>
                         }
                         else
                         {
-                            <td><a class="btn btn-outline-info" asp-action="EditProfile" asp-controller="AdminDash" asp-route-adminid="@item.useraccessid">Edit</a></td>
+                            <td><a class="btn btn-outline-info" asp-action="AdminProfile" asp-controller="AdminDash" asp-route-email="@item.Email">Edit</a></td>
                         }
                     </tr>
                 </tbody>

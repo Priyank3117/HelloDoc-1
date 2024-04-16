@@ -16,13 +16,13 @@ namespace DAL.ViewModel
 
         public int? vendorId { get; set; }
 
+        [Required]
         public string? BusinessContact { get; set; }
 
 
-        [Required] 
- 
-        [DataType(DataType.EmailAddress, ErrorMessage = "Enter email in correct format (mailto:example@email.com)")]
-        public string? Email { get; set; }
+        [Required]
+       
+        public string Email { get; set; } 
 
         public string? FaxNum{ get; set; }
 

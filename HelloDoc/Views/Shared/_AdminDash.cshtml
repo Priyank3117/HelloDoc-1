@@ -23,6 +23,7 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
    
+
 </head>
 
 <body>
@@ -34,8 +35,8 @@
 
                     <nav class="navbar d-inline d-sm-none mt-3">
                         <div class="container-fluid">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-                            data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                         </div>
@@ -81,7 +82,7 @@
                         <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none">
                             <button class="nav-link  text-info
 
-                        @(new string[] { "AdminDash", "ViewNotes", "ViewCase" }
+                        @(new string[] { "AdminDash", "ViewNotes", "ViewCase","SendOrder","CreateRequest" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">
                                 Dashboard
                             </button>
@@ -110,14 +111,16 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a asp-action="Partners" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">Partners</a>
+                        <a asp-action="Partners" class="nav-link text-info  @(new string[] { "Partners", "AddBusiness" }
+                            .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">Partners</a>
                     </li>
+                    
                     <li class="nav-item dropdown">
-                        <a class="nav-link  text-info 
+                        <a class="nav-link  text-info
 
-                        @(new string[] { "UserAccess", "CreateAdminAccount", "AccountAccess" }
+                        @(new string[] { "UserAccess", "CreateAdminAccount", "AccountAccess","CreateAccess" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Access
                         </a>
                         <ul class="dropdown-menu">
@@ -128,8 +131,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link  text-info
                         @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory" }
-                        .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")" 
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
+                        .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
                         <ul class="dropdown-menu">
                             <li><a asp-action="SearchRecords" class="dropdown-item ">Search Records</a></li>
                             <li><a class="dropdown-item">Email Logs</a></li>
@@ -167,6 +170,7 @@
                     </ul>
                 </div>
             </div>
+        </div>
     </header>
     <div class="container-fluid pb-5  rounded-3 shadow">
         <main role="main">
@@ -181,15 +185,15 @@
     </footer>
 
 
-   
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Patient_request.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <partial name="_ValidationScriptsPartial"></partial>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> 
-   *@
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    *@
     @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -198,7 +202,7 @@
     <script src="~/js/Partner.js"></script>
 
 
-  
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -253,8 +257,8 @@
             setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
 
             $('.triangle').css('display', 'none');
-            //  $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
-
+            $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+            $("#divnew").addClass("active");
 
             filtertable(currentPartialview, currentstatus, currentpage, pagesize);
             $('AdminTablePending').hide();
@@ -486,7 +490,7 @@
                                 },
                                 success: function (data) {
                                     $('#PartialViews').html(data);
-                                    console.log(data)
+                                  
                                 },
 
                                 error: function (error) {
@@ -503,7 +507,9 @@
 
             }
 
+
             // -------------------------------------------------------------
+           
 
             // -------------------------------------------------------------
 
@@ -546,7 +552,7 @@
                     type: 'POST',
                     data: formData,
                     success: function (response) {
-
+                        
                         $('#AssignCaseModalsubmit').modal('hide');
                         window.location.href = "/AdminDash/AdminDash";
                     },

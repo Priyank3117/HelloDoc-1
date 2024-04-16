@@ -55,16 +55,16 @@
                         <span asp-validation-for="LastName" class="text-danger"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                        <input type="tel"
+                        <input type="tel    "
                                asp-for="PhoneNumber"
                                class="form-control"
                                id="floatingInpu5t"
                                placeholder="PhoneNumber" />
                         <label for="floatingInput5" class="ms-2">Mobile Number</label>
-  
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
-                        <input type="text"
+                        <input type="email"
                                asp-for="Email"
                                class="form-control"
                                id="email1"
@@ -78,12 +78,12 @@
                         <input type="date"
                                asp-for="BirthDate"
                                max="@DateTime.Now.ToString("yyyy-MM-dd")"
-                               min="@DateTime.Now.AddYears(-80).ToString("yyyy-MM-dd")"
+                               min="@DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd")"
                                class="form-control"
                                id="floatingInput3"
                                placeholder="Date Of Birth" />
                         <label for="floatingInput3" class="ms-2">Date Of Birth</label>
-                     
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
                     </div>
 
                     <div class="row" id="passwordFields" style="display : none;">
@@ -93,7 +93,7 @@
                                    id="password"
                                    placeholder="Password" />
                             <label for="floatingInput" class="ms-2">Password</label>
-                           
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
                         <div class="col-sm-12 col-md-12 col-lg-6 form-floating my-3">
