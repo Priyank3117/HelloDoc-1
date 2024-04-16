@@ -8,6 +8,8 @@ using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using static BAL.Repository.Authorizationrepo;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using Rotativa.AspNetCore;
 
 
 namespace HelloDoc.Controllers
@@ -23,9 +25,11 @@ namespace HelloDoc.Controllers
         private readonly IEmailService _emailService;
         private readonly IAddFile _files;
         private readonly IPatient_Request _patient;
+        private readonly INotyfService _notyf;
 
         public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,
-            IAdminDashBoard adminDashBoard,IAdminAction adminAction,IEmailService emailService, IHostingEnvironment hostEnvironment, IAddFile files, IPatient_Request patient) { 
+            IAdminDashBoard adminDashBoard,IAdminAction adminAction,IEmailService emailService, IHostingEnvironment hostEnvironment, IAddFile files, 
+            IPatient_Request patient,INotyfService notyf) { 
            
 
            _context = context;
@@ -36,6 +40,7 @@ namespace HelloDoc.Controllers
             _environment = hostEnvironment;
             _patient = patient;
             _files = files;
+            _notyf = notyf;
         }
      
         public IActionResult ProviderDashBoard()
@@ -251,33 +256,45 @@ namespace HelloDoc.Controllers
 
         public IActionResult ConcludeCareSubmit(int id)
         {
-            var Notes = Request.Form["ProviderNote"];
-            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var isFinalize = _context.EncounterForms.Where(s => s.RequestId == id).Select(s => s.IsFinalize).FirstOrDefault();
 
-            var request = _context.Requests.FirstOrDefault(u => u.RequestId == id);
-            request.Status = 8;
-            request.ModifiedDate = DateTime.Now;
-            _context.Requests.Update(request);
-            _context.SaveChanges();
-
-            RequestStatusLog log = new RequestStatusLog()
+            if(isFinalize)
             {
-                RequestId = id,
-                Status = request.Status,
-                PhysicianId = physicianId,
-                CreatedDate = DateTime.Now,
-               
+                var Notes = Request.Form["ProviderNote"];
+                var physicianId = HttpContext.Session.GetInt32("PhysicianId");
 
-            };
-            _context.RequestStatusLogs.Add(log);
-            _context.SaveChanges();
+                var request = _context.Requests.FirstOrDefault(u => u.RequestId == id);
+                request.Status = 8;
+                request.ModifiedDate = DateTime.Now;
+                _context.Requests.Update(request);
+                _context.SaveChanges();
 
-            RequestNote note = _context.RequestNotes.FirstOrDefault(u => u.RequestId == id);
-            note.PhysicianNotes = Notes;
-            _context.RequestNotes.Update(note); 
-            _context.SaveChanges();
+                RequestStatusLog log = new RequestStatusLog()
+                {
+                    RequestId = id,
+                    Status = request.Status,
+                    PhysicianId = physicianId,
+                    CreatedDate = DateTime.Now,
 
-            return RedirectToAction("ProviderDashBoard");
+
+                };
+                _context.RequestStatusLogs.Add(log);
+                _context.SaveChanges();
+
+                RequestNote note = _context.RequestNotes.FirstOrDefault(u => u.RequestId == id);
+                note.PhysicianNotes = Notes;
+                _context.RequestNotes.Update(note);
+                _context.SaveChanges();
+                _notyf.Success("Request closed Successfully");
+              return RedirectToAction("ProviderDashBoard");
+            }
+            else
+            {
+                _notyf.Error("Request is not Finalize");
+                return RedirectToAction("ProviderDashBoard");
+            }
+           
+
         }
 
         public IActionResult Scheduling()
@@ -341,6 +358,38 @@ namespace HelloDoc.Controllers
             }).ToList();
 
             return Json(mappedEvents);
+        }
+
+        public IActionResult Finalize(int id)
+        {
+            var finalize = _context.EncounterForms.FirstOrDefault(s => s.RequestId == id);
+
+            if (finalize != null)
+            {
+                finalize.IsFinalize = true;
+                _context.Update(finalize);
+                _context.SaveChanges();
+            }
+            else
+            {
+                _notyf.Error("Save the form before finalize");
+            }
+
+            return RedirectToAction("ProviderDashBoard");
+        }
+        public IActionResult GeneratePDF(int requeid)
+        {
+            var EncounterForm = _adminAction.EncounterForm(requeid);
+
+            if (EncounterForm == null)
+            {
+                return NotFound();
+            }
+
+            return new ViewAsPdf("DashBoard/EncounterFormDetails", EncounterForm)
+            {
+                FileName = "Encounter_Form.pdf"
+            };
         }
     }
 }

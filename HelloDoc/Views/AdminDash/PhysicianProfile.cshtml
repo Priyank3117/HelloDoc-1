@@ -368,68 +368,106 @@
 
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <input type="checkbox" class="form-check-input" id="agreeToICA" name="agreeToICA" @(Model.IsAgreement[0] ? "checked" : "")>
-                    <span>Independent Contractor Agreement</span>
-
+                    <div class="w-25">
+                        <span>Independent Contractor Agreement</span>
+                    </div>
                     <input type="file" class="form-control" id="ICA" hidden />
-                    <label class="input-group-text btn btn-info text-light" for="ICA">
-                        <span class="d-none d-md-inline">Upload</span>
-                    </label>
-                    @if (Model.IsAgreement[0])
-                    {
-                        <a class="btn btn-info" href="~/Physician/@Model.physicianid/ICA.pdf">View</a>
-                    }
+
+                    <div class="ms-4">
+                        <label class="input-group-text btn btn-info text-light" for="ICA">
+                            <span class="d-none d-md-inline">Upload</span>
+                        </label>
+                    </div>
+                    <div class="ms-4">
+                        @if (Model.IsAgreement[0])
+                        {
+                            <a class="btn btn-info" href="~/Physician/@Model.physicianid/ICA.pdf">View</a>
+                        }
+                    </div>
                 </div>
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <input type="checkbox" class="form-check-input" id="agreeToICA" name="agreeToICA" @(Model.IsBackground[0] ? "checked" : "")>
-                    <span>Background Check</span>
-
+                  
+                    <div class="w-25">
+                        <span>Background Check</span>
+                    </div>
                     <input type="file" class="form-control" id="Background" hidden />
-                    <label class="input-group-text btn btn-info text-light" for="Background">
-                        <span class="d-none d-md-inline">Upload</span>
-                    </label>
-                    @if (Model.IsBackground[0])
-                    {
-                        <a class="btn btn-info" href="~/Physician/@Model.physicianid/Background.pdf">View</a>
-                    }
+                  
+                    <div class="ms-4">
+                        <label class="input-group-text btn btn-info text-light" for="Background">
+                            <span class="d-none d-md-inline">Upload</span>
+                        </label>
+                    </div>
+                   
+                    <div class="ms-4">
+                        @if (Model.IsBackground[0])
+                        {
+                            <a class="btn btn-info" href="~/Physician/@Model.physicianid/Background.pdf">View</a>
+                        }
+                    </div>
                 </div>
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <input type="checkbox" class="form-check-input" id="agreeToICA" name="agreeToICA" @(Model.IsHippa[0] ? "checked" : "")>
-                    <span>Hippa Compalience</span>
-
+                 
+                    <div class="w-25">
+                        <span>Hippa Compalience</span>
+                    </div>
                     <input type="file" class="form-control" id="Hippa" hidden />
-                    <label class="input-group-text btn btn-info text-light" for="Hippa">
-                        <span class="d-none d-md-inline">Upload</span>
-                    </label>
-                    @if (Model.IsHippa[0])
-                    {
-                        <a class="btn btn-info" href="~/Physician/@Model.physicianid/Hippa.pdf">View</a>
-                    }
+                   
+                    <div class="ms-4">
+                        <label class="input-group-text btn btn-info text-light" for="Hippa">
+                            <span class="d-none d-md-inline">Upload</span>
+                        </label>
+                    </div>
+                  
+                    <div class="ms-4">
+                        @if (Model.IsHippa[0])
+                        {
+                            <a class="btn btn-info" href="~/Physician/@Model.physicianid/Hippa.pdf">View</a>
+                        }
+                    </div>
                 </div>
            <div class="d-flex align-items-center gap-3 mb-3">
                     <input type="checkbox" class="form-check-input" id="agreeToICA" name="agreeToICA" @(Model.NonDiscoluser[0] ? "checked" : "") accept=".pdf .jpg">
-                    <span>Non-disclosure-Agreement</span>
-
+                    
+                    <div class="w-25">
+                        <span>Non-disclosure-Agreement</span>
+                    </div>
                     <input type="file" class="form-control" id="NonDiscoluser" hidden />
-                    <label class="input-group-text btn btn-info text-light" for="NonDiscoluser">
-                        <span class="d-none d-md-inline">Upload</span>
-                    </label>
-                    @if (Model.NonDiscoluser[0])
-                    {
-                        <a class="btn btn-info" href="~/Physician/@Model.physicianid/NonDiscoluser.pdf">View</a>
-                    }
+                  
+                    <div class="ms-4">
+                        <label class="input-group-text btn btn-info text-light" for="NonDiscoluser">
+                            <span class="d-none d-md-inline">Upload</span>
+                        </label>
+                    </div>
+                 
+                    <div class="ms-4">
+                        @if (Model.NonDiscoluser[0])
+                        {
+                            <a class="btn btn-info" href="~/Physician/@Model.physicianid/NonDiscoluser.pdf">View</a>
+                        }
+                    </div>
                 </div>
            <div class="d-flex align-items-center gap-3 mb-3">
                     <input type="checkbox" class="form-check-input" id="agreeToICA" name="agreeToICA" @(Model.License[0] ? "checked" : "")>
-                    <span>License-Documents</span>
-
+                    
+                    <div class="w-25">
+                        <span>License-Documents</span>
+                    </div>
                     <input type="file" class="form-control" id="License" hidden />
-                    <label class="input-group-text btn btn-info text-light" for="License">
-                        <span class="d-none d-md-inline">Upload</span>
-                    </label>
-                    @if (Model.License[0])
-                    {
-                        <a class="btn btn-info" href="~/Physician/@Model.physicianid/License.pdf">View</a>
-                    }
+                   
+                    <div class="ms-4">
+                        <label class="input-group-text btn btn-info text-light" for="License">
+                            <span class="d-none d-md-inline">Upload</span>
+                        </label>
+                    </div>
+                 
+                    <div class="ms-4">
+                        @if (Model.License[0])
+                        {
+                            <a class="btn btn-info" href="~/Physician/@Model.physicianid/License.pdf">View</a>
+                        }
+                    </div>
                 </div>
             </form>
 

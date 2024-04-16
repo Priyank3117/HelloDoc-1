@@ -187,7 +187,7 @@
 
 
                         <div class="form-floating mt-3">
-                            <textarea class="form-control border border-info" name="Descriptionoftra" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <textarea class="form-control border border-info" name="Descriptionoftra" required placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px;resize:none"></textarea>
                             <label for="floatingTextarea2">Description</label>
                         </div>
 
@@ -284,9 +284,65 @@
 
     @* -----------SendAgreement Modal  --------------------------- *@
     @* -----------Modals------------------------ *@
-    
+    <div class="modal fade rounded-2" id="isFinalize" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h1 class="modal-title fs-5  text-white" id="exampleModalLabel">Confirm Cancellation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="isFinalizeSubmit" asp-action="GeneratePdf">
+                    <div class="modal-body">
+                        <input type="hidden" name="requeid" id="requid" />
+                        <span class="text-body">Encounter Form is finalized successfully!</span>
+                        <div class="d-flex justify-content-center my-3">
+                            <button type="submit" class="btn btn-info" data-bs-dismiss="modal"> Download </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 
     @* -------------------------------Search--------------------------------------------- *@
+    @* -------------------------------Send link modal--------------------------------------------- *@
+    <div class="modal fade" id="sendLinkModal" tabindex="-1" aria-labelledby="sendLinkModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h2 class="modal-title fs-5" id="sendLinkModalLabel">Send Mail to Patient for Submitting request</h2>
+                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="sendLinkForm" asp-action="SendLinkForm">
+                    <div class="modal-body">
+                        <div class="form-floating my-3">
+                            <input type="text" class="form-control" id="sendLinkFirstname" name="sendLinkFirstname" placeholder="Firstname">
+                            <label class="text-muted floating-label">Firstname</label>
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-floating my-3">
+                            <input type="text" class="form-control" id="sendLinkLarstname" name="sendLinkLastname" placeholder="Lastname">
+                            <label class="text-muted floating-label">Lastname</label>
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-floating my-3">
+                            <input type="email" class="form-control" id="sendLinkEmail" name="sendLinkEmail" placeholder="Email">
+                            <label class="text-muted floating-label">Email</label>
+                            <span class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-top-0">
+                        <button type="submit" class="btn btn-info text-white" data-bs-dismiss="modal">Submit</button>
+                        <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @* -------------------------------Send link modal--------------------------------------------- *@
 
     <div id="PartialViews">
     </div>

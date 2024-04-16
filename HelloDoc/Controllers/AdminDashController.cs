@@ -486,20 +486,7 @@ namespace HelloDoc.Controllers
             return RedirectToAction("EncounterForm", controllerName, new { id = id });
         }
 
-        public IActionResult Finalize(int id)
-        {
-            var finalize = _context.EncounterForms.FirstOrDefault(s => s.RequestId == id);
-
-            if (finalize != null)
-            {
-                finalize.IsFinalize = true;
-                _context.Update(finalize);
-                _context.SaveChanges();
-            }
-
-
-            return RedirectToAction("ProviderDashBoard");
-        }
+        
         public IActionResult GeneratePDF(int requeid)
         {
             var EncounterForm = _adminAction.EncounterForm(requeid);
@@ -801,7 +788,7 @@ namespace HelloDoc.Controllers
         {
 
             string email = HttpContext.Session.GetString("Email");
-            string physicianid = HttpContext.Session.GetString("PhysicianId");
+            var physicianid = HttpContext.Session.GetInt32("PhysicianId");
 
             Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
             if (admin != null)
@@ -811,7 +798,7 @@ namespace HelloDoc.Controllers
             }
             else
             {
-                id = int.Parse(physicianid);
+                id = (int)physicianid;
                 ViewBag.IsPhysican = true;
 
             }

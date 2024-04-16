@@ -56,9 +56,9 @@
                 <table class="table text-center ">
                     <thead class="table-secondary">
                         <tr>
-                            <th scope="col"><input type="checkbox" id="chkbox" /></th>
+                         
                             <th scope="col">Documents</th>
-                            <th scope="col">Upload Date</th>
+                         
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -67,10 +67,7 @@
                         @foreach (var item in Model.requestwisefile)
                         {
                             <tr>
-                                <td><input type="checkbox" class="chkboxind" data-filename="@item.FileName" /></td>
                                 <td>@item.FileName</td>
-                                <td>@item.CreatedDate</td>
-
                                 <td>
 
                                     <a href="~/Files/@item.FileName" download>
@@ -101,9 +98,7 @@
                 <form asp-action="ConcludeCareSubmit" asp-route-id="@Model.requestid">
             <div>
                 <h4>Provider Notes</h4>
-                <textarea rows="6" name="ProviderNote" class="w-100">
-
-                </textarea>
+                <textarea  name="ProviderNote" class="w-100" style="height:150px;resize:none" required></textarea>
             </div>
             <div class="d-flex justify-content-end mt-3">
                 <button type="submit" class="btn btn-info text-white">Conclude Care</button>

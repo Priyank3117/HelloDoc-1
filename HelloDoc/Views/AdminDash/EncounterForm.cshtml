@@ -274,7 +274,7 @@
                     <button class="p-2 btn btn-outline-info mx-1">Cancel</button>
                     @if (ViewBag.IsPhysican)
                     {
-                        <a asp-action="Finalize" asp-controller="AdminDash" asp-route-id="@Model.requestid">
+                        <a asp-action="Finalize" asp-controller="ProviderDashBoard" asp-route-id="@Model.requestid">
                             <button type="button" class="btn p-2 mx-1" style="background-color:indigo; color:white" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                 Finalize
                             </button>
