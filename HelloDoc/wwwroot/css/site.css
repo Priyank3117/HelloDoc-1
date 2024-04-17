@@ -28,16 +28,31 @@ body {
     --bs-table-color: none !important;
 }
 
-.nav-link:not(.active) {
+[data-bs-theme = "light"] .nav-link:not(.active) {
     color: #000 !important; /* Black color for inactive links */
     text-decoration: none; /* Remove underline for inactive links */
 }
 [data-bs-theme = "light"] .white-bag
 {
-    background-color:#fff;
+    background-color:#fff !important;
 }
 [data-bs-theme = "dark"] .white-bag {
     background-color: #212529;
+}
+[data-bs-theme = "dark"] .filter {
+    color: #fff;
+}
+
+[data-bs-theme = "dark"] .status:not(.active) .text {
+   color:black;
+}
+
+[data-bs-theme = "dark"] .triangle {
+    color: transparent !important;
+}
+[data-bs-theme = "dark"] .nav-link:not(.active) {
+    color: #fff !important; /* Black color for inactive links */
+     /* Remove underline for inactive links */
 }
 [data-bs-theme = "light"] .color {
     background-color: #E9ECEF;

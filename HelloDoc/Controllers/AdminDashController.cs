@@ -68,7 +68,7 @@ namespace HelloDoc.Controllers
             var email = HttpContext.Session.GetString("Email");
             if (email != null)
             {
-                ViewBag.username = _context.AspNetUsers.First(u => u.Email == email).UserName;
+                TempData["username"] = _context.AspNetUsers.First(u => u.Email == email).UserName;
             }
             var DashData = _AdminDashboard.GetList();
 
@@ -708,7 +708,14 @@ namespace HelloDoc.Controllers
 
             if (ModelState.IsValid)
             {
-                _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId);
+               if (ViewBag.IsPhysican)
+                {
+                    _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId,false);
+                }
+               else
+                {
+                    _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId, true);
+                }
                 if (formLink != null)
                 {
                     //send email on createRequest.Email which is enter by admin
@@ -716,6 +723,9 @@ namespace HelloDoc.Controllers
                      $"<a href='{formLink}'>Click here </a> for Request");
                     _notyf.Success("Email Sent Successfully");
                 }
+
+
+                _notyf.Success("Request added Successfully");
                 return RedirectToAction("CreateRequest", controllerName);
             }
 
@@ -783,7 +793,7 @@ namespace HelloDoc.Controllers
         #region physicianprofile
         [CustomAuthorize(new string[] { "Admin", "Physician" })]
         [HttpGet("AdminDash/PhysicianProfile/{id}", Name = "Profileviewbyadmin")]
-        [HttpGet("ProviderDashBoard/PhysicianProfile", Name = "Profileviewbyprovider")]
+        [HttpGet("ProviderDashBoard/PhysicianProfile/{id?}", Name = "Profileviewbyprovider")]
         public IActionResult PhysicianProfile(int id)
         {
 
@@ -814,6 +824,13 @@ namespace HelloDoc.Controllers
 
             Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
             AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+              string email = HttpContext.Session.GetString("Email");
+
+            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            ViewBag.IsPhysican = admin != null ? false : true;
+
+            bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
+            string controllerName = (controller) ? "ProviderDashBoard" : "AdminDash";
 
 
             if (account != null && Password != null)
@@ -829,7 +846,7 @@ namespace HelloDoc.Controllers
                 _notyf.Error("Please Enter the Password");
             }
 
-            return RedirectToAction("PhysicianProfile", "AdminDash", new { id = physicianid });
+            return RedirectToAction("PhysicianProfile", controllerName, new { id = physicianid });
         }
 
         public IActionResult PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
@@ -1209,8 +1226,14 @@ namespace HelloDoc.Controllers
         {
             var email = HttpContext.Session.GetString("Email");
             int physicianId = HttpContext.Session.GetInt32("PhysicianId") ?? 0;
-            _adminAction.CreateShift(model, email, physicianId);
-            return RedirectToAction("PhysicianScheduling");
+			Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+			ViewBag.IsPhysican = admin != null ? false : true;
+
+			bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
+			string controllerName = (controller) ? "ProviderDashBoard" : "AdminDash";
+            string actionName = (controller) ? "Scheduling" : "PhysicianScheduling";
+			_adminAction.CreateShift(model, email, physicianId);
+            return RedirectToAction(actionName, controllerName);
         }
 
         [HttpPost]

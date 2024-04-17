@@ -20,7 +20,7 @@ namespace BAL.Repository
         private readonly IUploadProvider _uploadprovider;
 
 
-        public AdminDashBoardrepo(ApplicationDbContext context, IUploadProvider uploadprovider,IPasswordHasher<AdminProfile> passwordHasher)
+        public AdminDashBoardrepo(ApplicationDbContext context, IUploadProvider uploadprovider, IPasswordHasher<AdminProfile> passwordHasher)
         {
             _context = context;
             _uploadprovider = uploadprovider;
@@ -54,7 +54,7 @@ namespace BAL.Repository
                                 Isfinalise = _context.EncounterForms.Where(x => x.RequestId == req.RequestId).Select(x => x.IsFinalize).FirstOrDefault()
                             }); ;
 
-                            return DashData;   
+            return DashData;
         }
 
         public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect,
@@ -63,9 +63,9 @@ namespace BAL.Repository
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
-                             join phy in _context.Physicians on
-                             req.PhysicianId equals phy.PhysicianId into phys
-                             from totalreqs in phys.DefaultIfEmpty()
+                            join phy in _context.Physicians on
+                            req.PhysicianId equals phy.PhysicianId into phys
+                            from totalreqs in phys.DefaultIfEmpty()
 
                             select new Admin_DashBoard()
                             {
@@ -100,12 +100,12 @@ namespace BAL.Repository
         }
 
         public List<Admin_DashBoard> GetRequestDataPhy(string SearchValue, string Filterselect,
-            string selectvalue, string partialName, int[] currentstatus,int PhyId)
+            string selectvalue, string partialName, int[] currentstatus, int PhyId)
         {
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
-                             where req.PhysicianId == PhyId
+                            where req.PhysicianId == PhyId
                             select new Admin_DashBoard()
                             {
                                 Name = reqclient.FirstName.ToLower(),
@@ -171,18 +171,18 @@ namespace BAL.Repository
         {
             Request? request = _context.Requests.FirstOrDefault(x => x.RequestId == id);
             ViewNotes viewNotes = new();
-         
-            if(request != null)
+
+            if (request != null)
             {
                 viewNotes.AdminNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.AdminNotes).ToList();
                 viewNotes.PhysicianNotes = _context.RequestNotes.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.PhysicianNotes).ToList();
                 viewNotes.TransferNotes = _context.RequestStatusLogs.Where(s => s.RequestId == id).OrderByDescending(c => c.CreatedDate).Select(c => c.Notes).ToList();
-                        
+
             }
             return viewNotes;
         }
 
-      
+
 
         public AdminProfile GetAdminData(string Email)
         {
@@ -207,15 +207,15 @@ namespace BAL.Repository
                 adminProfile.LastName = admin.LastName;
                 adminProfile.MobileNumAdmin = admin.Mobile;
                 adminProfile.SelectedRegions = states.Select(x => x.RegionId).ToList();
-                 adminProfile.statesForChecked= (from adminregion in _context.AdminRegions
-                           where adminregion.AdminId == admin.AdminId
-                           select new CheckboxList_model
-                           {
-                               Value = adminregion.RegionId,
-                               Selected = true
-                           }).ToList();
+                adminProfile.statesForChecked = (from adminregion in _context.AdminRegions
+                                                 where adminregion.AdminId == admin.AdminId
+                                                 select new CheckboxList_model
+                                                 {
+                                                     Value = adminregion.RegionId,
+                                                     Selected = true
+                                                 }).ToList();
 
-                
+
 
             }
             return adminProfile;
@@ -233,7 +233,7 @@ namespace BAL.Repository
             //add on the adminid 
             foreach (var item in states)
             {
-            AdminRegion adminRegion = new AdminRegion();
+                AdminRegion adminRegion = new AdminRegion();
                 adminRegion.AdminId = admin.AdminId;
                 adminRegion.RegionId = int.Parse(item);
                 _context.Add(adminRegion);
@@ -281,46 +281,62 @@ namespace BAL.Repository
             throw new NotImplementedException();
         }
 
-        public void AddCreateRequest(CreateRequest patient, string Email, string SelectedStateId)
+        public void AddCreateRequest(CreateRequest patient, string Email, string SelectedStateId, bool isAdmin)
         {
-          
-                var admin = _context.Admins.Where(x => x.Email == Email).FirstOrDefault();
-                if (patient != null)
-                {
-                    patient.CreatedDate = DateTime.Now;
-                    var request = new Request();
 
+
+            if (patient != null)
+            {
+                patient.CreatedDate = DateTime.Now;
+                var request = new Request();
+
+                if (isAdmin)
+                {
+                    var admin = _context.Admins.Where(x => x.Email == Email).FirstOrDefault();
                     request.FirstName = admin.FirstName;
                     request.LastName = admin.LastName;
                     request.CreatedDate = DateTime.Now;
                     request.PhoneNumber = admin.Mobile;
                     request.Email = Email;
-                   request.RequestTypeId = 1;
+                    request.RequestTypeId = 1;
+                }
+                else
+                {
+                    var admin = _context.Physicians.Where(x => x.Email == Email).FirstOrDefault();
+                    request.FirstName = admin.FirstName;
+                    request.LastName = admin.LastName;
+                    request.CreatedDate = DateTime.Now;
+                    request.PhoneNumber = admin.Mobile;
+                    request.Email = Email;
+                    request.PhysicianId = admin.PhysicianId;
+                    request.RequestTypeId = 1;
+                }
 
 
-                    _context.Requests.Add(request);
-                    _context.SaveChanges();
+
+                _context.Requests.Add(request);
+                _context.SaveChanges();
 
 
-                    var requestClient = new RequestClient();
+                var requestClient = new RequestClient();
 
-                    requestClient.RequestId = request.RequestId;
-                    requestClient.FirstName = patient.FirstName;
-                    requestClient.LastName = patient.LastName;
-                    requestClient.Email = patient.Email;
-                    requestClient.PhoneNumber = patient.PhoneNumber;
-                    requestClient.Street = patient.Street;
-                    requestClient.City = patient.City;
-                    requestClient.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(SelectedStateId)).Name;
-                    requestClient.ZipCode = patient.ZipCode;
-                    requestClient.IntDate = patient.BirthDate.Value.Day;
-                    requestClient.IntYear = patient.BirthDate.Value.Year;
-                    requestClient.StrMonth = patient.BirthDate.Value.Month.ToString();
-                    requestClient.RegionId = int.Parse(SelectedStateId);
+                requestClient.RequestId = request.RequestId;
+                requestClient.FirstName = patient.FirstName;
+                requestClient.LastName = patient.LastName;
+                requestClient.Email = patient.Email;
+                requestClient.PhoneNumber = patient.PhoneNumber;
+                requestClient.Street = patient.Street;
+                requestClient.City = patient.City;
+                requestClient.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(SelectedStateId)).Name;
+                requestClient.ZipCode = patient.ZipCode;
+                requestClient.IntDate = patient.BirthDate.Value.Day;
+                requestClient.IntYear = patient.BirthDate.Value.Year;
+                requestClient.StrMonth = patient.BirthDate.Value.Month.ToString();
+                requestClient.RegionId = int.Parse(SelectedStateId);
 
 
-                    _context.RequestClients.Add(requestClient);
-                    _context.SaveChanges();
+                _context.RequestClients.Add(requestClient);
+                _context.SaveChanges();
 
 
                 var region = _context.Regions.FirstOrDefault(x => x.RegionId == requestClient.RegionId);
@@ -344,16 +360,32 @@ namespace BAL.Repository
                 _context.Update(request);
                 _context.SaveChanges();
 
-                var reqnotes = new RequestNote();
+                if (isAdmin)
+                {
+                    var reqnotes = new RequestNote();
                     reqnotes.RequestId = request.RequestId;
                     reqnotes.AdminNotes = patient.AdminNote;
                     reqnotes.CreatedDate = DateTime.Now;
                     reqnotes.CreatedBy = request.FirstName + request.LastName;
                     reqnotes.PhysicianNotes = "-";
                     _context.RequestNotes.Add(reqnotes);
-                    _context.SaveChanges();
+
                 }
+                else
+                {
+                    var reqnotes = new RequestNote();
+                    reqnotes.RequestId = request.RequestId;
+                    reqnotes.PhysicianNotes = patient.AdminNote;
+                    reqnotes.CreatedDate = DateTime.Now;
+                    reqnotes.CreatedBy = request.FirstName + request.LastName;
+                    reqnotes.PhysicianNotes = "-";
+                    _context.RequestNotes.Add(reqnotes);
+
+                }
+                _context.SaveChanges();
+
             }
+        }
 
         public GetCount GetCount()
         {
@@ -412,7 +444,7 @@ namespace BAL.Repository
                           on phy.RoleId equals role.RoleId
                           join notify in _context.PhysicianNotifications
             on phy.PhysicianId equals notify.PhysicianId
-            orderby phy.CreatedDate
+                          orderby phy.CreatedDate
                           where (string.IsNullOrEmpty(Region) || phy.RegionId == int.Parse(Region))
                           select new Provider
                           {
@@ -459,7 +491,7 @@ namespace BAL.Repository
             return physicanProfile;
         }
 
-      
+
 
         public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid)
         {
@@ -504,17 +536,17 @@ namespace BAL.Repository
 
         public Admin GetAdminByEmail(string email)
         {
-            var admin= _context.Admins.FirstOrDefault(item => item.Email == email);
+            var admin = _context.Admins.FirstOrDefault(item => item.Email == email);
             return admin;
         }
 
         public List<Physician> GetPhysiciansByRegionId(string regionId)
         {
-           var result = (from physician in _context.Physicians
-                         join region in _context.PhysicianRegions on
-                        physician.PhysicianId equals region.PhysicianId
-                        where region.RegionId == int.Parse(regionId)
-                       select physician).ToList();
+            var result = (from physician in _context.Physicians
+                          join region in _context.PhysicianRegions on
+                         physician.PhysicianId equals region.PhysicianId
+                          where region.RegionId == int.Parse(regionId)
+                          select physician).ToList();
 
             return result;
         }
@@ -524,7 +556,7 @@ namespace BAL.Repository
             bool[] bitValues = { true };
             BitArray bits = new BitArray(bitValues);
 
-          var req=  _context.RequestWiseFiles.Where(u => u.RequestId == id && u.IsDeleted != bits).ToList();
+            var req = _context.RequestWiseFiles.Where(u => u.RequestId == id && u.IsDeleted != bits).ToList();
             return req;
         }
     }

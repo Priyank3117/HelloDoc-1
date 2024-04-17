@@ -48,10 +48,8 @@
                     <div class="form-floating">
                         <select class="form-control d-flex align-items-center py-2" asp-for="Role">
                             <option>Select Roles</option>
-                            @foreach (var item in Model.roles)
-                            {
-                                <option value="@item.RoleId">@item.Name</option>
-                            }
+                            <option >Physician</option>
+                            
                         </select>             
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>

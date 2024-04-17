@@ -1,5 +1,5 @@
 ﻿@{
-    string userName = ViewBag.username;
+    TempData.Keep("username");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -46,10 +46,10 @@
                     </div>
 
                     <div class=" float-end ">
-                        <span class="fw-bold me-2 d-none d-sm-inline">Welcome:@userName</span>
+                        <span class="fw-bold me-2 d-none d-sm-inline">Welcome: @TempData["username"]</span>
                         <a asp-action="Logout" asp-controller="Login">
 
-                            <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"
+                            <button type="submit" class="btn border-info white-bag fw-2 text-info me-2 border border-2"
                                     style="height:3rem">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="33" fill="currentColor" class="bi text-info bi-box-arrow-right d-inline d-sm-none" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
@@ -60,12 +60,12 @@
                             </button>
                         </a>
 
-                        <button class="dark-button border border-2 border-info bg-white my-3 mx-2" id="theme-toggle">
+                        <button class="btn dark-button float-end border-3  border-info" id="theme-toggle">
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="35"
-                                 height="39"
+                                 width="29"
+                                 height="29"
                                  fill="currentColor"
-                                 class="bi bi-moon text-info p-1 m-auto type-bold"
+                                 class="bi bi-moon text-info  p-1"
                                  viewBox="0 0 16 16">
                                 <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286" />
                             </svg>
@@ -80,7 +80,7 @@
                 <ul class="nav nav-tabs-info nav-underline fs-4 " id="pills-tab" role="tablist">
                     <li class="nav-item ">
                         <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none">
-                            <button class="nav-link  text-info
+                            <button class="nav-link  text-info  
 
                         @(new string[] { "AdminDash", "ViewNotes", "ViewCase","SendOrder","CreateRequest" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">
@@ -100,8 +100,8 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" || ViewContext.ActionDescriptor.RouteValues["action"] == "CreateProviderAccount"
-                        || ViewContext.ActionDescriptor.RouteValues["action"] == "PhysicianScheduling"? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link  text-info  @(new string[] { "Provider", "PhysicianScheduling", "ReviewShift","CreateProviderAccount","PhysicianProfile" }
+                            .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Provider
                         </a>
                         <ul class="dropdown-menu ">
@@ -257,7 +257,7 @@
             setDataInLocalStorage("currentstatus", JSON.stringify(currentstatus));
 
             $('.triangle').css('display', 'none');
-            $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'white');
+            $('#tranew').css('display', 'block').css('border-top', '20px solid #203f9a').css('color', 'transperant');
             $("#divnew").addClass("active");
 
             filtertable(currentPartialview, currentstatus, currentpage, pagesize);

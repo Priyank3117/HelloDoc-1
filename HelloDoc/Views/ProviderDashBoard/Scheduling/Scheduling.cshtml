@@ -15,7 +15,7 @@
 			<h3 class="mt-2"> My Schedule </h3>
 		</div>
 		<div>
-			<a asp-action="AdminDash" class="btn btn-outline-info mt-2"> ❮  Back </a>
+			<a asp-action="AdminDash" class="btn btn-outline-info mt-2" > ❮  Back </a>
 		</div>
 	</div>
 
@@ -298,7 +298,7 @@
 										<form asp-action="viewshift">
 										<input class="d-none" id="shiftDetailId" value="${shiftDetailId}">
 										   <div class="form-floating mb-3 mt-3">
-									<select class="form-control" aria-label="Default select example" id="selectregion" disabled>
+										<select class="form-control" aria-label="Default select example" id="selectregion" required disabled>
 										<option value="">${region[0].name}</option>
 
 									</select>
@@ -395,11 +395,11 @@
 		<div class="modal-content">
 			<div class="modal-header bg-info">
 				<h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				<button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 			</div>
-
+		
 		</div>
 	</div>
 </div>

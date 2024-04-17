@@ -13,7 +13,7 @@
 
             <div class="col col-lg-6 col-sm-12 text-center right-side">
                
-                    <button class=" dark-button float-end  border-info" id="theme-toggle">
+                    <button type="button" class="dark-button float-end  border-info" id="theme-toggle">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="30"
                              height="35"
@@ -52,22 +52,25 @@
                                    class="form-control border-0 no-border"
                                    id="floatingInput"
                                    placeholder="name@example.com" />
+                            <button type="button" class="border-0 white-bag ">
                             <img src="../images/user_circle.svg"
                                  alt=""
                                  class="pe-3 white-bag" />
+                            </button>
                             <label for="floatingInput">Email</label>
-                    
                         </div>
                          <span asp-validation-for="Email" class="text-danger d-block text-start"></span>
                         <div class="form-floating d-flex  mt-3 border rounded">
                             <input type="password"
                                      asp-for="PasswordHash"
                                    class="form-control border-0 no-border"
-                                   id="floatingPassword"
+                                   id="passwordInput"
                                    placeholder="Password" />
-                            <img src="../images/password_icon.svg"
-                                 alt=""
-                                 class="pe-3 white-bag" />
+                            <button type="button" id="togglePassword" class="border-0 white-bag ">
+                                <img src="../images/password_icon.svg"
+                                     alt=""
+                                     class="pe-3  white-bag" />
+                            </button>
                             <label for="floatingPassword">Password</label>
                         </div>
                             <span asp-validation-for="PasswordHash" class="text-danger  d-block  text-start"></span>
@@ -88,7 +91,27 @@
     </div>
    
    <script>
-       localStorage.clear();
+    const keys = Object.keys(localStorage);
+
+    // Iterate over all keys
+    for (const key of keys) {
+        // If the key is not "myKey", delete it
+        if (key !== "theme") {
+            localStorage.removeItem(key);
+        }
+    }
+    const toggleButtonForPassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
+
+    toggleButtonForPassword.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+           
+        } else {
+            passwordInput.type = 'password';
+         
+        }
+    });
    </script>
     
 

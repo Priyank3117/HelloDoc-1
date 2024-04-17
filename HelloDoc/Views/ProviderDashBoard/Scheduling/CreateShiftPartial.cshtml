@@ -13,8 +13,8 @@
 
 
                 <div class="form-floating my-3">
-                    <select asp-for="Regionid" class="p-2 px-3 form-control w-100 regionDropdown" onchange="getPhysicianByregion(this.value)">
-                        <option value="" selected disabled>Regions</option>
+                    <select asp-for="Regionid" required class="p-2 px-3 form-control w-100 regionDropdown" onchange="getPhysicianByregion(this.value)">
+                        <option value=""  selected disabled>Select Regions</option>
                         @foreach (var region in ViewBag.regions)
                         {
                             <option value="@region.RegionId">@region.Name</option>

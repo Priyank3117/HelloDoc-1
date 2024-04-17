@@ -93,6 +93,14 @@ namespace BAL.Repository
                 request_c.StrMonth = (patient.BirthDate.Value.Month).ToString();
 
 
+                var aspnetuserrole = new AspNetUserRole
+                {
+                    UserId = aspnetUser.AspNetUserId,
+                    RoleId = "2"
+                };
+                _context.AspNetUserRoles.Add(aspnetuserrole);
+                _context.SaveChanges();
+
                 if (patient.State != null)
                 {
                     request_c.RegionId = int.Parse(patient.State);

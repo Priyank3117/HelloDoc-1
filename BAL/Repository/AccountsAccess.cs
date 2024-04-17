@@ -116,7 +116,7 @@ namespace BAL.Repository
 
 			Physician physician = new Physician();
 			physician.AspNetUserId = aspnetUser.AspNetUserId;
-			physician.RoleId = int.Parse(CreateProviderAccount.Role);
+			physician.RoleId = 1;
 			physician.FirstName = CreateProviderAccount.Firstname;
 			physician.LastName = CreateProviderAccount.Lastname;
 			physician.Email = CreateProviderAccount.Email;

@@ -1,4 +1,5 @@
-﻿using BAL.Interface;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using BAL.Interface;
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
@@ -18,6 +19,7 @@ namespace HelloDoc.Controllers
         private readonly IAddFile _file;
         private readonly IHostingEnvironment _environment;
         private readonly IEmailService _emailService;
+        private readonly INotyfService _notyf;
 
 
 
@@ -25,7 +27,7 @@ namespace HelloDoc.Controllers
 
         public RequestController(ApplicationDbContext context, IPatient_Request patient_Request, IFamily_Request Family_Req,
             IConcierge_Request concierge, IBusiness_Request business_Request, IAddFile file, 
-            IHostingEnvironment hostingEnvironment, IEmailService emailService)
+            IHostingEnvironment hostingEnvironment, IEmailService emailService,INotyfService notyf)
         {
             _context = context;
             _request = patient_Request;
@@ -35,6 +37,7 @@ namespace HelloDoc.Controllers
             _file = file;
             _environment = hostingEnvironment;
             _emailService = emailService;
+            _notyf = notyf;
         }
 
         //-----------------------Add Context-------------------------------------
@@ -76,6 +79,8 @@ namespace HelloDoc.Controllers
                     _request.RequestWiseFile(fileName, Request.RequestId);
 
                 }
+                
+                 _notyf.Success("Data added Successfully");
                 return RedirectToAction("Patient_Request");
             }
             patient.regions = _context.Regions.ToList();
@@ -118,11 +123,12 @@ namespace HelloDoc.Controllers
                     string fileName = Path.GetFileName(other_Reqs.Filedata.FileName);
                     fileName = $"{uniquefilesavetoken}_{fileName}";
                     _file.AddFile(other_Reqs.Filedata, path, fileName);
-                    var Request = _request.GetUserByEmail(other_Reqs.Email_P);
+                    var Request = _request.GetUserByEmail(other_Reqs.EmailOther);
                     _request.RequestWiseFile(fileName, Request.RequestId);
 
                 }
-               return RedirectToAction("Family_Friend_Request");
+                _notyf.Success("Data added Successfully");
+                return RedirectToAction("Family_Friend_Request");
             }
             other_Reqs.regions = _context.Regions.ToList();
             return View("Family_Friend_Request", other_Reqs);
@@ -154,6 +160,7 @@ namespace HelloDoc.Controllers
                     _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
                    $"<a href='{formLink}'>Click here </a> for Request");
                 }
+                _notyf.Success("Data added Successfully");
                 return RedirectToAction("Concierge_Request");
 
             }
@@ -188,6 +195,7 @@ namespace HelloDoc.Controllers
                     _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
                    $"<a href='{formLink}'>Click here </a> for Request");
                 }
+                _notyf.Success("Data added Successfully");
                 return RedirectToAction("Business_Request");
             }
             other_Reqs.regions = _context.Regions.ToList() ;

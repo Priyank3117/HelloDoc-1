@@ -19,7 +19,10 @@ namespace DAL.ViewModels
         [Required]
         public string? PasswordHash { get; set; }
         [Column(TypeName = "character varying")]
+
+
         [Required]
+        [Compare("PasswordHash")]
         public string? Confirmpassword { get; set; }
 
         [Required]
