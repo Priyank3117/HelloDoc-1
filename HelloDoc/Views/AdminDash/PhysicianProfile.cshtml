@@ -52,9 +52,9 @@
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input asp-for=@Model.Password type="text" class="form-control" id="Password" placeholder="Password" name="Password">
+                            <input asp-for="Password" type="password" class="form-control" id="Password" placeholder="Password" name="Password">
                             <label for="Password">Password</label>
-                            <span class="error-Password text-danger"></span>
+                            <span asp-validation-for="Password" class="mt-2 text-danger"></span>
 
                         </div>
                     </div>

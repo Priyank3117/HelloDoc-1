@@ -27,15 +27,19 @@ namespace BAL.Repository
             _passwordHasher = passwordHasher;
         }
 
-
-        public IQueryable<Admin_DashBoard> GetList()
+		public AspNetUser GetAspNetUserByEmail(string email)
+        {
+            var aspNetUser = _context.AspNetUsers.FirstOrDefault( s => s.Email == email);
+            return aspNetUser;
+        }
+		public IQueryable<Admin_DashBoard> GetList()
         {
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                            on req.RequestId equals reqclient.RequestId
+							where req.IsDeleted == new BitArray(new[] { false })
 
-
-                            select new Admin_DashBoard()
+							select new Admin_DashBoard()
                             {
                                 Name = reqclient.FirstName,
                                 Requestor = req.FirstName,
@@ -63,6 +67,7 @@ namespace BAL.Repository
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
+                             where req.IsDeleted == new BitArray(new[] {false} )
                             join phy in _context.Physicians on
                             req.PhysicianId equals phy.PhysicianId into phys
                             from totalreqs in phys.DefaultIfEmpty()
@@ -105,7 +110,8 @@ namespace BAL.Repository
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
-                            where req.PhysicianId == PhyId
+							where req.IsDeleted == new BitArray(new[] { false })
+							where req.PhysicianId == PhyId
                             select new Admin_DashBoard()
                             {
                                 Name = reqclient.FirstName.ToLower(),
@@ -140,7 +146,8 @@ namespace BAL.Repository
             var DashData = (from req in _context.Requests
                             join reqclient in _context.RequestClients
                              on req.RequestId equals reqclient.RequestId
-                            join region in _context.Regions on reqclient.RegionId equals region.RegionId
+							where req.IsDeleted == new BitArray(new[] { false })
+							join region in _context.Regions on reqclient.RegionId equals region.RegionId
 
                             select new Admin_DashBoard()
                             {
@@ -389,9 +396,9 @@ namespace BAL.Repository
 
         public GetCount GetCount()
         {
-            var newcount = (_context.Requests.Where(item => item.Status == 1)).Count();
-            var pendingcount = (_context.Requests.Where(item => item.Status == 2)).Count();
-            var activecount = (_context.Requests.Where(item => item.Status == 4 || item.Status == 5)).Count();
+            var newcount = (_context.Requests.Where(item =>  (item.Status == 1) && (item.IsDeleted != new BitArray(new[] {true})) )).Count();
+            var pendingcount = (_context.Requests.Where(item => (item.Status == 2) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
+			var activecount = (_context.Requests.Where(item => item.Status == 4 || item.Status == 5)).Count();
             var conclude = (_context.Requests.Where(item => item.Status == 6)).Count();
             var toclosed = (_context.Requests.Where(item => item.Status == 3 || item.Status == 7 || item.Status == 8)).Count();
             var unpaid = (_context.Requests.Where(item => item.Status == 9)).Count();
@@ -559,7 +566,20 @@ namespace BAL.Repository
             var req = _context.RequestWiseFiles.Where(u => u.RequestId == id && u.IsDeleted != bits).ToList();
             return req;
         }
-    }
+
+		public List<PhysicianLocation> GetLocationsList()
+		{
+			var location = _context.PhysicianLocations.ToList();
+            return location;
+		}
+
+        public string GetPhyEmail(string id)
+        {
+            var email =_context.Physicians.FirstOrDefault(s => s.PhysicianId == int.Parse(id)).Email;
+            return email;
+
+		}
+	}
 }
 
 

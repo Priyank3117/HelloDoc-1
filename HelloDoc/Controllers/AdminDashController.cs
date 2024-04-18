@@ -1,9 +1,7 @@
 ﻿
 using BAL.Interface;
-using DAL.DataContext;
 using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Net.Mail;
 using static BAL.Repository.Authorizationrepo;
@@ -12,23 +10,16 @@ using Microsoft.AspNetCore.Identity;
 using DAL.DataModels;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using OfficeOpenXml;
-using Microsoft.EntityFrameworkCore;
-
-
-
-
 
 
 namespace HelloDoc.Controllers
 {
 
-
-
-    public class AdminDashController : Controller
+	public class AdminDashController : Controller
     {
         #region variable
-        private readonly ApplicationDbContext _context;
-        private readonly IAdminDashBoard _AdminDashboard;
+        
+		private readonly IAdminDashBoard _AdminDashboard;
         private readonly IHostingEnvironment _environment;
         private readonly IAddFile _files;
         private readonly IPatient_Request _patient;
@@ -41,12 +32,12 @@ namespace HelloDoc.Controllers
         private readonly IAdminDashboardRecords _adminDashboardRecords;
 
 
-        public AdminDashController(ApplicationDbContext context, IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
+        public AdminDashController(IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
             IPasswordHasher<AdminProfile> passwordHasher,
             INotyfService notyf, IUploadProvider uploadProvider,
             IAdminAction adminAction, IAccountsAccess accountsAccess, IAdminDashboardRecords adminDashboardRecords)
         {
-            _context = context;
+           
             _AdminDashboard = adminDashboard;
             _environment = environment;
             _files = files;
@@ -68,7 +59,7 @@ namespace HelloDoc.Controllers
             var email = HttpContext.Session.GetString("Email");
             if (email != null)
             {
-                TempData["username"] = _context.AspNetUsers.First(u => u.Email == email).UserName;
+                TempData["username"] = _AdminDashboard.GetAspNetUserByEmail(email).UserName;
             }
             var DashData = _AdminDashboard.GetList();
 
@@ -120,17 +111,7 @@ namespace HelloDoc.Controllers
             string email = HttpContext.Session.GetString("Email");
 
             Admin? admin = _AdminDashboard.GetAdminByEmail(email);
-
-            if (admin != null)
-            {
-                ViewBag.IsPhysican = false;
-
-            }
-            else
-            {
-                ViewBag.IsPhysican = true;
-
-            }
+            ViewBag.IsPhysican = admin != null ? false : true;
             var ViewCase = _adminAction.ViewCase(id, status);
             return View(ViewCase);
         }
@@ -146,18 +127,8 @@ namespace HelloDoc.Controllers
             //tables notes it will known as the transfer notes
 
             string email = HttpContext.Session.GetString("Email");
-
             Admin? admin = _AdminDashboard.GetAdminByEmail(email);
-            if (admin != null)
-            {
-                ViewBag.IsPhysican = false;
-
-            }
-            else
-            {
-                ViewBag.IsPhysican = true;
-
-            }
+            ViewBag.IsPhysican = admin != null ? false : true;
             var result = _AdminDashboard.GetViewNotes(id);
             return View(result);
         }
@@ -212,16 +183,7 @@ namespace HelloDoc.Controllers
             string email = HttpContext.Session.GetString("Email");
 
             Admin? admin = _AdminDashboard.GetAdminByEmail(email);
-            if (admin != null)
-            {
-                ViewBag.IsPhysican = false;
-
-            }
-            else
-            {
-                ViewBag.IsPhysican = true;
-
-            }
+            ViewBag.IsPhysican = admin != null ? false : true;
             var reque = _AdminDashboard.GetRequestWiseFilesWithoutDelete(id);
 
             var result = new ViewDoc
@@ -261,19 +223,9 @@ namespace HelloDoc.Controllers
 
         public IActionResult DeleteFile(int reqid, string name)
         {
-
             string path = Path.Combine(_environment.WebRootPath, "Files", name);
             // _files.RemoveFile(path);
-
-            RequestWiseFile reqFile = _context.RequestWiseFiles.Where(x => x.FileName == name).FirstOrDefault();
-            if (reqFile != null)
-            {
-                bool[] bitValues = { true };
-                BitArray bits = new BitArray(bitValues);
-                reqFile.IsDeleted = bits;
-                _context.Update(reqFile);
-                _context.SaveChanges();
-            }
+            _adminAction.DeleteFile(name);
             return RedirectToAction("ViewUpload", new { id = reqid });
         }
         //---------------------------DeleteSelectedFiles----------------------
@@ -286,13 +238,7 @@ namespace HelloDoc.Controllers
             {
                 foreach (var filename in filenames)
                 {
-                    var file = _context.RequestWiseFiles.FirstOrDefault(item => item.FileName == filename);
-
-                    if (file != null)
-                    {
-                        file.IsDeleted = new BitArray(new[] { true });
-                        _context.SaveChanges();
-                    }
+                    _adminAction.DeleteFile(filename);
                 }
 
                 return Ok(new { message = "Files delete successfully" });
@@ -322,7 +268,7 @@ namespace HelloDoc.Controllers
                         var attach = new Attachment(path);
                         files.Add(attach);
                     }
-                    var req = _context.Requests.FirstOrDefault(s => s.RequestId == id);
+                    var req = _adminAction.GetByRequestId(id);
 
                     var subject = "Uploaded Documents";
                     var body = "Docs";
@@ -368,18 +314,10 @@ namespace HelloDoc.Controllers
             bool controllerName = Request.Path.ToString().Contains("ProviderDashBoard");
             string email = HttpContext.Session.GetString("Email");
 
-            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
-            if (admin != null)
-            {
-                ViewBag.IsPhysican = false;
+            Admin? admin = _AdminDashboard.GetAdminByEmail(email);
+			ViewBag.IsPhysican = admin != null ? false : true;
 
-            }
-            else
-            {
-                ViewBag.IsPhysican = true;
-
-            }
-            var Profession = _context.HealthProfessionalTypes.ToList();
+            var Profession = _adminAction.GetHealthProfessionalTypeList();
 
             SendOrder sendOrder = new SendOrder();
 
@@ -414,13 +352,13 @@ namespace HelloDoc.Controllers
         [CustomAuthorize(new string[] { "Admin", "Physician" })]
         public IActionResult GetBusinessName(string professionId)
         {
-            var result = _context.HealthProfessionals.Where(r => r.Profession == int.Parse(professionId)).ToList();
+            var result = _adminAction.GetHealthProfessionalByProfessionId(professionId);
             return Json(result);
         }
 
         public IActionResult GetBusinessData(string vendorId)
         {
-            var result = _context.HealthProfessionals.Where(r => r.VendorId == int.Parse(vendorId)).FirstOrDefault();
+            var result = _adminAction.GetHealthProfessionalByVendorId(vendorId);
             return Json(result);
 
         }
@@ -451,17 +389,8 @@ namespace HelloDoc.Controllers
         {
             string email = HttpContext.Session.GetString("Email");
 
-            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
-            if (admin != null)
-            {
-                ViewBag.IsPhysican = false;
-
-            }
-            else
-            {
-                ViewBag.IsPhysican = true;
-
-            }
+            Admin? admin = _AdminDashboard.GetAdminByEmail(email);
+            ViewBag.IsPhysican = admin != null ? false : true;
 
             var result = _adminAction.EncounterForm(id);
             return View(result);
@@ -472,21 +401,12 @@ namespace HelloDoc.Controllers
         [HttpPost("AdminDash/EncounterForm/{id}", Name = "AdminForms")]
         public IActionResult EncounterForm(int id, Encounter enc)
         {
-            bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
-            string controllerName = null;
-            if (controller)
-            {
-                controllerName = "ProviderDashBoard";
-            }
-            else
-            {
-                controllerName = "AdminDash";
-            }
+            string controllerName = Request.Path.ToString().Contains("ProviderDashBoard") ? "ProviderDashBoard" : "AdminDash";
             _adminAction.EncounterPost(id, enc);
             return RedirectToAction("EncounterForm", controllerName, new { id = id });
         }
 
-        
+
         public IActionResult GeneratePDF(int requeid)
         {
             var EncounterForm = _adminAction.EncounterForm(requeid);
@@ -672,19 +592,10 @@ namespace HelloDoc.Controllers
         {
             string email = HttpContext.Session.GetString("Email");
 
-            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
-            if (admin != null)
-            {
-                ViewBag.IsPhysican = false;
-
-            }
-            else
-            {
-                ViewBag.IsPhysican = true;
-
-            }
+            Admin? admin = _AdminDashboard.GetAdminByEmail(email);
+            ViewBag.IsPhysican = admin != null ? false : true;
             CreateRequest createRequest = new CreateRequest();
-            createRequest.Region = _context.Regions.ToList();
+            createRequest.Region = _adminAction.GetRegionsList();
             return View(createRequest);
         }
 
@@ -695,11 +606,9 @@ namespace HelloDoc.Controllers
         {
             string email = HttpContext.Session.GetString("Email");
 
-            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
-            ViewBag.IsPhysican = admin != null ? false : true;
-
-            bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
-            string controllerName = (controller) ? "ProviderDashBoard" : "AdminDash";
+            Admin? admin = _AdminDashboard.GetAdminByEmail(email);
+			ViewBag.IsPhysican = admin != null ? false : true;
+            string controllerName = Request.Path.ToString().Contains("ProviderDashBoard") ? "ProviderDashBoard" : "AdminDash";
 
             var Email = HttpContext.Session.GetString("Email");
             var subject = "Creat Patient Request";
@@ -708,14 +617,8 @@ namespace HelloDoc.Controllers
 
             if (ModelState.IsValid)
             {
-               if (ViewBag.IsPhysican)
-                {
-                    _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId,false);
-                }
-               else
-                {
-                    _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId, true);
-                }
+                _AdminDashboard.AddCreateRequest(createRequest, Email, SelectedStateId, !ViewBag.IsPhysican);
+
                 if (formLink != null)
                 {
                     //send email on createRequest.Email which is enter by admin
@@ -729,7 +632,7 @@ namespace HelloDoc.Controllers
                 return RedirectToAction("CreateRequest", controllerName);
             }
 
-            createRequest.Region = _context.Regions.ToList();
+            createRequest.Region =  _adminAction.GetRegionsList();
             return View(createRequest);
         }
         #endregion
@@ -740,8 +643,7 @@ namespace HelloDoc.Controllers
         public IActionResult CreateProviderAccount()
         {
             CreateProviderAccount createProviderAccount = new CreateProviderAccount();
-            createProviderAccount.regions = _context.Regions.ToList();
-            createProviderAccount.roles = _context.Roles.ToList();
+            createProviderAccount.regions = _adminAction.GetRegionsList();
             return View(createProviderAccount);
 
         }
@@ -759,18 +661,19 @@ namespace HelloDoc.Controllers
 
             else
             {
-                CreateProviderAccount.regions = _context.Regions.ToList();
-                CreateProviderAccount.roles = _context.Roles.ToList();
+                CreateProviderAccount.regions =  _adminAction.GetRegionsList();
+                CreateProviderAccount.roles = _adminAction.GetRolesList();
                 return View("CreateProviderAccount", CreateProviderAccount);
             }
         }
         #endregion
 
+
         #region ProviderView
         public IActionResult Provider()
         {
             Provider provider = new Provider();
-            provider.regions = _context.Regions.ToList();
+            provider.regions = _adminAction.GetRegionsList();
             return View(provider);
         }
 
@@ -781,11 +684,13 @@ namespace HelloDoc.Controllers
         }
         #endregion
 
+
+
         #region getlocation
 
         public IActionResult GetPhysicianLocation()
         {
-            List<PhysicianLocation> physicianLocations = _context.PhysicianLocations.ToList();
+            List<PhysicianLocation> physicianLocations = _AdminDashboard.GetLocationsList();
             return Json(physicianLocations);
         }
         #endregion
@@ -800,8 +705,8 @@ namespace HelloDoc.Controllers
             string email = HttpContext.Session.GetString("Email");
             var physicianid = HttpContext.Session.GetInt32("PhysicianId");
 
-            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
-            if (admin != null)
+            Admin? admin = _AdminDashboard.GetAdminByEmail(email);
+			if (admin != null)
             {
                 ViewBag.IsPhysican = false;
 
@@ -822,70 +727,19 @@ namespace HelloDoc.Controllers
         public IActionResult ResetPhysicianPassword(string Password, int physicianid)
         {
 
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
-            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
-              string email = HttpContext.Session.GetString("Email");
+            
+            string email = HttpContext.Session.GetString("Email");
 
-            Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
-            ViewBag.IsPhysican = admin != null ? false : true;
-
-            bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
-            string controllerName = (controller) ? "ProviderDashBoard" : "AdminDash";
-
-
-            if (account != null && Password != null)
-            {
-                string passwordhash = _passwordHasher.HashPassword(null, Password);
-                account.PasswordHash = passwordhash;
-                _context.AspNetUsers.Update(account);
-                _context.SaveChanges();
-                _notyf.Success("Password Changed Successfully");
-            }
-            else
-            {
-                _notyf.Error("Please Enter the Password");
-            }
-
+            Admin? admin = _AdminDashboard.GetAdminByEmail(email);
+			ViewBag.IsPhysican = admin != null ? false : true;
+            string controllerName = Request.Path.ToString().Contains("ProviderDashBoard") ? "ProviderDashBoard" : "AdminDash";
+            _acc.ResetPhysicianPassword(Password, physicianid);
             return RedirectToAction("PhysicianProfile", controllerName, new { id = physicianid });
         }
 
         public IActionResult PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
         {
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
-
-            AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
-            if (physician != null)
-            {
-                physician.Mobile = MobileNo;
-                physician.Npinumber = NPINumber;
-                physician.MedicalLicense = MedicalLicense;
-                physician.SyncEmailAddress = SynchronizationEmail;
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
-
-
-                List<PhysicianRegion> region = _context.PhysicianRegions.
-                    Where(item => item.PhysicianId == physician.PhysicianId).ToList();
-
-                _context.PhysicianRegions.RemoveRange(region);
-                _context.SaveChanges();
-
-                foreach (var item in Region)
-                {
-                    PhysicianRegion physicianRegion = new PhysicianRegion();
-                    physicianRegion.PhysicianId = id;
-                    physicianRegion.RegionId = int.Parse(item);
-                    _context.Add(physicianRegion);
-                    _context.SaveChanges();
-                }
-
-                _notyf.Success("Data Saved Successfully");
-
-            }
-            else
-            {
-                _notyf.Error("Data Can not be added");
-            }
+            _acc.PhysicianInformation(id, MobileNo, Region, SynchronizationEmail, NPINumber, MedicalLicense);
             return RedirectToAction("PhysicianProfile", "AdminDash", new { id = id });
 
         }
@@ -898,24 +752,7 @@ namespace HelloDoc.Controllers
         public IActionResult MailingBillingInformationProvider(int physicianid, string MobileNo, string Address1, string Address2, string City, int State, string Zipcode)
         {
 
-            Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
-            if (physician != null)
-            {
-                physician.Address1 = Address1;
-                physician.Address2 = Address2;
-                physician.City = City;
-                physician.Mobile = MobileNo;
-                physician.RegionId = State;
-                physician.Zip = Zipcode;
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
-                _notyf.Success("Data Saved Successfully");
-            }
-            else
-            {
-                _notyf.Error("Data Can not be added");
-
-            }
+            _acc.MailingBillingInformationProvider(physicianid, MobileNo, Address1, Address2, City, State, Zipcode);
             return RedirectToAction("PhysicianProfile", "AdminDash", new { id = physicianid });
         }
         [HttpPost]
@@ -924,11 +761,7 @@ namespace HelloDoc.Controllers
 
             if (signatureImage != null && signatureImage.Length > 0)
             {
-                string fileName = _uploadProvider.UploadSignature(signatureImage, id);
-                var physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
-                physician.Signature = fileName;
-                _context.Physicians.Update(physician);
-                _context.SaveChanges();
+                _acc.SaveSignatureImage(signatureImage, id);
                 _notyf.Success("Signature Saved Successfully");
                 return Ok();
             }
@@ -958,22 +791,7 @@ namespace HelloDoc.Controllers
         }
         public IActionResult NotificationManagement(bool isChecked, string id)
         {
-            var physicianNotification = _context.PhysicianNotifications.Where(u => u.PhysicianId == int.Parse(id)).FirstOrDefault();
-            if (physicianNotification != null)
-            {
-                if (isChecked == true)
-                {
-                    physicianNotification.IsNotificationStopped = new BitArray(new[] { true });
-                }
-                else
-                {
-                    physicianNotification.IsNotificationStopped = new BitArray(new[] { false });
-                }
-
-                _context.PhysicianNotifications.Update(physicianNotification);
-                _context.SaveChanges();
-                return RedirectToAction("Provider");
-            }
+            _acc.NotificationManagement(isChecked, id);
             return RedirectToAction("Provider");
         }
 
@@ -998,7 +816,7 @@ namespace HelloDoc.Controllers
 
             if (id != null)
             {
-                var physicianEmail = _context.Physicians.FirstOrDefault(s => s.PhysicianId == int.Parse(id)).Email;
+                var physicianEmail = _AdminDashboard.GetPhyEmail(id);
             }
             ///do for value 3 and 2 
             if (radioForprovider == "1")
@@ -1021,8 +839,7 @@ namespace HelloDoc.Controllers
         public IActionResult CreateAdminAccount()
         {
             AdminProfile profile = new AdminProfile();
-            profile.Regions = _context.Regions.ToList();
-            profile.roles = _context.Roles.ToList();
+            profile.Regions = _adminAction.GetRegionsList();
             return View("Access/CreateAdminAccount", profile);
         }
 
@@ -1040,8 +857,7 @@ namespace HelloDoc.Controllers
             else
             {
 
-                profile.Regions = _context.Regions.ToList();
-                profile.roles = _context.Roles.ToList();
+                profile.Regions = _adminAction.GetRegionsList();
                 return View("Access/CreateAdminAccount", profile);
             }
 
@@ -1066,7 +882,7 @@ namespace HelloDoc.Controllers
         #region AccountAccess
         public IActionResult AccountAccess()
         {
-            var roles = _context.Roles.ToList();
+            var roles = _adminAction.GetRolesList();
             var list = roles.Where(item => item.IsDeleted != null && (item.IsDeleted.Length == 0 || !item.IsDeleted[0]));
             return View("Access/AccountAccess", list.ToList());
         }
@@ -1082,7 +898,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult GetRoles(int role)
         {
-            var menu = _context.Menus.Where(item => role == 0 || item.AccountType == role).ToList();
+            var menu = _adminAction.GetMenusByRole(role);
             return PartialView("Access/_CreateAccessPartial", menu);
         }
 
@@ -1110,8 +926,8 @@ namespace HelloDoc.Controllers
         #region EditAccess,Partial,Postmethod
         public IActionResult EditAccess(int roleid)
         {
-            var rolemenu = _context.RoleMenus.Where(item => item.RoleId == roleid).Select(item => item.MenuId).ToList();
-            var role = _context.Roles.Where(item => item.RoleId == roleid).FirstOrDefault();
+            var rolemenu = _adminAction.GetRoleMenusByRoleId(roleid).Select(item => item.MenuId).ToList();
+            var role = _adminAction.GetRoleByRoleId(roleid);
             Access access = new Access();
             access.Menu = rolemenu;
             access.Name = role.Name;
@@ -1123,8 +939,8 @@ namespace HelloDoc.Controllers
         //you can edit  roles data
         public IActionResult EditRolesData(int role, int roleid)
         {
-            var rolemenu = _context.RoleMenus.Where(item => item.RoleId == roleid).Select(item => item.MenuId).ToList();
-            var menuList = _context.Menus.Where(item => role == 0 || item.AccountType == role).ToList();
+            var rolemenu = _adminAction.GetRoleMenusByRoleId(roleid).Select(item => item.MenuId).ToList();
+            var menuList = _adminAction.GetMenusByRole(role);
 
             var viewModel = new RoleMenuModel
             {
@@ -1138,40 +954,14 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult EditAccess(int id, int[] rolemenu, string rolename, int accounttype)
         {
-            var role = _context.Roles.FirstOrDefault(item => item.RoleId == id);
-            var menulist = _context.RoleMenus.Where(item => item.RoleId == id).ToList();
-            role.Name = rolename;
-            role.AccountType = (short)accounttype;
-            _context.Roles.Update(role);
-            _context.SaveChanges();
-            _context.RoleMenus.RemoveRange(menulist);
-            _context.SaveChanges();
-            foreach (var item in rolemenu)
-            {
-                RoleMenu rolemenu1 = new RoleMenu();
-                rolemenu1.MenuId = item;
-                rolemenu1.RoleId = id;
-                _context.RoleMenus.Add(rolemenu1);
-            }
-            _context.SaveChanges();
+            _acc.EditAccess(id, rolemenu, rolename, accounttype); 
             return RedirectToAction("EditAccess", new { roleid = id });
         }
 
         public IActionResult DeleteRole(int id)
         {
 
-            Role? role = _context.Roles.Where(item => item.RoleId == id).FirstOrDefault();
-            if (role != null)
-            {
-                role.IsDeleted = new BitArray(new[] { true });
-                _context.Roles.Update(role);
-                _context.SaveChanges();
-                _notyf.Success("Your Role Has Been Deleted");
-            }
-            else
-            {
-                _notyf.Success("Your Role Has Been Not Deleted");
-            }
+           _acc.DeleteAccess(id);
             return RedirectToAction("AccountAccess");
         }
 
@@ -1182,7 +972,7 @@ namespace HelloDoc.Controllers
         #region scheduling
         public IActionResult PhysicianScheduling()
         {
-            var region = _context.Regions.ToList();
+            var region =  _adminAction.GetRegionsList();
             ViewBag.regions = region;
             return View();
         }
@@ -1191,11 +981,8 @@ namespace HelloDoc.Controllers
         public IActionResult GetPhysicianShift(int region)
         {
             // Retrieve physicians associated with the specified region
-            var physicians = (from physicianRegion in _context.PhysicianRegions
-                              where region == 0 || physicianRegion.RegionId == region
-                              select physicianRegion.Physician)
-                             .ToList();
-
+            
+            var physicians = _adminAction.GetPhysicianShiftList(region);
             return Json(physicians);
         }
 
@@ -1211,7 +998,7 @@ namespace HelloDoc.Controllers
                 start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
                 end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
                 ShiftDetailId = e.ShiftDetailId,
-                region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+                region = _adminAction.GetRegionsList().Where(i => i.RegionId == e.Regionid),
                 status = e.Status
             }).ToList();
 
@@ -1226,13 +1013,11 @@ namespace HelloDoc.Controllers
         {
             var email = HttpContext.Session.GetString("Email");
             int physicianId = HttpContext.Session.GetInt32("PhysicianId") ?? 0;
-			Admin? admin = _context.Admins.FirstOrDefault(item => item.Email == email);
+            Admin? admin = _AdminDashboard.GetAdminByEmail(email);
 			ViewBag.IsPhysican = admin != null ? false : true;
-
-			bool controller = Request.Path.ToString().Contains("ProviderDashBoard");
-			string controllerName = (controller) ? "ProviderDashBoard" : "AdminDash";
-            string actionName = (controller) ? "Scheduling" : "PhysicianScheduling";
-			_adminAction.CreateShift(model, email, physicianId);
+            string controllerName = Request.Path.ToString().Contains("ProviderDashBoard") ? "ProviderDashBoard" : "AdminDash";
+            string actionName = controllerName == "ProviderDashBoard" ? "Scheduling" : "PhysicianScheduling";
+            _adminAction.CreateShift(model, email, physicianId);
             return RedirectToAction(actionName, controllerName);
         }
 
@@ -1240,7 +1025,7 @@ namespace HelloDoc.Controllers
         public IActionResult ChangeShift(int shiftDetailId, DateTime startDate, TimeOnly startTime, TimeOnly endTime, int region)
         {
             // Find the shift detail by its ID
-            ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
+            ShiftDetail shiftdetail = _adminAction.ShiftDetail(shiftDetailId);
 
             // If shift detail is not found, return a 404 Not Found response
             if (shiftdetail == null)
@@ -1251,13 +1036,7 @@ namespace HelloDoc.Controllers
             try
             {
                 // Update the shift detail properties
-                shiftdetail.ShiftDate = startDate;
-                shiftdetail.StartTime = startTime;
-                shiftdetail.EndTime = endTime;
-
-                // Update the database
-                _context.ShiftDetails.Update(shiftdetail);
-                _context.SaveChanges();
+                _adminAction.ChangeShift(shiftDetailId, startDate, startTime, endTime, region); 
                 var events = _adminAction.GetEvents(region);
                 var mappedEvents = events.Select(e => new
                 {
@@ -1267,7 +1046,7 @@ namespace HelloDoc.Controllers
                     start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
                     end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
                     ShiftDetailId = e.ShiftDetailId,
-                    region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+                    region = _adminAction.GetRegionsList().Where(i => i.RegionId == e.Regionid),
                     status = e.Status
                 }).ToList();
                 // Return a 200 OK response
@@ -1281,14 +1060,12 @@ namespace HelloDoc.Controllers
         }
         public IActionResult DeleteShift(int shiftDetailId, int region)
         {
-            ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
-            if (shiftdetail == null)
+            ShiftDetail shiftdetail = _adminAction.ShiftDetail(shiftDetailId);
+			if (shiftdetail == null)
             {
                 return NotFound("Shift detail not found.");
             }
-            shiftdetail.IsDeleted = new BitArray(new[] { true });
-            _context.ShiftDetails.Update(shiftdetail);
-            _context.SaveChanges();
+            _adminAction.DeleteShift(shiftDetailId, region);
             var events = _adminAction.GetEvents(region);
             var mappedEvents = events.Select(e => new
             {
@@ -1298,7 +1075,7 @@ namespace HelloDoc.Controllers
                 start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
                 end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
                 ShiftDetailId = e.ShiftDetailId,
-                region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+                region = _adminAction.GetRegionsList().Where(i => i.RegionId == e.Regionid),
                 status = e.Status
             }).ToList();
             return Ok(new { message = "Shift detail Deleted successfully.", events = mappedEvents });
@@ -1307,17 +1084,14 @@ namespace HelloDoc.Controllers
 
         public IActionResult ReturnShift(int shiftDetailId, int region)
         {
-            ShiftDetail shiftdetail = _context.ShiftDetails.Find(shiftDetailId);
+            ShiftDetail shiftdetail = _adminAction.ShiftDetail(shiftDetailId);
 
-            // If shift detail is not found, return a 404 Not Found response
-            if (shiftdetail == null)
+			// If shift detail is not found, return a 404 Not Found response
+			if (shiftdetail == null)
             {
                 return NotFound("Shift detail not found.");
             }
-            shiftdetail.Status = (short)((shiftdetail.Status == 0) ? 1 : 0);
-
-            _context.ShiftDetails.Update(shiftdetail);
-            _context.SaveChanges();
+            _adminAction.ReturnShift(shiftDetailId, region);
             var events = _adminAction.GetEvents(region);
             var mappedEvents = events.Select(e => new
             {
@@ -1327,7 +1101,7 @@ namespace HelloDoc.Controllers
                 start = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Starttime.Hour, e.Starttime.Minute, e.Starttime.Second),
                 end = new DateTime(e.Shiftdate.Value.Year, e.Shiftdate.Value.Month, e.Shiftdate.Value.Day, e.Endtime.Hour, e.Endtime.Minute, e.Endtime.Second),
                 ShiftDetailId = e.ShiftDetailId,
-                region = _context.Regions.Where(i => i.RegionId == e.Regionid),
+                region = _adminAction.GetRegionsList().Where(i => i.RegionId == e.Regionid),
                 status = e.Status
             }).ToList();
             return Ok(new { message = "Shift detail updated successfully.", events = mappedEvents });
@@ -1337,7 +1111,7 @@ namespace HelloDoc.Controllers
         public IActionResult ReviewShift()
         {
             ShiftDetailModel shiftDetailModel = new ShiftDetailModel();
-            shiftDetailModel.Regions = _context.Regions.ToList();
+            shiftDetailModel.Regions = _adminAction.GetRegionsList();
             return View(shiftDetailModel);
         }
 
@@ -1345,64 +1119,26 @@ namespace HelloDoc.Controllers
         {
             //0 for APPROVED
             //1 for Pending
-            var result = (from shiftDetail in _context.ShiftDetails
-                          where ((shiftDetail.RegionId == region || region == 0) &&
-                             shiftDetail.Status != 0 && shiftDetail.IsDeleted != new BitArray(new[] { true }))
-                          select new ShiftDetailModel
-                          {
-                              physicianName = shiftDetail.Shift.Physician.FirstName,
-                              ShiftDetailId = shiftDetail.ShiftDetailId,
-                              day = shiftDetail.ShiftDate.ToString("MMM dd, yyyy"),
-                              starttime = shiftDetail.StartTime,
-                              endtime = shiftDetail.EndTime,
-                              Regioname = _context.Regions.FirstOrDefault(s => s.RegionId == shiftDetail.RegionId).Name,
-
-                          }).ToList();
+            var result = _adminAction.GetShifts(region);
             return PartialView("_ReviewShiftPartial", result);
         }
 
         [HttpPost]
         public IActionResult ApprovedSelected(string[] checkedValues)
         {
-
-            foreach (var item in checkedValues)
-            {
-                if (item != "0")
-                {
-                    var status = _context.ShiftDetails.FirstOrDefault(s => s.ShiftDetailId == int.Parse(item));
-                    status.Status = 0;
-                    _context.ShiftDetails.Update(status);
-                }
-            }
-
-            _context.SaveChanges();
-
+            _adminAction.ApprovedSelectedShift(checkedValues);
             return RedirectToAction("ReviewShift");
-
         }
 
         public IActionResult DeleteSelected(string[] checkedValues)
         {
-
-            foreach (var item in checkedValues)
-            {
-                if (item != "0")
-                {
-                    var shiftToDelete = _context.ShiftDetails.FirstOrDefault(s => s.ShiftDetailId == int.Parse(item));
-                    shiftToDelete.IsDeleted = new BitArray(new[] { true });
-                    _context.ShiftDetails.Update(shiftToDelete);
-                }
-            }
-
-            _context.SaveChanges();
-
+           _adminAction.DeleteSelectedShift(checkedValues);
             return RedirectToAction("ReviewShift");
-
         }
 
         public IActionResult MdOnCall()
         {
-            List<Region> regions = _context.Regions.ToList();
+            List<Region> regions = _adminAction.GetRegionsList();
             ViewBag.Regions = regions;
             return View();
 
@@ -1411,23 +1147,10 @@ namespace HelloDoc.Controllers
 
 
         public IActionResult GetPhysiciansOnCall(string region)
-        {
-            DateTime today = DateTime.Today;
-            BitArray trueBitArray = new BitArray(new[] { true });
-            var onDuty = (from physician in _context.Physicians
-                          join shift in _context.Shifts on physician.PhysicianId equals shift.PhysicianId into shiftJoin
-                          from shiftRecord in shiftJoin.DefaultIfEmpty()
-                          join shiftDetail in _context.ShiftDetails on shiftRecord.ShiftId equals shiftDetail.ShiftId into shiftDetailJoin
-                          from shiftDetailRecord in shiftDetailJoin.DefaultIfEmpty()
-                          where shiftDetailRecord.IsDeleted != trueBitArray && shiftDetailRecord.ShiftDate.Date == today.Date
-                                                            && shiftDetailRecord.StartTime <= TimeOnly.FromDateTime(DateTime.Now)
-                                                            && shiftDetailRecord.EndTime >= TimeOnly.FromDateTime(DateTime.Now)
-                          select physician).Where(x => region == "0" || x.RegionId == int.Parse(region)).Distinct().ToList();
-
-            var offDuty = _context.Physicians.Where(x => region == "0" || x.RegionId == int.Parse(region)).ToList().Except(onDuty).ToList();
-
-            ProvidersOnCallModel providersOnCall = new ProvidersOnCallModel { OffDuty = offDuty, OnDuty = onDuty };
-
+        {         
+            var onDuty = _adminAction.OnDuty(region);
+			var offDuty = _adminAction.OffDuty(region);
+			ProvidersOnCallModel providersOnCall = new ProvidersOnCallModel { OffDuty = offDuty, OnDuty = onDuty };
             return PartialView("_MdOnCallPartial", providersOnCall);
         }
         #endregion
@@ -1437,38 +1160,23 @@ namespace HelloDoc.Controllers
         {
 
 
-            List<HealthProfessionalType> healthProfessionalTypes = _context.HealthProfessionalTypes.ToList();
+            List<HealthProfessionalType> healthProfessionalTypes = _adminAction.GetHealthProfessionalTypeList();
             ViewBag.HealthProfessionalTypes = healthProfessionalTypes;
             return View("Partners/Partners");
         }
 
         public IActionResult GetBusinessInfo(string Profession, string searchValue)
         {
-            var data = (from profession in _context.HealthProfessionalTypes
-                        join business in _context.HealthProfessionals
-                        on profession.HealthProfessionalId equals business.Profession
-                        select new BusinessModel
-                        {
-                            profession = profession.ProfessionName,
-                            BusinessName = business.VendorName,
-                            Email = business.Email ?? "--",
-                            FaxNumber = business.FaxNumber ?? "--",
-                            PhoneNum = business.PhoneNumber ?? "--",
-                            BusinessContact = business.BusinessContact ?? "--",
-                            ProfessionId = business.Profession.ToString(),
-                            vendorid = business.VendorId
-                        }).Where(s => (Profession == "0" || s.ProfessionId == Profession) &&
-                            (string.IsNullOrEmpty(searchValue) || s.BusinessName.Contains(searchValue))).ToList();
-
+            var data = _adminAction.GetBusinessInfo(Profession, searchValue);
             return PartialView("Partners/_PartnersPartial", data);
         }
 
 
         public IActionResult AddBusiness()
         {
-            List<HealthProfessionalType> healthProfessionalTypes = _context.HealthProfessionalTypes.ToList();
+            List<HealthProfessionalType> healthProfessionalTypes = _adminAction.GetHealthProfessionalTypeList();
             ViewBag.HealthProfessionalTypes = healthProfessionalTypes;
-            List<Region> regions = _context.Regions.ToList();
+            List<Region> regions = _adminAction.GetRegionsList();
             ViewBag.Regions = regions;
             return View("Partners/AddBusiness");
         }
@@ -1478,28 +1186,15 @@ namespace HelloDoc.Controllers
         {
             if (ModelState.IsValid)
             {
-                HealthProfessional healthProfessional = new HealthProfessional();
-                healthProfessional.VendorName = addBusiness.BusinessName;
-                healthProfessional.Profession = int.Parse(addBusiness.Profession);
-                healthProfessional.BusinessContact = addBusiness.BusinessContact;
-                healthProfessional.FaxNumber = addBusiness.FaxNumber;
-                healthProfessional.Address = addBusiness.city + addBusiness.street;
-                healthProfessional.City = addBusiness.city;
-                healthProfessional.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(addBusiness.state)).Name;
-                healthProfessional.RegionId = int.Parse(addBusiness.state);
-                healthProfessional.CreatedDate = DateTime.Now;
-                healthProfessional.PhoneNumber = addBusiness.PhoneNum;
-                healthProfessional.Email = addBusiness.Email;
-                _context.HealthProfessionals.Add(healthProfessional);
-                _context.SaveChanges();
+                _adminAction.AddBusiness(addBusiness);
                 _notyf.Success("Data Added Successfully");
                 return RedirectToAction("AddBusiness");
             }
             else
             {
-                List<HealthProfessionalType> healthProfessionalTypes = _context.HealthProfessionalTypes.ToList();
+                List<HealthProfessionalType> healthProfessionalTypes = _adminAction.GetHealthProfessionalTypeList();
                 ViewBag.HealthProfessionalTypes = healthProfessionalTypes;
-                List<Region> regions = _context.Regions.ToList();
+                List<Region> regions = _adminAction.GetRegionsList();
                 ViewBag.Regions = regions;
                 _notyf.Error("Data can not be added");
                 return View("Partners/AddBusiness");
@@ -1509,25 +1204,15 @@ namespace HelloDoc.Controllers
         public IActionResult EditBusinessData(int id)
         {
 
-            List<HealthProfessionalType> healthProfessionalTypes = _context.HealthProfessionalTypes.ToList();
+            List<HealthProfessionalType> healthProfessionalTypes = _adminAction.GetHealthProfessionalTypeList();
             ViewBag.HealthProfessionalTypes = healthProfessionalTypes;
-            List<Region> regions = _context.Regions.ToList();
+            List<Region> regions =  _adminAction.GetRegionsList();
             ViewBag.Regions = regions;
-            var vendor = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == id);
 
-            if (vendor != null)
+            var vendor = _adminAction.GetVendor(id);
+			if (vendor != null)
             {
-                AddBusiness businessModel = new AddBusiness();
-                businessModel.Profession = vendor.Profession.ToString();
-                businessModel.BusinessName = vendor.VendorName;
-                businessModel.BusinessContact = vendor.BusinessContact;
-                businessModel.FaxNumber = vendor.FaxNumber;
-                businessModel.PhoneNum = vendor.PhoneNumber;
-                businessModel.state = _context.Regions.FirstOrDefault(s => s.Name == vendor.State).RegionId.ToString();
-                businessModel.city = vendor.City;
-                businessModel.Email = vendor.Email;
-                businessModel.street = vendor.City;
-                businessModel.vendorid = id;
+                var businessModel=_adminAction.EditBusinessData(id);
                 return View("Partners/EditBusinessData", businessModel);
             }
             else
@@ -1540,35 +1225,14 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult EditBusinessPost(AddBusiness addBusiness, int id)
         {
-            var healthProfessional = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == id);
-            healthProfessional.VendorName = addBusiness.BusinessName;
-            healthProfessional.Profession = int.Parse(addBusiness.Profession);
-            healthProfessional.BusinessContact = addBusiness.BusinessContact;
-            healthProfessional.FaxNumber = addBusiness.FaxNumber;
-            healthProfessional.Address = addBusiness.city + addBusiness.street;
-            healthProfessional.City = addBusiness.city;
-            healthProfessional.State = _context.Regions.FirstOrDefault(s => s.RegionId == int.Parse(addBusiness.state)).Name;
-            healthProfessional.RegionId = int.Parse(addBusiness.state);
-            healthProfessional.CreatedDate = DateTime.Now;
-            healthProfessional.PhoneNumber = addBusiness.PhoneNum;
-            healthProfessional.Email = addBusiness.Email;
-            _context.HealthProfessionals.Update(healthProfessional);
-            _context.SaveChanges();
+            _adminAction.EditBusinessData(id);
             _notyf.Success("Data Updated Successfully");
             return RedirectToAction("EditBusinessData", new { id = id });
         }
 
         public IActionResult DeleteBusinessData(int vendorid)
         {
-            var vendor = _context.HealthProfessionals.FirstOrDefault(s => s.VendorId == vendorid);
-
-            if (vendor != null)
-            {
-                vendor.IsDeleted = new BitArray(new[] { true });
-                _context.Update(vendor);
-                _context.SaveChanges();
-            }
-
+            _adminAction.DeleteBusinessData(vendorid);
             return RedirectToAction("Partners");
         }
 
@@ -1673,14 +1337,8 @@ namespace HelloDoc.Controllers
 
         public IActionResult DeleteRecord(int id)
         {
-            Request? request = _context.Requests.Find(id);
-            if (request != null)
-            {
-                request.IsDeleted = new BitArray(new[] { true });
-                _context.Requests.Update(request);
-            }
+            _adminDashboardRecords.DeleteRecord(id);
             _notyf.Success("The patient deleted successfully");
-            _context.SaveChanges();
             return RedirectToAction("SearchRecords");
         }
         #endregion
@@ -1699,14 +1357,7 @@ namespace HelloDoc.Controllers
 
         public IActionResult Unblock(int id)
         {
-            var user = _context.BlockRequests.FirstOrDefault(s => s.RequestId == id.ToString());
-
-            if (user != null)
-            {
-                _context.BlockRequests.Remove(user);
-                _context.SaveChanges();
-            }
-
+            _adminDashboardRecords.Unblock(id);
             return RedirectToAction("BlockHistory");
         }
         #endregion

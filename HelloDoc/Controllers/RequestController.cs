@@ -20,6 +20,9 @@ namespace HelloDoc.Controllers
         private readonly IHostingEnvironment _environment;
         private readonly IEmailService _emailService;
         private readonly INotyfService _notyf;
+        private readonly IDashBoard _dashBoard;
+        private readonly IAdminAction _adminAction;
+        
 
 
 
@@ -27,7 +30,7 @@ namespace HelloDoc.Controllers
 
         public RequestController(ApplicationDbContext context, IPatient_Request patient_Request, IFamily_Request Family_Req,
             IConcierge_Request concierge, IBusiness_Request business_Request, IAddFile file, 
-            IHostingEnvironment hostingEnvironment, IEmailService emailService,INotyfService notyf)
+            IHostingEnvironment hostingEnvironment, IEmailService emailService,INotyfService notyf,IAdminAction adminAction,IDashBoard dashBoard)
         {
             _context = context;
             _request = patient_Request;
@@ -38,6 +41,8 @@ namespace HelloDoc.Controllers
             _environment = hostingEnvironment;
             _emailService = emailService;
             _notyf = notyf;
+            _dashBoard = dashBoard;
+            _adminAction = adminAction;
         }
 
         //-----------------------Add Context-------------------------------------
@@ -47,14 +52,14 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult CheckEmail(string email)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = _dashBoard.GetUser(email);
             return Json(new { exists = user != null });
         }
 
         public IActionResult Patient_Request()
         {
             Patient patient = new Patient();
-            patient.regions = _context.Regions.ToList();
+            patient.regions = _adminAction.GetRegionsList();
             return View(patient);
         }
 
@@ -83,7 +88,7 @@ namespace HelloDoc.Controllers
                  _notyf.Success("Data added Successfully");
                 return RedirectToAction("Patient_Request");
             }
-            patient.regions = _context.Regions.ToList();
+            patient.regions = _adminAction.GetRegionsList();
             return View("Patient_Request", patient);
         }
         //----------------Patient Request----------------------------
@@ -94,7 +99,7 @@ namespace HelloDoc.Controllers
 
         {
             Other_Request other_Request = new Other_Request();
-            other_Request.regions = _context.Regions.ToList();
+            other_Request.regions = _adminAction.GetRegionsList();
             return View(other_Request);
 
         }
@@ -130,7 +135,7 @@ namespace HelloDoc.Controllers
                 _notyf.Success("Data added Successfully");
                 return RedirectToAction("Family_Friend_Request");
             }
-            other_Reqs.regions = _context.Regions.ToList();
+            other_Reqs.regions = _adminAction.GetRegionsList();
             return View("Family_Friend_Request", other_Reqs);
         }
         //--------------------Family/Friend----------------------------------------
@@ -140,7 +145,7 @@ namespace HelloDoc.Controllers
         public IActionResult Concierge_Request()
         {
             Other_Request other_Request = new Other_Request();
-            other_Request.regions = _context.Regions.ToList();
+            other_Request.regions = _adminAction.GetRegionsList();
             return View(other_Request);
         }
 
@@ -164,7 +169,7 @@ namespace HelloDoc.Controllers
                 return RedirectToAction("Concierge_Request");
 
             }
-            other_Reqs.regions = _context.Regions.ToList();
+            other_Reqs.regions = _adminAction.GetRegionsList();
             return View("Family_Friend_Request", other_Reqs);
         }
         //--------------------Concierge---------------------------------------
@@ -175,7 +180,7 @@ namespace HelloDoc.Controllers
 
         {
             Other_Request other_Request = new Other_Request();
-            other_Request.regions = _context.Regions.ToList();
+            other_Request.regions = _adminAction.GetRegionsList();
             return View(other_Request);
 
         }
@@ -198,7 +203,7 @@ namespace HelloDoc.Controllers
                 _notyf.Success("Data added Successfully");
                 return RedirectToAction("Business_Request");
             }
-            other_Reqs.regions = _context.Regions.ToList() ;
+            other_Reqs.regions = _adminAction.GetRegionsList() ;
             return View("Family_Friend_Request", other_Reqs);
         }
 
@@ -226,48 +231,17 @@ namespace HelloDoc.Controllers
 
         public IActionResult Agree(int id)
         {
-            var request = _context.Requests.FirstOrDefault(s => s.RequestId == id);
-
-            if (request != null)
-            {
-                request.Status = 4;
-                request.ModifiedDate = DateTime.Now;
-
-                _context.Update(request);
-                _context.SaveChanges();
-
-                RequestStatusLog requestStatusLog = new RequestStatusLog();
-                requestStatusLog.RequestId = id;
-                requestStatusLog.CreatedDate = DateTime.Now;
-                requestStatusLog.Status = 4;
-                _context.Add(requestStatusLog);
-                _context.SaveChanges();
-
-            }
+           _dashBoard.Agree(id);
            return  RedirectToAction("Patient_login", "Login");
         }
 
         public IActionResult CancelAgreement(string Notes, int id)
         {
-            var req = _context.Requests.FirstOrDefault(s => s.RequestId == id);
+           
 
-            if (req != null)
+            if (_dashBoard.CancelAgreement(Notes,id))
             {
-                req.Status = 7;
-                req.ModifiedDate = DateTime.Now;
-                _context.Update(req);
-                _context.SaveChanges();
-
-                RequestStatusLog requestStatusLog = new RequestStatusLog();
-                requestStatusLog.Notes = Notes;
-                requestStatusLog.RequestId = id;
-                requestStatusLog.CreatedDate = DateTime.Now;
-                requestStatusLog.Status = 7;
-                _context.Add(requestStatusLog);
-                _context.SaveChanges();
-
                 return RedirectToAction("Patient_login", "Login");
-
             }
             return BadRequest();
         }

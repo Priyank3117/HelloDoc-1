@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Collections;
 using System.Security.Cryptography.X509Certificates;
 
 namespace BAL.Repository
@@ -75,6 +76,7 @@ namespace BAL.Repository
                 request.PhoneNumber = patient.PhoneNumber;
                 request.CreatedDate = DateTime.Now;
                 request.RequestTypeId = 1;
+                request.IsDeleted = new BitArray(new[] { false });
                 _context.Requests.Add(request);
                 _context.SaveChanges();
 

@@ -5,6 +5,7 @@ using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,8 @@ namespace BAL.Repository
             request.RelationName = req.Relation;
             request.CreatedDate = DateTime.Now;
             request.RequestTypeId = 2;
-            _context.Requests.Add(request);
+			request.IsDeleted = new BitArray(new[] { false });
+			_context.Requests.Add(request);
             _context.SaveChanges();
 
 

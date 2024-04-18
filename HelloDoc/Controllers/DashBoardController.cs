@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Web.Helpers;
 using static BAL.Repository.Authorizationrepo;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -14,23 +15,28 @@ namespace HelloDoc.Controllers
     public class DashBoardController : Controller
     {
 
-        private readonly ApplicationDbContext _context;
+		#region variable
         private readonly IHostingEnvironment _environment;
         private readonly IAddFile _files;
         private readonly IPatient_Request _patient;
+        private readonly IDashBoard _dashBoard;
 
-        public DashBoardController(ApplicationDbContext context,IHostingEnvironment environment , IAddFile files,IPatient_Request patient)
+        public DashBoardController(IHostingEnvironment environment , IAddFile files,IPatient_Request patient,IDashBoard dashBoard)
         {
-            _context = context;
             _environment = environment;
             _files = files;
             _patient = patient;
+            _dashBoard = dashBoard;
         }
-        public IActionResult Index()
+
+		#endregion
+
+		#region Index,viewdoc,uploadfile,patientprofile
+		public IActionResult Index()
                 {
             
             var Email = HttpContext.Session.GetString("Email");
-            var mail = _context.Users.FirstOrDefault(u => u.Email == Email);
+            var mail = _dashBoard.GetUser(Email);
    
             if (mail == null)
             {
@@ -41,31 +47,18 @@ namespace HelloDoc.Controllers
                 ViewBag.username = mail.FirstName + " " + mail.LastName;
             }
 
-            var result = from req in _context.Requests join reqclient in _context.RequestClients on req.RequestId equals reqclient.RequestId
-                         join requestfile in _context.RequestWiseFiles on req.RequestId equals requestfile.RequestId                        
-                         into reqs
-                         where reqclient.Email == Email
-                         from requestfile in reqs.DefaultIfEmpty()
-
-                         select new Patient_Dash
-                         {
-                             CurrentStatus = req.Status,
-                             CreatedDate = req.CreatedDate,
-                             FilePath = requestfile.FileName != null ? requestfile.FileName : null,
-                             requestid = req.RequestId,
-                             count = _context.RequestWiseFiles.Count(u => u.RequestId == req.RequestId),
-                         };
-
-            return View(result.ToList());
+            var result = _dashBoard.GetPatientData(Email);
+            return View(result);
 
         }
 
         public IActionResult viewDocs(int requestid)
         {
             var Email = HttpContext.Session.GetString("Email");
-            var mail = _context.Users.FirstOrDefault(u => u.Email == Email);
-            var reque = _context.RequestWiseFiles.Where(u => u.RequestId == requestid).ToList();
-            if (mail == null)
+            var mail = _dashBoard.GetUser(Email);
+            var reque = _dashBoard.GetRequestWiseFiles(requestid);
+
+			if (mail == null)
             {
                 return NotFound();
             }
@@ -77,7 +70,7 @@ namespace HelloDoc.Controllers
             {
                 requestwisefile = reque,
                 requestid = requestid,
-                confirmationnum = _context.Requests.FirstOrDefault(s => s.RequestId == requestid).ConfirmationNumber,
+                confirmationnum = _dashBoard.ConfirmationNumber(requestid)
             };
             return View(result);
         }
@@ -106,9 +99,9 @@ namespace HelloDoc.Controllers
         public  IActionResult  Patient_Profile()
         {
             var Email = HttpContext.Session.GetString("Email");
-            var mail = _context.Users.FirstOrDefault(u => u.Email == Email);
+            var mail = _dashBoard.GetUser(Email);
 
-            if (mail == null)
+			if (mail == null)
             {
                 return NotFound();
             }
@@ -118,8 +111,8 @@ namespace HelloDoc.Controllers
             }
 
             var email = HttpContext.Session.GetString("Email");
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
-            var Patient_Profile = new Patient_Profile();
+            var user = _dashBoard.GetUser(email);
+			var Patient_Profile = new Patient_Profile();
             Patient_Profile.FirstName = user.FirstName;
             Patient_Profile.Email = user.Email;
             Patient_Profile.LastName = user.LastName;
@@ -140,25 +133,9 @@ namespace HelloDoc.Controllers
         {
 
             var email = HttpContext.Session.GetString("Email");
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
-              
-
-            if(ModelState.IsValid)
+			if (ModelState.IsValid)
             {
-
-                user.FirstName = patient_Profile.FirstName;
-                user.LastName = patient_Profile.LastName;
-                user.Mobile = patient_Profile.PhoneNumber;
-                user.Street = patient_Profile.Street;
-                user.City = patient_Profile.City;
-                user.State = patient_Profile.State;
-                user.IntDate = patient_Profile.BirthDate.Value.Day;
-                user.IntYear = patient_Profile.BirthDate.Value.Year;
-                user.StrMonth = (patient_Profile.BirthDate.Value.Month).ToString();
-                user.ZipCode = patient_Profile.ZipCode;
-
-                _context.Update(user);
-                _context.SaveChanges();
+                _dashBoard.Patient_Profile(patient_Profile, email);
                 return RedirectToAction("Patient_Profile");
             }
             else
@@ -169,7 +146,8 @@ namespace HelloDoc.Controllers
           
                 
         }
-    }
+		#endregion
+	}
 }
 
 

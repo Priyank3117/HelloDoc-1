@@ -1,7 +1,9 @@
-﻿using BAL.Interface;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using BAL.Interface;
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
 
@@ -12,13 +14,16 @@ namespace BAL.Repository
 		private readonly ApplicationDbContext _context;
 		private readonly IPasswordHasher<AdminProfile> _passwordHasher;
 		private readonly IUploadProvider _uploadprovider;
+		private readonly INotyfService _notyf;
 
 
-		public AccountsAccess(ApplicationDbContext context, IUploadProvider uploadprovider, IPasswordHasher<AdminProfile> passwordHasher)
+		public AccountsAccess(ApplicationDbContext context,
+			IUploadProvider uploadprovider, IPasswordHasher<AdminProfile> passwordHasher,INotyfService notyf)
 		{
 			_context = context;
 			_uploadprovider = uploadprovider;
 			_passwordHasher = passwordHasher;
+			_notyf = notyf;
 		}
 
 		public void CreateAccess(int[] rolemenu, string rolename, int accounttype)
@@ -214,6 +219,42 @@ namespace BAL.Repository
 			}
 		}
 
+		public void DeleteAccess(int id)
+		{
+			Role? role = _context.Roles.Where(item => item.RoleId == id).FirstOrDefault();
+			if (role != null)
+			{
+				role.IsDeleted = new BitArray(new[] { true });
+				_context.Roles.Update(role);
+				_context.SaveChanges();
+				_notyf.Success("Your Role Has Been Deleted");
+			}
+			else
+			{
+				_notyf.Success("Your Role Has Been Not Deleted");
+			}
+		}
+
+		public void EditAccess(int id, int[] rolemenu, string rolename, int accounttype)
+		{
+			var role = _context.Roles.FirstOrDefault(item => item.RoleId == id);
+			var menulist = _context.RoleMenus.Where(item => item.RoleId == id).ToList();
+			role.Name = rolename;
+			role.AccountType = (short)accounttype;
+			_context.Roles.Update(role);
+			_context.SaveChanges();
+			_context.RoleMenus.RemoveRange(menulist);
+			_context.SaveChanges();
+			foreach (var item in rolemenu)
+			{
+				RoleMenu rolemenu1 = new RoleMenu();
+				rolemenu1.MenuId = item;
+				rolemenu1.RoleId = id;
+				_context.RoleMenus.Add(rolemenu1);
+			}
+			_context.SaveChanges();
+		}
+
 		public List<UserAccess> GetUserAccessData(int role)
 		{
 			var result = (from aspuser in _context.AspNetUsers
@@ -253,6 +294,107 @@ namespace BAL.Repository
 						  )).ToList();
 
 			return result;
+		}
+
+		public void MailingBillingInformationProvider(int physicianid, string MobileNo, string Address1, string Address2, string City, int State, string Zipcode)
+		{
+			Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+			if (physician != null)
+			{
+				physician.Address1 = Address1;
+				physician.Address2 = Address2;
+				physician.City = City;
+				physician.Mobile = MobileNo;
+				physician.RegionId = State;
+				physician.Zip = Zipcode;
+				_context.Physicians.Update(physician);
+				_context.SaveChanges();
+				_notyf.Success("Data Saved Successfully");
+			}
+			else
+			{
+				_notyf.Error("Data Can not be added");
+
+			}
+		}
+
+		public void NotificationManagement(bool isChecked, string id)
+		{
+			var physicianNotification = _context.PhysicianNotifications.Where(u => u.PhysicianId == int.Parse(id)).FirstOrDefault();
+			if (physicianNotification != null)
+			{
+				physicianNotification.IsNotificationStopped = new BitArray(new[] { isChecked });
+
+				_context.PhysicianNotifications.Update(physicianNotification);
+				_context.SaveChanges();
+			}
+		}
+
+		public void PhysicianInformation(int id, string MobileNo, string[] Region, string SynchronizationEmail, string NPINumber, string MedicalLicense)
+		{
+			Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+
+			AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+			if (physician != null)
+			{
+				physician.Mobile = MobileNo;
+				physician.Npinumber = NPINumber;
+				physician.MedicalLicense = MedicalLicense;
+				physician.SyncEmailAddress = SynchronizationEmail;
+				_context.Physicians.Update(physician);
+				_context.SaveChanges();
+
+
+				List<PhysicianRegion> region = _context.PhysicianRegions.
+					Where(item => item.PhysicianId == physician.PhysicianId).ToList();
+
+				_context.PhysicianRegions.RemoveRange(region);
+				_context.SaveChanges();
+
+				foreach (var item in Region)
+				{
+					PhysicianRegion physicianRegion = new PhysicianRegion();
+					physicianRegion.PhysicianId = id;
+					physicianRegion.RegionId = int.Parse(item);
+					_context.Add(physicianRegion);
+					_context.SaveChanges();
+				}
+
+				_notyf.Success("Data Saved Successfully");
+
+			}
+			else
+			{
+				_notyf.Error("Data Can not be added");
+			}
+		}
+
+		public void ResetPhysicianPassword(string Password, int physicianid)
+		{
+			Physician? physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == physicianid);
+			AspNetUser? account = _context.AspNetUsers.FirstOrDefault(item => item.Email == physician.Email);
+			if (account != null && Password != null)
+			{
+				string passwordhash = _passwordHasher.HashPassword(null, Password);
+				account.PasswordHash = passwordhash;
+				_context.AspNetUsers.Update(account);
+				_context.SaveChanges();
+				_notyf.Success("Password Changed Successfully");
+			}
+			else
+			{
+				_notyf.Error("Please Enter the Password");
+			}
+
+		}
+
+		public void SaveSignatureImage(IFormFile signatureImage, int id)
+		{
+			string fileName = _uploadprovider.UploadSignature(signatureImage, id);
+			var physician = _context.Physicians.FirstOrDefault(item => item.PhysicianId == id);
+			physician.Signature = fileName;
+			_context.Physicians.Update(physician);
+			_context.SaveChanges();
 		}
 	}
 }

@@ -13,34 +13,37 @@ namespace HelloDoc.Controllers
     public class ME_ForSomeOneController : Controller
     {
 
-        private readonly ApplicationDbContext _context;
         private readonly IPatient_Request _request;
         private readonly IHostingEnvironment _environment;
         private readonly IAddFile _file;
+		private readonly IDashBoard _dashBoard;
+        private readonly IAdminAction _adminAction;
 
 
 
-        //-----------------------Add Context---------------------------------
+		//-----------------------Add Context---------------------------------
 
-        public ME_ForSomeOneController(ApplicationDbContext context, IPatient_Request patient_Request, IHostingEnvironment environment, IAddFile file)
-        {
-            _context = context;
-            _request = patient_Request;
-            _environment = environment;
-            _file = file;   
-        }
-        public IActionResult Me()
+		public ME_ForSomeOneController(
+            IPatient_Request patient_Request, IHostingEnvironment environment, IAddFile file, IDashBoard dashBoard,IAdminAction adminAction)
+		{
+			_request = patient_Request;
+			_environment = environment;
+			_file = file;
+			_dashBoard = dashBoard;
+            _adminAction = adminAction;
+		}
+		public IActionResult Me()
         {
             var email = HttpContext.Session.GetString("Email");
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = _dashBoard.GetUser(email);
 
             var patient = new Patient
             {
-                Email=email,
-                FirstName = user.FirstName, 
+                Email = email,
+                FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.Mobile,
-                regions = _context.Regions.ToList()
+                regions = _adminAction.GetRegionsList()
              };
         
            
@@ -51,7 +54,7 @@ namespace HelloDoc.Controllers
         public IActionResult Me(Patient patient)
         {
             var email = HttpContext.Session.GetString("Email");
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = _dashBoard.GetUser(email);
 
 
             if(ModelState.IsValid) 
@@ -75,7 +78,7 @@ namespace HelloDoc.Controllers
             }
             else
             {
-                patient.regions = _context.Regions.ToList();
+                patient.regions = _adminAction.GetRegionsList();
                 return View(patient);
             }
         } 
@@ -85,7 +88,7 @@ namespace HelloDoc.Controllers
         public IActionResult SomeOne()
         {
             Patient patient = new Patient();
-            patient.regions = _context.Regions.ToList();
+            patient.regions = _adminAction.GetRegionsList();
             return View(patient);
         }
 
@@ -93,10 +96,10 @@ namespace HelloDoc.Controllers
         public IActionResult SomeOne(Patient patient)
         {
             var email = HttpContext.Session.GetString("Email");
-            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            var user = _dashBoard.GetUser(email);
 
 
-            if (ModelState.IsValid)
+			if (ModelState.IsValid)
             {
                 _request.AddPatient(patient);
                 if (patient.Filedata != null)
@@ -116,7 +119,7 @@ namespace HelloDoc.Controllers
             }
             else
             {
-                patient.regions = _context.Regions.ToList();
+                patient.regions = _adminAction.GetRegionsList();
                 return View(patient);
             }
         }

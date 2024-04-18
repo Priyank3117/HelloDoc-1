@@ -11,6 +11,8 @@ namespace BAL.Interface
        
         public Admin GetAdminByEmail(string email);
 
+        public AspNetUser GetAspNetUserByEmail(string email);
+
         public List<Admin_DashBoard> GetRequestData(string SearchValue, string Filterselect, 
             string selectvalue, string partialName, int[] currentstatus);
 
@@ -48,5 +50,8 @@ namespace BAL.Interface
         public List<Physician> GetPhysiciansByRegionId(string regionId);
 
         public List<RequestWiseFile> GetRequestWiseFilesWithoutDelete(int id);
+
+        public List<PhysicianLocation> GetLocationsList();
+        public string GetPhyEmail(string id);
 	}
 }

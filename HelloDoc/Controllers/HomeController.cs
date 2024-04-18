@@ -16,14 +16,13 @@ namespace HelloDoc.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
         private readonly IHome _home;
 
         public object AspNetUsers { get; private set; }
 
-        public HomeController(ApplicationDbContext context,IHome home)
+        public HomeController(IHome home)
         {
-            _context = context;
+
             _home = home;
         }
 

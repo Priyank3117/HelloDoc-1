@@ -4,6 +4,7 @@ using DAL.DataModels;
 using DAL.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -143,6 +144,26 @@ namespace BAL.Repository
             return searchRecords;
         }
 
-       
-    }
+		public void Unblock(int id)
+		{
+			var user = _context.BlockRequests.FirstOrDefault(s => s.RequestId == id.ToString());
+
+			if (user != null)
+			{
+				_context.BlockRequests.Remove(user);
+				_context.SaveChanges();
+			}
+		}
+
+		public void DeleteRecord(int id)
+		{
+			Request? request = _context.Requests.Find(id);
+			if (request != null)
+			{
+				request.IsDeleted = new BitArray(new[] { true });
+				_context.Requests.Update(request);
+			}
+			_context.SaveChanges();
+		}
+	}
 }

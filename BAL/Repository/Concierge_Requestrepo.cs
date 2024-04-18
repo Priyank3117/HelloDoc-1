@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
+using System.Collections;
 
 namespace BAL.Repository
 {
@@ -27,8 +28,9 @@ namespace BAL.Repository
             request.PhoneNumber = req.PhoneNumberother;
             request.RequestTypeId = 3;
             request.CreatedDate = DateTime.Now;
+			request.IsDeleted = new BitArray(new[] { false });
 
-            _context.Requests.Add(request);
+			_context.Requests.Add(request);
             _context.SaveChanges();
 
 

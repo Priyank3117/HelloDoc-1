@@ -18,5 +18,8 @@ namespace BAL.Interface
         public List<BlockHistory> BlockedPatientRecords(string email, string name, string phone, DateTime date);
 
         public List<User> PatientRecords(string firstName, string lastName, string email, string phone, int currentpage, int pagesize);
-    }
+        public void Unblock(int id);
+        public void DeleteRecord(int id);
+
+	}
 }

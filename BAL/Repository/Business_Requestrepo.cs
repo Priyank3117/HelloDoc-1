@@ -2,6 +2,7 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
+using System.Collections;
 
 
 namespace BAL.Repository
@@ -26,8 +27,9 @@ namespace BAL.Repository
             request.Email = req.EmailOther;
             request.CreatedDate = DateTime.Now;
             request.RequestTypeId = 4;
+			request.IsDeleted = new BitArray(new[] { false });
 
-            _context.Requests.Add(request);
+			_context.Requests.Add(request);
             _context.SaveChanges();
 
             requestClient.RequestId = request.RequestId;

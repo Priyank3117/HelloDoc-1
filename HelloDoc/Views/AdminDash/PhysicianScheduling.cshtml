@@ -80,6 +80,9 @@
 		margin: 10px;
 	}
 
+	.fc-daygrid-day-top {
+		background-color: #ffa3f0 !important;
+	}
 	.fc-direction-ltr .fc-button-group > .fc-button:not(:last-child) {
 		background: none;
 		border: 1px solid #02BCE6;
@@ -132,16 +135,25 @@
 		background-color: transparent !important;
 	}
 
-	.fc-daygrid-day-top {
-		background-color: #F4CAED !important
-	}
+	
 
 	.fc-timeline-slot-frame {
 		background-color: #bdbfbe;
 	}
+
+	.fc-scrollgrid-sync-inner:has(.fc-col-header-cell-cushion) {
+		background-color: #a1a1a1;
+	}
+
+	.fc .fc-col-header-cell-cushion {
+		color: white !important
+	}
+
+	.fc *, .fc ::after, .fc ::before {
+		text-wrap:balance;
+	}
 </style>
-</style>
-<div class="container-fluid bg-body-secondary" style="height:80vh !important">
+<div class="container-fluid bg-body-secondary mb-3" >
 <div class="justify-content-between d-flex container-fluid mb-2 position-relative container my-3">
     <div class="">
         <h3 class="mt-2"> Scheduling </h3>
@@ -151,7 +163,7 @@
     </div>
 </div>
 
-<div class="container bg-white pt-3 px-4 position-relative rounded-2">
+<div class="container white-bag pt-3 px-4 position-relative rounded-2">
 
     <div class="p-0 m-0 d-flex justify-content-between">
         <div class="d-flex border border-secondary  rounded align-items-center my-2 col-3">
@@ -274,12 +286,12 @@
 			});
 			console.log(resources)
 			calendar = new FullCalendar.Calendar(calendarEl, {
-				height: '25rem',
+				height: 'auto',
 				schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
 				themeSystem: 'bootstrap5',
 				headerToolbar: false,
 				initialView: 'dayGridMonth',
-				dayMaxEvents: 4,
+				dayMaxEvents: 2,
 				editable:true,
 				views: {
 					resourceTimelineDay: {
