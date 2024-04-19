@@ -1,5 +1,5 @@
 ﻿@{
-    string userName = ViewBag.username;
+    TempData.Keep("username");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +45,7 @@
                     </div>
 
                     <div class=" float-end ">
-                        <span class="fw-bold me-2 d-none d-sm-inline">Welcome:@userName</span>
+                        <span class="fw-bold me-2 d-none d-sm-inline">Welcome:@TempData["username"]</span>
                         <a asp-action="Logout" asp-controller="Login">
 
                             <button type="submit" class="btn border-info bg-white fw-2 text-info me-2 border border-2"

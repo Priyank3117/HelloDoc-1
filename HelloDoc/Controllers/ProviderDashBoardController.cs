@@ -49,7 +49,7 @@ namespace HelloDoc.Controllers
             int phyId = 0;
             if (email != null)
             {
-                ViewBag.username = _context.AspNetUsers.First(u => u.Email == email).UserName;
+                TempData["username"] = _context.AspNetUsers.First(u => u.Email == email).UserName;
                 phyId = _context.Physicians.First(u => u.Email == email).PhysicianId;
             }
             var DashData = _AdminDashBoard.GetList();

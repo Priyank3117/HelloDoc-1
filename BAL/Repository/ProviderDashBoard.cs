@@ -1,6 +1,7 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModel;
+using System.Collections;
 
 namespace BAL.Repository
 {
@@ -16,10 +17,10 @@ namespace BAL.Repository
         }
         public GetCount GetCount(int phyId)
         {
-            var newcount = (_context.Requests.Where(item => item.Status == 1 && item.PhysicianId == phyId)).Count();
-            var pendingcount = (_context.Requests.Where(item => item.Status == 2 && item.PhysicianId == phyId)).Count();
-            var activecount = (_context.Requests.Where(item => (item.Status == 4 || item.Status == 5) && item.PhysicianId == phyId)).Count();
-            var conclude = (_context.Requests.Where(item => (item.Status == 6) && item.PhysicianId == phyId)).Count();
+            var newcount = (_context.Requests.Where(item => (item.Status == 1) && (item.PhysicianId == phyId) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
+            var pendingcount = (_context.Requests.Where(item => (item.Status == 2) && (item.PhysicianId == phyId) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
+            var activecount = (_context.Requests.Where(item => (item.Status == 4 || item.Status == 5) && (item.PhysicianId == phyId) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
+            var conclude = (_context.Requests.Where(item => (item.Status == 6) && (item.PhysicianId == phyId) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
             
 
             return new GetCount

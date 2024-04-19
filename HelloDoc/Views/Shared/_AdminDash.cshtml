@@ -25,7 +25,11 @@
    
 
 </head>
-
+<@* div id="overlay">
+    <div class="cv-spinner">
+        <span class="spinner"></span>
+    </div>
+</div> *@
 <body>
     <header>
         <div class="container-fluid">
@@ -33,14 +37,13 @@
                 <!-- -----------------nav--------------- -->
                 <div class="col col-12 d-flex mb-1 flex-row justify-content-between">
 
-                    <nav class="navbar d-inline d-sm-none mt-3">
-                        <div class="container-fluid">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                        </div>
-                    </nav>
+                    <button class="btn btn-outline-info  d-sm-none d-inline" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions"
+                            aria-controls="offcanvasWithBothOptions">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                        </svg>
+                    </button>
+
                     <div class="doct-logo d-none d-sm-inline">
                         <img src="~/images/doct-logo-2.png" alt="" style="height:4rem" />
                     </div>
@@ -100,7 +103,7 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link  text-info  @(new string[] { "Provider", "PhysicianScheduling", "ReviewShift","CreateProviderAccount","PhysicianProfile" }
+                        <a class="nav-link  text-info  @(new string[] { "Provider", "PhysicianScheduling", "ReviewShift","CreateProviderAccount","PhysicianProfile","MdOnCall" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Provider
                         </a>
@@ -145,31 +148,85 @@
                 </ul>
 
             </div>
-            <div class="collapse " id="navbarToggleExternalContent">
-                <div class=" p-4">
-                    <ul class="nav nav-tabs-info nav-underline   fs-4 " id="pills-tab" role="tablist">
-                        <li class="nav-item text-info">
-                            <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none"> <button class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Index" ? "active" : "")">Dashboard</button></a>
+
+            @* ---------------- *@
+          
+            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title text-info" id="offcanvasWithBothOptionsLabel">Welcome : @TempData["username"]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="nav nav-tabs-info nav-underline fs-4 list-group" id="pills-tab" role="tablist">
+                        <li class="nav-item ">
+                            <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none">
+                                <button class="nav-link  text-info
+
+                        @(new string[] { "AdminDash", "ViewNotes", "ViewCase","SendOrder","CreateRequest","ViewUpload" }
+                            .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">
+                                    Dashboard
+                                </button>
+                            </a>
                         </li>
                         <li class="nav-item ">
                             <a asp-action="ProviderLocation" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
                         </li>
                         <li class="nav-item">
-                            <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none"><button class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Profile" ? "active" : "")">My Profile</button></a>
+                            <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none">
+                                <button class="nav-link text-info
+                            @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")">
+                                    My Profile
+                                </button>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link  text-info  @(new string[] { "Provider", "PhysicianScheduling", "ReviewShift","CreateProviderAccount","PhysicianProfile","MdOnCall" }
+                            .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Provider
+                            </a>
+                            <ul class="dropdown-menu ">
+                                <li><a asp-action="Provider" asp-controller="AdminDash" class="dropdown-item ">Provider</a></li>
+                                <li><a asp-action="PhysicianScheduling" class="dropdown-item">Scheduling</a></li>
+                                <li><a class="dropdown-item">Invoice</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Provider" ? "active" : "")">Provider</a>
+                            <a asp-action="Partners" class="nav-link text-info  @(new string[] { "Partners", "AddBusiness" }
+                            .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">Partners</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link  text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">Parteners</a>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link  text-info
+
+                        @(new string[] { "UserAccess", "CreateAdminAccount", "AccountAccess","CreateAccess" }
+                            .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Access
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-action="UserAccess" class="dropdown-item">User Access</a></li>
+                                <li><a asp-action="AccountAccess" class="dropdown-item">Account Access</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Records" ? "active" : "")">Records</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link  text-info
+                        @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory" }
+                        .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-action="SearchRecords" class="dropdown-item ">Search Records</a></li>
+                                <li><a class="dropdown-item">Email Logs</a></li>
+                                <li><a class="dropdown-item">SMS Logs</a></li>
+                                <li><a asp-action="PatientHistory" class="dropdown-item">Patient Records</a></li>
+                                <li><a asp-action="BlockHistory" class="dropdown-item">Blocked History</a></li>
+                            </ul>
                         </li>
 
                     </ul>
                 </div>
             </div>
+            @* ---------------- *@
+          
         </div>
     </header>
     <div class="container-fluid pb-5  rounded-3 shadow">
@@ -248,6 +305,15 @@
                 }
             }
 
+            // $(window).on('load', function () {
+            //     $('#overlay').fadeOut(150);
+            // });
+
+            // $(document).ajaxStart(function () {
+            //     $('#overlay').show();
+            // }).ajaxStop(function () {
+            //     $('#overlay').fadeOut(150);
+            // });
             // Initialize variables with default values or retrieve from local storage
             var currentPartialview = getDataFromLocalStorage("currentPartialview") || "AdminTableNew";
             var currentstatus = JSON.parse(getDataFromLocalStorage("currentstatus")) || [1];
@@ -623,12 +689,12 @@
 
 
                 var regionid = $(this).val();
-
+                var reqid = $("#trarequest").val();
                 if (regionid != 0) {
                     $.ajax({
                         type: "GET",
                         url: "/AdminDash/GetPhysicianForTransfer", // Controller action to fetch models based on brand ID
-                        data: { regionid: regionid },
+                        data: { regionid: regionid, reqid: reqid },
                         success: function (response) {
                             // Clear existing options
                             $('#physiciandropdownoftra').empty();

@@ -48,8 +48,10 @@ namespace BAL.Interface
         public bool UploadDocumetnsProvider(string fileName, IFormFile File, int physicianid);
       
         public List<Physician> GetPhysiciansByRegionId(string regionId);
+        public List<Physician> GetPhysiciansByRegionIdForTransfer(string regionId,string reqid);
 
-        public List<RequestWiseFile> GetRequestWiseFilesWithoutDelete(int id);
+
+		public List<RequestWiseFile> GetRequestWiseFilesWithoutDelete(int id);
 
         public List<PhysicianLocation> GetLocationsList();
         public string GetPhyEmail(string id);

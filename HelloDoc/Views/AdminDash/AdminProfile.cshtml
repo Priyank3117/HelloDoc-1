@@ -122,10 +122,11 @@
                 if (i < Model.statesForChecked.Count && state.RegionId == Model.statesForChecked[i].Value)
                 {
                     <input class="form-check-input text-body changable" name="states" for="box1" type="checkbox" id="@state.RegionId"
-                           value="@state.RegionId" checked disabled />
+                           value="@state.RegionId" checked disabled required />
                     <label class="form-check-label fs-6" for="states">
                         @state.Name
                     </label>
+                   
                     i++;
                 }
                 else

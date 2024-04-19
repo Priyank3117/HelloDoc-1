@@ -146,7 +146,7 @@
                                         <input class="form-check-input changable"
                                                type="checkbox"
                                                id="region-@region.RegionId"
-                                               name="Region"
+                                               name="Region" required
                                                value="@region.RegionId"
                                         @(Model.WorkingRegions.Any(wr => wr.RegionId == region.RegionId) ? "checked" : "")
                                                disabled />
@@ -295,9 +295,9 @@
                     <div class="col">
                         <div class="input-group input-group-lg">
                             <div id="signname" class="form-control fs-6 align-middle">
-                                Select Signature
+                                <span id="infoArea">Select Signature</span>
                             </div>
-                            <input type="file" id="sign" name="signature" class="form-control changable2" hidden disabled />
+                            <input type="file"  id="sign" name="signature" class="form-control changable2" hidden disabled />
                             <label class="input-group-text btn btn-info text-light" for="sign">
                             
                                 <span class="d-none d-md-inline">Upload Sign</span>
@@ -500,6 +500,15 @@
         $("#SaveBtn").show();
     }
 
+    // Get the file input element and the infoArea span element
+    const fileInput = document.getElementById('sign');
+    const fileNameSpan = document.getElementById('infoArea');
+
+    fileInput.addEventListener('change', () => {
+        const fileName = fileInput.files[0].name;
+        fileNameSpan.textContent = fileName;
+        document.getElementById('createBtn').disabled = false;
+    });
 
     function toggleCancel() {
         var inputFields = document.querySelectorAll('.changable');

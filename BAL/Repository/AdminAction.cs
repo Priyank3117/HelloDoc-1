@@ -526,7 +526,7 @@ namespace BAL.Repository
 			var admin = _context.Admins.FirstOrDefault(s => s.Email == email);
 
 
-			bool shiftExists = _context.ShiftDetails.Any(sd => sd.Shift.PhysicianId == (physicianId != 0 ? physicianId : model.Physicianid) &&
+			bool shiftExists = _context.ShiftDetails.Any(sd => sd.IsDeleted == new BitArray(new[] {false}) && sd.Shift.PhysicianId == (physicianId != 0 ? physicianId : model.Physicianid) &&
 			sd.ShiftDate.Date == model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).Date &&
 			(sd.StartTime <= model.Endtime ||
 			sd.EndTime >= model.Starttime));
@@ -579,10 +579,10 @@ namespace BAL.Repository
 						}
 
 						// Iterate over Refill times
-						for (int i = 0; i < shift.RepeatUpto; i++)
+						for (int i = 1; i <= shift.RepeatUpto; i++)
 						{
-							bool shiftDetailsExists = _context.ShiftDetails.Any(sd => sd.Shift.PhysicianId == model.Physicianid &&
-							sd.ShiftDate.Date == model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).Date &&
+							bool shiftDetailsExists = _context.ShiftDetails.Any(sd => sd.IsDeleted == new BitArray(new[] { false }) && sd.Shift.PhysicianId == model.Physicianid &&
+							sd.ShiftDate.Date == startDateForWeekday.Date &&
 							(sd.StartTime <= model.Endtime ||
 							 sd.EndTime >= model.Starttime));
 							// Create a new ShiftDetail instance for each occurrence
@@ -607,7 +607,7 @@ namespace BAL.Repository
 							else
 							{
 
-								_notyf.Error("shift already exist");
+								_notyf.Error($"A shift already exists at {startDateForWeekday.ToString("dddd, MMMM d, yyyy")} from {model.Starttime.ToString("h:mm tt")} to {model.Endtime.ToString("h:mm tt")}");
 							}
 
 						}
@@ -616,7 +616,7 @@ namespace BAL.Repository
 			}
 			else
 			{
-				_notyf.Error("shift already exist");
+				 _notyf.Error($"A shift already exists from {model.Startdate.ToString("dddd, MMMM d, yyyy")} from {model.Starttime.ToString("h:mm tt")} to {model.Endtime.ToString("h:mm tt")}");
 			}
 
 		}

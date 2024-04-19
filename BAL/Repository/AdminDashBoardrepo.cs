@@ -398,10 +398,10 @@ namespace BAL.Repository
         {
             var newcount = (_context.Requests.Where(item =>  (item.Status == 1) && (item.IsDeleted != new BitArray(new[] {true})) )).Count();
             var pendingcount = (_context.Requests.Where(item => (item.Status == 2) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
-			var activecount = (_context.Requests.Where(item => item.Status == 4 || item.Status == 5)).Count();
-            var conclude = (_context.Requests.Where(item => item.Status == 6)).Count();
-            var toclosed = (_context.Requests.Where(item => item.Status == 3 || item.Status == 7 || item.Status == 8)).Count();
-            var unpaid = (_context.Requests.Where(item => item.Status == 9)).Count();
+			var activecount = (_context.Requests.Where(item => (item.Status == 4 || item.Status == 5) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
+            var conclude = (_context.Requests.Where(item => (item.Status == 6) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
+            var toclosed = (_context.Requests.Where(item => (item.Status == 3 || item.Status == 7 || item.Status == 8) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
+            var unpaid = (_context.Requests.Where(item => (item.Status == 9) && (item.IsDeleted != new BitArray(new[] { true })))).Count();
 
             return new GetCount
             {
@@ -551,8 +551,22 @@ namespace BAL.Repository
         {
             var result = (from physician in _context.Physicians
                           join region in _context.PhysicianRegions on
-                         physician.PhysicianId equals region.PhysicianId
+                          physician.PhysicianId equals region.PhysicianId
                           where region.RegionId == int.Parse(regionId)
+                          select physician).ToList();
+
+            return result;
+        }
+         public List<Physician> GetPhysiciansByRegionIdForTransfer(string regionId,string reqid)
+        {
+
+            var phyId = _context.Requests.Where(s => s.RequestId == int.Parse(reqid)).Select(c => c.PhysicianId).FirstOrDefault();
+
+            var result = (from physician in _context.Physicians
+                          join region in _context.PhysicianRegions on
+                          physician.PhysicianId equals region.PhysicianId
+                          where region.RegionId == int.Parse(regionId) 
+                          && physician.PhysicianId != phyId
                           select physician).ToList();
 
             return result;

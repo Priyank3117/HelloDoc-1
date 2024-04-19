@@ -163,9 +163,9 @@ namespace HelloDoc.Controllers
             _adminAction.TransferCase(transferid, Descriptionoftra, phyidtra);
             return Ok();
         }
-        public IActionResult GetPhysicianForTransfer(string regionid)
+        public IActionResult GetPhysicianForTransfer(string regionid,string reqid)
         {
-            var result = _AdminDashboard.GetPhysiciansByRegionId(regionid);
+            var result = _AdminDashboard.GetPhysiciansByRegionIdForTransfer(regionid,reqid);
             return Json(result);
         }
 

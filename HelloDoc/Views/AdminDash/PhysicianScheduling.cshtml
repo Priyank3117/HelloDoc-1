@@ -117,6 +117,7 @@
 		border-radius: 50px;
 	}
 
+	
 	.fc-prev-button.fc-button.fc-button-primary {
 		padding: 4px 5px;
 		border-radius: 50px;
@@ -153,8 +154,8 @@
 		text-wrap:balance;
 	}
 </style>
-<div class="container-fluid bg-body-secondary mb-3" >
-<div class="justify-content-between d-flex container-fluid mb-2 position-relative container my-3">
+<div class="container-fluid bg-body-secondary mb-3" style="height:78vh" >
+<div class="justify-content-between d-flex container-fluid pb-2 position-relative container ">
     <div class="">
         <h3 class="mt-2"> Scheduling </h3>
     </div>
@@ -286,7 +287,7 @@
 			});
 			console.log(resources)
 			calendar = new FullCalendar.Calendar(calendarEl, {
-				height: 'auto',
+				height: '45vh',
 				schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
 				themeSystem: 'bootstrap5',
 				headerToolbar: false,
@@ -392,7 +393,7 @@
 								const events = response.events.map(event => ({
 									id: event.id,
 									resourceId: event.resourceId,
-									title: event.title,
+									title: `${event.start.split("T")[1].substr(0, 5)} - ${event.end.split("T")[1].substr(0, 5)}: ${event.title}`,
 									start: event.start,
 									end: event.end,
 									eventBackgroundColor: event.status == 1 ? '#e39de8' : '#32d97d',
