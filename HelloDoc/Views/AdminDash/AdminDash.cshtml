@@ -21,6 +21,9 @@
         transform: translateX(-50%)
     }
 
+    .rounded-3 {
+       padding-bottom:20px !important;
+    }
    
 </style>
 
@@ -34,10 +37,10 @@
             <div class="px-2 py-2  border  rounded-4 position-relative status " id="divnew" style="background-color:#e9eaef">
                     <div class="d-flex align-items-center">
                        
-                        <h4 class="text">new</h4>
+                        <h5 class="text">NEW</h5>
                     </div>
                     <div class="triangle" id="tranew"></div>
-                <h3 class="text">@ViewBag.NewCount</h3>
+                <h3 class="text fw-bold">@ViewBag.NewCount</h3>
                 </div>
                 </a>
             </div> 
@@ -46,10 +49,10 @@
         <div class="px-2 py-2 border rounded-4 position-relative status"  id="divpen">
                     <div class="d-flex align-items-center">
 
-                    <h4 class="text">pending</h4>
+                    <h5 class="text">PENDING</h5>
                     </div>
                     <div class="triangle text-white" id="trapending"></div>
-                <h3 class="text">@ViewBag.PendingCount</h3>
+                <h3 class="text fw-bold">@ViewBag.PendingCount</h3>
                 </div>
                   </a>
             </div> 
@@ -58,10 +61,10 @@
         <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#e9f0e8" id="divact">
                     <div class="d-flex align-items-center">
 
-                    <h4 class="text">Active</h4>
+                    <h5 class="text">ACTIVE</h5>
                     </div>
                     <div class="triangle text-white" id="traact"></div>
-                <h3 class="text">@ViewBag.activecount</h3>
+                <h3 class="text fw-bold">@ViewBag.activecount</h3>
                 </div>
                 </a>
             </div> 
@@ -70,10 +73,10 @@
         <div class="px-2 py-2 border  rounded-4 text-pink position-relative status" style="background-color:#f7e6ee" id="divcon">
                     <div class="d-flex align-items-center">
 
-                    <h4 class="text">conclude</h4>
+                    <h5 class="text">CONCLUDE</h5>
                     </div>
                     <div class="triangle text-white" id="tracon"></div>
-                <h3 class="text">@ViewBag.conclude</h3>
+                <h3 class="text fw-bold">@ViewBag.conclude</h3>
                 </div>
                    </a>
             </div>  
@@ -82,10 +85,10 @@
         <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#e5eef5" id="divclo">
                     <div class="d-flex align-items-center">
 
-                    <h4 class="text">To close</h4>
+                    <h5 class="text">TO CLOSE</h5>
                     </div>
                     <div class="triangle text-white" id="traclo"></div>
-                <h3 class="text">@ViewBag.toclosed</h3>
+                <h3 class="text fw-bold">@ViewBag.toclosed</h3>
                 </div>
                 </a>
             </div>  
@@ -94,10 +97,10 @@
         <div class="px-2 py-2 border  rounded-4 position-relative status" style="background-color:#efeef4" id="divun">
                     <div class="d-flex align-items-center">
 
-                    <h4 class="text">Unpaid</h4>
+                    <h5 class="text">UNPAID</h5>
                     </div>
                     <div class="triangle text-white" id="traun"></div>
-                <h3 class="text">@ViewBag.unpaid</h3>
+                <h3 class="text fw-bold">@ViewBag.unpaid</h3>
                 </div>
                 </a>
             </div>
@@ -438,11 +441,11 @@
 
 
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" placeholder="Leave a comment here" id="agreementemail" name="blockreason">
+                                    <input class="form-control" placeholder="Leave a comment here" id="agreementemail" name="blockreason" required>
                                     <label for="floatingTextarea2" class="text-muted">Email</label>
                                 </div>
                                 <div class="form-floating">
-                                    <input class="form-control" placeholder="Leave a comment here" id="agreementphone" name="blockreason">
+                                    <input class="form-control" placeholder="Leave a comment here" id="agreementphone" name="blockreason" required>
                                     <label for="floatingTextarea2" class="text-muted">Phone No</label>
                                 </div>
                             </div>

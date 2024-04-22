@@ -46,6 +46,11 @@ namespace HelloDoc.Controllers
             if (ModelState.IsValid)
             {
                 var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
+                if(Email == null)
+                {
+                    _notyf.Error("Invlid Email");
+                    return View(patient);
+                }
                 var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
                 var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name.Trim();
                 var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);

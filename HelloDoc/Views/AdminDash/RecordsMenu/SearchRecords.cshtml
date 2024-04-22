@@ -127,6 +127,14 @@
         window.location.href = downloadUrl;
     }
 
+    $(document).on("click", "#pagination a.page-link", function () {
+        console.log("Pagination link clicked!");
+        var id = $(this).attr("id");
+        currentpage = $("#" + id).data("page");
+        console.log("Current Page: " + currentpage);
+        GetSearchRecord();
+    });
+
     function GetSearchRecord() {
         var status = $("#status").val();
         switch (status) {
@@ -153,13 +161,7 @@
                 break;
         }
 
-        $(document).on("click", "#pagination a.page-link", function () {
-            console.log("Pagination link clicked!");
-            var id = $(this).attr("id");
-            currentpage = $("#" + id).data("page");
-            console.log("Current Page: " + currentpage);
-            GetSearchRecord();
-        });
+      
 
      
 

@@ -28,7 +28,7 @@
                             <div id="btn" class="p-1 btn btn-info">
 
                                 <i class="bi bi-cloud-arrow-up text-white"></i>
-                                <button class="ps-2 btn btn-outline-info text-white" type="submit"> Upload</button>
+                                <button class="ps-2 btn btn-outline-info text-white" id="ubtn" type="button"> Upload</button>
 
                             </div>
                             <input type="file" name="file" class="form-control-file" id="fileUpload" hidden multiple>
@@ -93,7 +93,7 @@
     </div>
   
 </div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
     // document.getElementById("fileUpload").onchange = function () {
@@ -127,5 +127,21 @@
             link.click();
             document.body.removeChild(link);
         });
+    });
+
+
+    $("#ubtn").on("click", function () {
+      
+            
+        let fileInput = $("#fileUpload");
+        
+        if (fileInput[0].files.length == 0) {
+            $("#ubtn").prop("type", "button");
+       
+        } else {
+            $("#ubtn").prop("type", "submit");
+       
+        }
+
     });
 </script>

@@ -85,8 +85,8 @@ namespace HelloDoc.Controllers
 
             string fileName = Path.GetFileName(file.FileName);
             fileName = $"{fileName}_{uniquefilesavetoken}";
-            string path = Path.Combine(_environment.WebRootPath, "Files");
-            _files.AddFile(file, path, fileName);
+           string path = Path.Combine(_environment.WebRootPath, "Files");
+           _files.AddFile(file, path, fileName);
 
             _patient.RequestWiseFile(fileName, reqid);
             return RedirectToAction("viewDocs", new { requestid = reqid} );

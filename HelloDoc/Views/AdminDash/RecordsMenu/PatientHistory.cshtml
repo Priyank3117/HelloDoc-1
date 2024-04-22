@@ -50,15 +50,17 @@
     var pagesize = 6;
     GetPatientRecord();
 
+    $(document).on("click", "#pagination a.page-link", function () {
+        console.log("Pagination link clicked!");
+        var id = $(this).attr("id");
+        currentpage = $("#" + id).data("page");
+        console.log("Current Page: " + currentpage);
+        GetPatientRecord();
+    });
+
     function GetPatientRecord() {
 
-        $(document).on("click", "#pagination a.page-link", function () {
-            console.log("Pagination link clicked!");
-            var id = $(this).attr("id");
-            currentpage = $("#" + id).data("page");
-            console.log("Current Page: " + currentpage);
-            GetPatientRecord();
-        });
+        
 
         var firstName = $("#FirstName").val();
         var phone = $("#PhoneNum").val();

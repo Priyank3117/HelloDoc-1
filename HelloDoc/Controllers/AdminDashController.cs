@@ -373,6 +373,7 @@ namespace HelloDoc.Controllers
             {
                 _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
                     $"<a href='{agreementLink}'>Click here </a> for further procedure");
+                _notyf.Success("Mail sent successfully");
                 return Ok();
             }
 

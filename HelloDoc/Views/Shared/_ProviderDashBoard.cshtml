@@ -32,14 +32,12 @@
                 <!-- -----------------nav--------------- -->
                 <div class="col col-12 d-flex mb-1 flex-row justify-content-between">
 
-                    <nav class="navbar d-inline d-sm-none mt-3">
-                        <div class="container-fluid">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                        </div>
-                    </nav>
+                    <button class="btn btn-outline-info  d-sm-none d-inline" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions"
+                            aria-controls="offcanvasWithBothOptions">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                        </svg>
+                    </button>
                     <div class="doct-logo d-none d-sm-inline">
                         <img src="~/images/doct-logo-2.png" alt="" style="height:4rem" />
                     </div>
@@ -72,6 +70,10 @@
                     </div>
                 </div>
                 <!-- -----------------nav--------------- -->
+
+                @* -------------------------------- *@
+
+                @* -------------------------------- *@
 
             </div>
             <!-- Nav tabs -->
@@ -107,30 +109,37 @@
                 </ul>
 
             </div>
-            <div class="collapse " id="navbarToggleExternalContent">
-                <div class=" p-4">
-                    <ul class="nav nav-tabs-info nav-underline   fs-4 " id="pills-tab" role="tablist">
+
+
+            @* ----------------------------- *@
+            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title text-info" id="offcanvasWithBothOptionsLabel">Welcome : @TempData["username"]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="nav nav-tabs-info nav-underline list-group  fs-4 " id="pills-tab" role="tablist">
                         <li class="nav-item ">
-                            <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none">
+                            <a asp-action="ProviderDashBoard" asp-controller="ProviderDashBoard" style="text-decoration:none">
                                 <button class="nav-link  text-info
-                             @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderDashBoard" ? "active" : "")">
+
+                            @(new string[] { "ProviderDashBoard", "ViewCase", "ViewNotes","Accept","ViewUpload","SendOrder","EncounterForm" }
+                                .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">
                                     Dashboard
                                 </button>
                             </a>
                         </li>
-                        <li class="nav-item ">
-                            <a asp-action="ProviderLocation" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "" ? "active" : "")">Invoice</a>
-                        </li>
+
 
 
                         <li class="nav-item">
-                            <a asp-action="Partners" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Partners" ? "active" : "")">My Schedule</a>
+                            <a asp-action="Scheduling" asp-controller="ProviderDashBoard" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" ? "active" : "")">My Schedule</a>
                         </li>
 
                         <li class="nav-item">
-                            <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none">
+                            <a asp-action="PhysicianProfile" asp-controller="ProviderDashBoard" style="text-decoration:none">
                                 <button class="nav-link text-info
-                            @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")">
+                            @(ViewContext.ActionDescriptor.RouteValues["action"] == "PhysicianProfile" ? "active" : "")">
                                     My Profile
                                 </button>
                             </a>
@@ -139,6 +148,8 @@
                     </ul>
                 </div>
             </div>
+            @* ----------------------------- *@
+           
         </div>
     </header>
     <div class="container-fluid pb-1 rounded-3 shadow">
@@ -425,63 +436,7 @@
 
             }
 
-            // -------------------------------------------------------------
-
-            // -------------------------------------------------------------
-
-            // -------------------------------------------------------------
-            //     $('#ModalFormsubmit').submit(function (event) {
-            //         event.preventDefault();
-
-            //         var formData = $(this).serialize();
-            //         console.log(formData);
-            //         $.ajax({
-            //             url: '/AdminDash/CancelCase',
-            //             type: 'POST',
-            //             data: formData,
-            //             success: function (response) {
-
-            //                 $('#modalForm').modal('hide');
-            //                 window.location.href = "/AdminDash/AdminDash";
-            //             },
-            //             error: function (xhr, status, error) {
-
-            //                 console.error('Error submitting form:', error);
-            //             }
-            //         });
-            //     });
-            //     $('#modalForm').on('hidden.bs.modal', function () {
-            //         $(this).find('form')[0].reset();
-            //     });
-
-            //     // -------------------------------------------------------------
-
-            //     // -------------------------------------------------------------
-
-            //     $('#AssignCaseModalsubmit').submit(function (event) {
-            //         event.preventDefault();
-
-            //         var formData = $(this).serialize();
-            //         console.log(formData);
-            //         $.ajax({
-            //             url: '/AdminDash/AssignCase',
-            //             type: 'POST',
-            //             data: formData,
-            //             success: function (response) {
-
-            //                 $('#AssignCaseModalsubmit').modal('hide');
-            //                 window.location.href = "/AdminDash/AdminDash";
-            //             },
-            //             error: function (xhr, status, error) {
-
-            //                 console.error('Error submitting form:', error);
-            //             }
-            //         });
-            //     });
-            //     $('#AssignCaseModal').on('hidden.bs.modal', function () {
-            //         $(this).find('form')[0].reset();
-            //     });
-            //     // -------------------------------------------------------------
+          
             $('#TransferModalSubmit').submit(function (event) {
                 event.preventDefault();
 
@@ -534,30 +489,30 @@
                 $(this).find('form')[0].reset();
             });
 
-            //     // -------------------
-            //     $('#regiondropdownoftra').change(function () {
+                // -------------------
+                $('#regiondropdownoftra').change(function () {
 
 
-            //         var regionid = $(this).val();
+                    var regionid = $(this).val();
 
-            //         if (regionid != 0) {
-            //             $.ajax({
-            //                 type: "GET",
-            //                 url: "/AdminDash/GetPhysicianForTransfer", // Controller action to fetch models based on brand ID
-            //                 data: { regionid: regionid },
-            //                 success: function (response) {
-            //                     // Clear existing options
-            //                     $('#physiciandropdownoftra').empty();
-            //                     console.log(response.FirstName)
-            //                     $.each(response, function (index, item) {
-            //                         $('#physiciandropdownoftra').append($('<option>').text(item.firstName).attr('value', item.physicianId));
-            //                     });
+                    if (regionid != 0) {
+                        $.ajax({
+                            type: "GET",
+                        url: "/ProviderDashBoard/GetPhysician", // Controller action to fetch models based on brand ID
+                            data: { regionid: regionid },
+                            success: function (response) {
+                                // Clear existing options
+                                $('#physiciandropdownoftra').empty();
+                                console.log(response.FirstName)
+                                $.each(response, function (index, item) {
+                                    $('#physiciandropdownoftra').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                                });
 
-            //                 }
-            //             });
-            //         }
-            //     });
-            //     // -------------------------------------------------------------
+                            }
+                        });
+                    }
+                });
+                // -------------------------------------------------------------
 
             $('#ProfessionNameDropDown').change(function () {
                 var professionId = $(this).val();
@@ -621,26 +576,26 @@
 
             //     // -------------------------------------------------------------
 
-            //     // ------------------
-            //     $('#regiondropdown').change(function () {
-            //         var regionid = $(this).val();
-            //         if (regionid != 0) {
-            //             $.ajax({
-            //                 type: "GET",
-            //                 url: "/AdminDash/GetPhysician", // Controller action to fetch models based on brand ID
-            //                 data: { regionid: regionid },
-            //                 success: function (response) {
-            //                     // Clear existing options
-            //                     $('#physiciandropdown').empty();
-            //                     console.log(response.FirstName)
-            //                     $.each(response, function (index, item) {
-            //                         $('#physiciandropdown').append($('<option>').text(item.firstName).attr('value', item.physicianId));
-            //                     });
+                // ------------------
+                $('#regiondropdown').change(function () {
+                    var regionid = $(this).val();
+                    if (regionid != 0) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/AdminDash/GetPhysician", // Controller action to fetch models based on brand ID
+                            data: { regionid: regionid },
+                            success: function (response) {
+                                // Clear existing options
+                                $('#physiciandropdown').empty();
+                                console.log(response.FirstName)
+                                $.each(response, function (index, item) {
+                                    $('#physiciandropdown').append($('<option>').text(item.firstName).attr('value', item.physicianId));
+                                });
 
-            //                 }
-            //             });
-            //         }
-            //     });
+                            }
+                        });
+                    }
+                });
 
             //     // -------------------------------------------------------------
             //     $('#BlockCaseModalsubmit').submit(function (event) {

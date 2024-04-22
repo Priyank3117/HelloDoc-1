@@ -100,3 +100,12 @@ body {
 .is-hide {
     display: none;
 }
+
+@media  screen and (max-height: 700px) {
+    
+    #c-container{
+        height : 66vh !important;
+    }
+
+
+}

@@ -58,6 +58,7 @@ namespace BAL.Repository
 
 		public ViewCase ViewCase(int id, int status)
 		{
+
 			var patientdata = _adminDashBoard.getregionwise().Where(s => s.reqclientid == id).FirstOrDefault();
 			ViewCase viewCase = new ViewCase();
 			viewCase.FirstName = patientdata.Name;
@@ -528,8 +529,8 @@ namespace BAL.Repository
 
 			bool shiftExists = _context.ShiftDetails.Any(sd => sd.IsDeleted == new BitArray(new[] {false}) && sd.Shift.PhysicianId == (physicianId != 0 ? physicianId : model.Physicianid) &&
 			sd.ShiftDate.Date == model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).Date &&
-			(sd.StartTime <= model.Endtime ||
-			sd.EndTime >= model.Starttime));
+			(sd.StartTime < model.Endtime &&
+			sd.EndTime > model.Starttime));
 
 
 			if (!shiftExists)
@@ -713,6 +714,7 @@ namespace BAL.Repository
 			var data = (from profession in _context.HealthProfessionalTypes
 						join business in _context.HealthProfessionals
 						on profession.HealthProfessionalId equals business.Profession
+						where business.IsDeleted != new BitArray(new[] {true})
 						select new BusinessModel
 						{
 							profession = profession.ProfessionName,
@@ -802,6 +804,12 @@ namespace BAL.Repository
 				vendor.IsDeleted = new BitArray(new[] { true });
 				_context.Update(vendor);
 				_context.SaveChanges();
+				_notyf.Success("Deleted Successsfully");
+			}
+			else
+			{
+			_notyf.Error("Not deleted try again");
+
 			}
 		}
 
