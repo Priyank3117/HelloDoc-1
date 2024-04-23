@@ -39,7 +39,7 @@
             </div>
        </div>
        
-        <div class="container border rounded-3 p-3 p-md-5 mb-3 d-flex flex-column  bg-white mt-3">
+        <div class="container border rounded-3 p-3 p-md-5 mb-3 d-flex flex-column  white-bag mt-3">
             <h5 class="fw-bold my-3">Account Information</h5>
             <form method="post" asp-controller="@controller" asp-action="ResetPhysicianPassword" id="ResetPhysicianPassword">
                 <input value="@Model.physicianid" class="d-none" asp-for="physicianid" />
@@ -269,14 +269,14 @@
                         <div class="form-floating">
                             <input asp-for=@Model.BusinessName type="text" class="form-control changable2" id="email" placeholder="Email" name="Businessname" disabled required>
                             <label for="email">BusinessName</label>
-                          
+                          <span asp-validation-for="BusinessName" class="mt-2 text-danger"></span>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input asp-for=@Model.BusinessWebsite type="text" class="form-control changable2" id="email" placeholder="Email" name="Businesswebsite" disabled>
+                            <input asp-for=@Model.BusinessWebsite type="text" class="form-control changable2" id="email" placeholder="Email" name="Businesswebsite" disabled required>
                             <label for="email">BusinessWebsite</label>
-                       
+                            <span asp-validation-for="BusinessWebsite" class="mt-2 text-danger"></span>
                         </div>
                     </div>
                     <div class="col">

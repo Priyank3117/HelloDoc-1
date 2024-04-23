@@ -210,6 +210,7 @@ namespace BAL.Repository
                 adminProfile.zip = admin.Zip;
                 adminProfile.City = admin.City;
                 adminProfile.state = region.RegionId;
+                adminProfile.adminId = admin.AdminId;
                 adminProfile.FirstName = admin.FirstName;
                 adminProfile.LastName = admin.LastName;
                 adminProfile.MobileNumAdmin = admin.Mobile;
@@ -587,6 +588,11 @@ namespace BAL.Repository
             return location;
 		}
 
+        public string GetAdminEmailById(int id)
+        {
+            var email = _context.Admins.Where(s => s.AdminId == id).Select(s => s.Email).FirstOrDefault();
+            return email;
+        }
         public string GetPhyEmail(string id)
         {
             var email =_context.Physicians.FirstOrDefault(s => s.PhysicianId == int.Parse(id)).Email;

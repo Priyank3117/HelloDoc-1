@@ -14,7 +14,7 @@ using Rotativa.AspNetCore;
 
 namespace HelloDoc.Controllers
 {
-    [CustomAuthorize(new string[] {"Physician"})]
+    [   CustomAuthorize(new string[] { "Physician" }, "2")]
     public class ProviderDashBoardController : Controller
     {
         private readonly ApplicationDbContext _context;

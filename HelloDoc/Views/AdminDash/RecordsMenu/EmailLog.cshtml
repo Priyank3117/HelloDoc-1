@@ -1,7 +1,62 @@
-﻿
-@{
+﻿﻿
+﻿@{
     ViewData["Title"] = "EmailLog";
+    Layout = "~/Views/Shared/_AdminDash.cshtml";
 }
 
-<h1>EmailLog</h1>
+<div class="container-fluid white-bag mb-5" style="height:80%!important">
+    <div class="d-flex justify-content-between ">
+        <h4 class="my-3">Email Logs(Gmail)</h4>
+        <div>
+            <a class="btn btn-outline-info mt-3" asp-action="AdminDash" >Back</a>
+        </div>
+    </div>
+    <div class="mx-0 row px-4 border-bottom-0 white-bag border border-secondary rounded-top pt-3 pb-4 ">
+        <div class="col-sm-12 col-md-12 col-lg-2 form-floating my-3">
+            <select class="form-select shadow-none statusSelect p-3" id="status" aria-label="Floating label select example">
+                <option value="0">Select Request Status</option>
+                <option value="1">New</option>
+                <option value="2">Pending</option>
+                <option value="3">Active</option>
+                <option value="4">Conclude</option>
+                <option value="5">To-close</option>
+                <option value="6">Unpaid</option>
+            </select>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-2 form-floating my-3">
+            <input type="text"
+                   class="form-control"
+                   id="FirstName"
+                   placeholder="First Name" />
+            <label for="floatingInput1" class="ms-2">Receiver Name</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-2 form-floating my-3">
+            <input type="text"
+                   class="form-control"
+                   id="Email"
+                   placeholder="name@InputType.com" />
+            <label for="floatingInput4" class="ms-2">Email Id</label>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-2 form-floating my-3">
+            <input type="date" class="form-control shadow-none startingDate" id="FromDateOfService">
+            <label for="floatingInput" class="customlable">Created Date</label>
+            <span class="text-danger"></span>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-2 form-floating my-3">
+            <input type="date" class="form-control shadow-none startingDate" id="FromDateOfService">
+            <label for="floatingInput" class="customlable">Sent Date</label>
+            <span class="text-danger"></span>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-2 form-floating my-4">
+        <div class="d-flex justify-content-end white-bag">
+            <button class="btn btn-outline-info" onclick="RemoveFilters()">Clear</button>
+            <button class="btn btn-info mx-3" onclick="GetPatientRecord()">Search</button>
+        </div>
+        </div>
+    </div>
+   
+    <div class=" border-top-0 border border-secondary white-bag rounded-bottom  px-3 overflow-auto" style="height: 80% !important" id="PatientHistoryPartial">
+    </div>
+</div>
+
 

@@ -10,7 +10,7 @@ namespace BAL.Interface
     public interface IJwtService
     {
 
-        public string Generatetoken(string Email,string role);
+        public string Generatetoken(string Email,string role,int? takenId);
 
         bool ValidateToken(string token, out JwtSecurityToken jwtSecurityToken);
     }

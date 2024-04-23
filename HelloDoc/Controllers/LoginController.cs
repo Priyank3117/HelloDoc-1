@@ -51,6 +51,24 @@ namespace HelloDoc.Controllers
                     _notyf.Error("Invlid Email");
                     return View(patient);
                 }
+
+                var adminsRoleId = _context.Admins.FirstOrDefault(s => s.AspNetUserId == Email.AspNetUserId)?.RoleId;
+                var physiciansRoleId = _context.Physicians.FirstOrDefault(s => s.AspNetUserId == Email.AspNetUserId)?.RoleId;
+
+                int? takenId = 0;
+                if (adminsRoleId != null )
+                {
+                    takenId = adminsRoleId;
+                }
+                else if (physiciansRoleId != null )
+                {
+                    takenId = physiciansRoleId;
+                }
+                else
+                {
+                    takenId = 0;
+                }
+
                 var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
                 var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name.Trim();
                 var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
@@ -62,7 +80,7 @@ namespace HelloDoc.Controllers
                     HttpContext.Session.SetString("Email", patient.Email);
                     HttpContext.Session.SetString("Role", role);
                   
-                    var jwt = _jwtService.Generatetoken(patient.Email, role);
+                    var jwt = _jwtService.Generatetoken(patient.Email, role,takenId);
                     Response.Cookies.Append("jwt", jwt);
                     if (role == "Patient")
                     {
@@ -154,23 +172,33 @@ namespace HelloDoc.Controllers
         public IActionResult Patient_ResetPassword(Patient_ResetPassword patient_ResetPassword)
 
         {
+            var email = _context.AspNetUsers.FirstOrDefault(s => s.Email ==  patient_ResetPassword.Email);
 
-            var mail = patient_ResetPassword.Email;
-            var token = GenerateToken(mail);
-            var subject = "Change the Password";
-            var agreementLink = Url.Action("ResetPasswordPage", "Login", new { token = token }, protocol: HttpContext.Request.Scheme);
-
-
-            if (ModelState.IsValid)
+            if (email != null)
             {
+                var mail = patient_ResetPassword.Email;
 
-                if (agreementLink != null)
+                var token = GenerateToken(mail);
+                var subject = "Change the Password";
+                var agreementLink = Url.Action("ResetPasswordPage", "Login", new { token = token }, protocol: HttpContext.Request.Scheme);
+
+
+                if (ModelState.IsValid)
                 {
-                    _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
-                        $"<a href='{agreementLink}'>Click here </a> for Change Your Password");
+
+                    if (agreementLink != null)
+                    {
+                        _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
+                            $"<a href='{agreementLink}'>Click here </a> for Change Your Password");
+                        _notyf.Success("Email sent successfully");
+                    }
                 }
             }
-
+              
+            else
+            {
+                _notyf.Error("User is not present in database");
+            }
             return RedirectToAction("Patient_ResetPassword");
 
 

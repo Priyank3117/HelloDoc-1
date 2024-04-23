@@ -257,32 +257,34 @@ namespace BAL.Repository
 
 		public List<UserAccess> GetUserAccessData(int role)
 		{
-			var result = (from aspuser in _context.AspNetUsers
+			var result = (from aspnetuser in _context.AspNetUsers
 						  join aspnetuserrole in _context.AspNetUserRoles
-						  on aspuser.AspNetUserId equals aspnetuserrole.UserId
+						  on aspnetuser.AspNetUserId equals aspnetuserrole.UserId
 						  join aspnetrole in _context.AspNetRoles
 						  on aspnetuserrole.RoleId equals aspnetrole.AspNetRoleId
-						  join phy in _context.Physicians
-						  on aspuser.AspNetUserId equals phy.AspNetUserId into phyusers
-						  from totaluser in phyusers.DefaultIfEmpty()
 						  join admin in _context.Admins
-						  on aspuser.AspNetUserId equals admin.AspNetUserId into admins
+						  on aspnetuser.AspNetUserId equals admin.AspNetUserId into admins
 						  from totaladmins in admins.DefaultIfEmpty()
+						  join phy in _context.Physicians
+						  on aspnetuser.AspNetUserId equals phy.AspNetUserId into phyusers
+						  from totaluser in phyusers.DefaultIfEmpty()
+						  
 						  where ((role == 0 || aspnetuserrole.RoleId == role.ToString()) && aspnetuserrole.RoleId != "2")
-						  select (role == 1 ? new UserAccess()
+						  select (aspnetuserrole.RoleId == "1" ? new UserAccess()
 						  {
 							  AccountType = aspnetrole.Name,
-							  AccountPOC = aspuser.UserName,
+							  AccountPOC = aspnetuser.UserName,
 							  phonenum = totaladmins.Mobile,
 							  status = totaladmins.AdminId,
 							  roleid = role,
-							  Email = totaladmins.Email,
+					
+                              Email = aspnetuser.Email,
 							  AccountTypeid = int.Parse(aspnetuserrole.RoleId),
 							  useraccessid = totaladmins.AdminId,
 						  } : new UserAccess()
 						  {
 							  AccountType = aspnetrole.Name,
-							  AccountPOC = aspuser.UserName,
+							  AccountPOC = aspnetuser.UserName,
 							  phonenum = totaluser.Mobile,
 							  status = totaluser.Status,
 							  roleid = role,

@@ -11,7 +11,7 @@ namespace HelloDoc.Controllers
 {
 
    
-    [CustomAuthorize(new string[] { "Patient" })]
+    [CustomAuthorize(new string[] { "Patient" },"0")]
     public class DashBoardController : Controller
     {
 

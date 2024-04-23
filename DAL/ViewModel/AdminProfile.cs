@@ -38,7 +38,6 @@ namespace DAL.ViewModel
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Confirm Email is required")]
         [DataType(DataType.EmailAddress)]
         [Compare("Email", ErrorMessage = "The email and confirmation email do not match.")]
         public string? ConfirmEmail { get; set; }
@@ -48,6 +47,7 @@ namespace DAL.ViewModel
         public string? Address1 { get; set; }
         public string? Address2 { get; set; }
 
+        public int? adminId { get; set; }
         public string? City { get; set; }
 
         public string? zip { get; set; }

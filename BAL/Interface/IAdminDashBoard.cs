@@ -55,5 +55,7 @@ namespace BAL.Interface
 
         public List<PhysicianLocation> GetLocationsList();
         public string GetPhyEmail(string id);
-	}
+        public string GetAdminEmailById(int id);
+
+    }
 }

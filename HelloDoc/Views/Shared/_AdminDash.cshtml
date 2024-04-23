@@ -114,7 +114,7 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a asp-action="Partners" class="nav-link text-info  @(new string[] { "Partners", "AddBusiness" }
+                        <a asp-action="Partners" class="nav-link text-info  @(new string[] { "Partners", "AddBusiness","EditBusinessData" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">Partners</a>
                     </li>
                     
@@ -133,12 +133,12 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link  text-info ms-2
-                        @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory" }
+                        @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory","Emaillog" }
                         .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
                         <ul class="dropdown-menu">
                             <li><a asp-action="SearchRecords" class="dropdown-item ">Search Records</a></li>
-                            <li><a class="dropdown-item">Email Logs</a></li>
+                            <li><a asp-action="Emaillog" class="dropdown-item">Email Logs</a></li>
                             <li><a class="dropdown-item">SMS Logs</a></li>
                             <li><a asp-action="PatientHistory" class="dropdown-item">Patient Records</a></li>
                             <li><a asp-action="BlockHistory" class="dropdown-item">Blocked History</a></li>
@@ -172,7 +172,7 @@
                             <a asp-action="ProviderLocation" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
                         </li>
                         <li class="nav-item">
-                            <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none">
+                            <a asp-action="AdminProfile" asp-controller="AdminDash"  style="text-decoration:none">
                                 <button class="nav-link text-info
                             @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")">
                                     My Profile
@@ -191,7 +191,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a asp-action="Partners" class="nav-link text-info  @(new string[] { "Partners", "AddBusiness" }
+                            <a asp-action="Partners" class="nav-link text-info  @(new string[] { "Partners", "AddBusiness","EditBusinessData" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">Partners</a>
                         </li>
 
@@ -210,12 +210,12 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link  text-info
-                        @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory" }
+                        @(new string[] { "Records", "SearchRecords", "PatientHistory", "BlockHistory","Emaillog" }
                         .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")"
                                role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
                             <ul class="dropdown-menu">
                                 <li><a asp-action="SearchRecords" class="dropdown-item ">Search Records</a></li>
-                                <li><a class="dropdown-item">Email Logs</a></li>
+                                <li><a asp-action="Emaillog" class="dropdown-item">Email Logs</a></li>
                                 <li><a class="dropdown-item">SMS Logs</a></li>
                                 <li><a asp-action="PatientHistory" class="dropdown-item">Patient Records</a></li>
                                 <li><a asp-action="BlockHistory" class="dropdown-item">Blocked History</a></li>

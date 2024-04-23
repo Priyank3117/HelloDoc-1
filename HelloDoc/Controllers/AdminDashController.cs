@@ -12,6 +12,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using OfficeOpenXml;
 
 
+
 namespace HelloDoc.Controllers
 {
 
@@ -103,7 +104,7 @@ namespace HelloDoc.Controllers
 
         #region viewcase,viewnotes,cancel,assign,teansfer,block,viewupload,clearcase
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" } , "2")]
         [HttpGet("ProviderDashBoard/ViewCase/{id}", Name = "ProviderCase")]
         [HttpGet("AdminDash/ViewCase/{id}/{status}", Name = "AdminCase")]
         public IActionResult ViewCase(int id, int status)
@@ -117,7 +118,7 @@ namespace HelloDoc.Controllers
         }
 
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpGet("ProviderDashBoard/ViewNotes/{id}", Name = "ProviderNotes")]
         [HttpGet("AdminDash/ViewNotes/{id}", Name = "AdminCaseNotes")]
         public ActionResult ViewNotes(int id)
@@ -175,7 +176,7 @@ namespace HelloDoc.Controllers
             return Ok();
         }
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpGet("ProviderDashBoard/ViewUpload/{id}", Name = "ProviderUploads")]
         [HttpGet("AdminDash/ViewUpload/{id}", Name = "AdminCaseNotesUploads")]
         public IActionResult ViewUpload(int id)
@@ -306,7 +307,7 @@ namespace HelloDoc.Controllers
         #endregion
 
         #region sendorder,sendagreement
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpGet("AdminDash/SendOrder/{id}", Name = "AdminCaseNotesorder")]
         [HttpGet("ProviderDashBoard/SendOrder/{id}", Name = "Providerorder")]
         public IActionResult SendOrder(int id)
@@ -328,7 +329,7 @@ namespace HelloDoc.Controllers
 
 
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpPost("AdminDash/SendOrder/{id}", Name = "AdminCaseNotesorderr")]
         [HttpPost("ProviderDashBoard/SendOrder/{id}", Name = "Providerorderr")]
         public IActionResult SendOrder(SendOrder sendOrder, int id)
@@ -349,7 +350,7 @@ namespace HelloDoc.Controllers
             return RedirectToAction("SendOrder", controllerName, new { id = id });
         }
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         public IActionResult GetBusinessName(string professionId)
         {
             var result = _adminAction.GetHealthProfessionalByProfessionId(professionId);
@@ -383,7 +384,7 @@ namespace HelloDoc.Controllers
         #endregion
 
         #region Encounterform,finalize,generatepdf
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpGet("ProviderDashBoard/EncounterForm/{id}", Name = "ProviderForms")]
         [HttpGet("AdminDash/EncounterForm/{id}", Name = "AdminForms")]
         public IActionResult EncounterForm(int id)
@@ -397,7 +398,7 @@ namespace HelloDoc.Controllers
             return View(result);
         }
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpPost("ProviderDashBoard/EncounterForm/{id}", Name = "ProviderForms")]
         [HttpPost("AdminDash/EncounterForm/{id}", Name = "AdminForms")]
         public IActionResult EncounterForm(int id, Encounter enc)
@@ -476,11 +477,11 @@ namespace HelloDoc.Controllers
 
 
 
-        public IActionResult AdministratorInformation(AdminProfile adminProfile, List<string> states)
+        public IActionResult AdministratorInformation(AdminProfile adminProfile, List<string> states,int id)
 
         {
 
-            var Email = HttpContext.Session.GetString("Email");
+            var Email = _AdminDashboard.GetAdminEmailById(id);
             if (Email != null)
             {
                 _AdminDashboard.AdministratorInformation(adminProfile, Email, states);
@@ -491,9 +492,9 @@ namespace HelloDoc.Controllers
         }
 
 
-        public IActionResult MailingBillingInformation(AdminProfile adminProfile)
+        public IActionResult MailingBillingInformation(AdminProfile adminProfile, int id)
         {
-            var Email = HttpContext.Session.GetString("Email");
+            var Email = _AdminDashboard.GetAdminEmailById(id);
             if (Email != null)
             {
                 _AdminDashboard.MailingBillingInformation(adminProfile, Email);
@@ -503,9 +504,9 @@ namespace HelloDoc.Controllers
             return RedirectToAction("AdminProfile");
         }
 
-        public IActionResult AccountInformation([FromForm] string Password)
+        public IActionResult AccountInformation([FromForm] string Password,int id)
         {
-            var Email = HttpContext.Session.GetString("Email");
+            var Email = _AdminDashboard.GetAdminEmailById(id);
 
             if (Email != null && Password != null)
             {
@@ -523,7 +524,7 @@ namespace HelloDoc.Controllers
         }
         #endregion
 
-        #region AdminDashButtons->SendLink,Createrequest,ExportExcle
+          #region AdminDashButtons->SendLink,Createrequest,ExportExcle
         public IActionResult ExportRequests(string[] currentstatus, int? pagesize = null, int? currentpage = null)
         {
             string[] num = currentstatus[0].Split(',');
@@ -586,7 +587,7 @@ namespace HelloDoc.Controllers
         }
 
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpGet("AdminDash/CreateRequest", Name = "AdminRequest")]
         [HttpGet("ProviderDashBoard/CreateRequest", Name = "ProviderRequest")]
         public IActionResult CreateRequest()
@@ -600,7 +601,7 @@ namespace HelloDoc.Controllers
             return View(createRequest);
         }
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpPost("ProviderDashBoard/CreateRequest", Name = "ProviderRequests")]
         [HttpPost("AdminDash/CreateRequest", Name = "AdminRequests")]
         public IActionResult CreateRequest(CreateRequest createRequest, string SelectedStateId)
@@ -687,6 +688,7 @@ namespace HelloDoc.Controllers
 
 
 
+
         #region getlocation
 
         public IActionResult GetPhysicianLocation()
@@ -697,7 +699,7 @@ namespace HelloDoc.Controllers
         #endregion
 
         #region physicianprofile
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpGet("AdminDash/PhysicianProfile/{id}", Name = "Profileviewbyadmin")]
         [HttpGet("ProviderDashBoard/PhysicianProfile/{id?}", Name = "Profileviewbyprovider")]
         public IActionResult PhysicianProfile(int id)
@@ -722,7 +724,7 @@ namespace HelloDoc.Controllers
             return View(physicanProfile);
         }
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpPost("ProviderDashBoard/ResetPhysicianPassword", Name = "ProviderRequestss")]
         [HttpPost("AdminDash/ResetPhysicianPassword", Name = "AdminRequestss")]
         public IActionResult ResetPhysicianPassword(string Password, int physicianid)
@@ -865,6 +867,7 @@ namespace HelloDoc.Controllers
         }
         #endregion
 
+
         #region AccessTab
 
         #region UserAccess
@@ -971,6 +974,7 @@ namespace HelloDoc.Controllers
         #endregion
 
         #region scheduling
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         public IActionResult PhysicianScheduling()
         {
             var region =  _adminAction.GetRegionsList();
@@ -1007,7 +1011,7 @@ namespace HelloDoc.Controllers
         }
 
 
-        [CustomAuthorize(new string[] { "Admin", "Physician" })]
+        [CustomAuthorize(new string[] { "Admin", "Physician" }, "2")]
         [HttpPost("AdminDash/CreateShift", Name = "Adminshift")]
         [HttpPost("ProviderDashBoard/CreateShift", Name = "Providershift")]
         public IActionResult CreateShift(Scheduling model)
@@ -1360,6 +1364,11 @@ namespace HelloDoc.Controllers
         {
             _adminDashboardRecords.Unblock(id);
             return RedirectToAction("BlockHistory");
+        }
+
+        public IActionResult Emaillog()
+        {
+            return View("SearchRecords/EmailLog");
         }
         #endregion
 
