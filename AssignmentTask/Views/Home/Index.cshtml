@@ -1,8 +1,115 @@
-﻿@{
+﻿@model AssignmentDAL.ViewModel.ProjectViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div class=" text-center" style="background-color:#a87132;height:60px">  <h3 class="w-100  mt-2 text-white mb-1">Project Management Stystem</h1></div>
+  
+     <div class="w-100 bg-dark text-center" style="height:80px">
+        <div class=""><button class="btn bg-white mt-4" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD PROJECT</button></div>
+     </div>
+    <div class="w-100 mt-3">
+        <input type="text"  id="Search" class="form-control w-75 mx-auto" placeholder="search">
+
+        <div class="mt-3 w-75 mx-auto" id="Partial">
+        </div>
+    </div>
 </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#a87132">
+                <h5 class="text-white" id="exampleModalLabel">Task Form</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+           
+            <div class="modal-body">
+                <form asp-action="ProjectAdd" >
+                    <div class="row mt-3">
+                        <div class="col">
+                            <input type="text" asp-for="taskName" class="form-control" placeholder="Task Name" required>
+                            <span asp-validation-for="taskName"></span>
+                        </div>
+                        <div class="col">
+                            <input type="text" asp-for="assignee" class="form-control" placeholder="Assignee" required>
+                            <span asp-validation-for="assignee"></span>
+                        </div>
+                    </div>
+              
+                    <div class="row mt-3">
+                        <div class="col">
+                            <input type="text" asp-for="description" class="form-control" placeholder="Description" required>
+                            <span asp-validation-for="description"></span>
+                        </div>
+                        <div class="col">
+                            <input type="date" asp-for="dueDate" max="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                   min="@DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd")" class="form-control" placeholder="Due Date" required>
+                            <span asp-validation-for="dueDate"></span>
+                        </div>
+                    </div>
+             
+               
+                    <div class="row mt-3">
+                        <div class="col">
+                            <input type="text" asp-for="city" class="form-control" placeholder="City" >
+                        </div>
+                        <div class="col">
+                            <select class="form-control  shadow-none" asp-for="domainValue" required>
+                                <option  selected disabled>All Domain</option>
+                                @foreach (var state in ViewBag.Domains)
+                                {
+                                    <option value="@state.DomainId">@state.Name</option>
+                                }
+                            </select>
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form> 
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    
+    var modalBody = document.querySelector('#eventModal .modal-body');
+
+    $("#Search").on("input", function () {
+        filter();
+    });
+
+    filter();
+    function filter() { 
+      SearchValue = $("#Search").val();  
+        $.ajax({
+            type: 'GET',
+            url: '/Home/GetSearchProjects',
+           
+            data: {
+                SearchValue: SearchValue
+            },
+            success: function (response) {
+                $("#Partial").html(response);
+            },
+            error: function (response) {
+                alert("Fail");
+            }
+        })
+    }
+    
+
+</script>

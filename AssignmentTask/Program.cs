@@ -1,8 +1,16 @@
+
+
+using AssignmentBAL.Interface;
+using AssignmentBAL.Repository;
+using AssignmentDAL.DataContext;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddScoped<IProjects, Projects>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
