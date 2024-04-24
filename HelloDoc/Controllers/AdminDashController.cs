@@ -568,7 +568,7 @@ namespace HelloDoc.Controllers
         public IActionResult SendLinkForm(string sendLinkFirstname, string sendLinkLastname, string sendLinkEmail)
         {
             var mail = sendLinkEmail;
-            var subject = "Creat Patient Request";
+            var subject = "Create Patient Request";
             var formLink = Url.ActionLink("Patient_Request", "Request", protocol: HttpContext.Request.Scheme);
 
 
@@ -577,7 +577,7 @@ namespace HelloDoc.Controllers
 
                 if (formLink != null)
                 {
-                    _emailService.SendEmail("patelpriyank3112002@gmail.com", subject,
+                    _emailService.SendEmail(mail, subject,
                      $"<a href='{formLink}'>Click here </a> for Request");
                     _notyf.Success("Email Sent Successfully");
                 }
