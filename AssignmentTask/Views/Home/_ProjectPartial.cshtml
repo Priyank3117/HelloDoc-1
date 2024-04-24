@@ -20,8 +20,7 @@
             <tr class="text-center">
                 <td>
                     @item.ProjectId
-                </td>
-             
+                </td>            
                 <td >@item.ProjectName</td>
                 <td >@item.Assignee</td>
                 <td >@item.Description</td>
@@ -30,7 +29,7 @@
                 <td >@item.City</td>            
                 <td >
                     <div class="d-flex">
-                        <a class="btn  rounded me-2 text-white" style="background-color:#a87132" id="Edit">Edit</a>
+                        <a class="btn  rounded me-2 text-white" style="background-color:#a87132"  id="Edit" >Edit</a>
                         <a class="btn bg-dark text-white rounded me-2" asp-action="DeleteProject" asp-route-id="@item.ProjectId">Delete</a>
                     </div>
                 </td>
