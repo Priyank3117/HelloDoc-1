@@ -42,73 +42,82 @@ namespace HelloDoc.Controllers
         public IActionResult Patient_login(Patient_login patient)
         {
 
-
-            if (ModelState.IsValid)
+            try
             {
-                var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
-                if(Email == null)
+                if (ModelState.IsValid)
                 {
-                    _notyf.Error("Invlid Email");
-                    return View(patient);
-                }
-
-                var adminsRoleId = _context.Admins.FirstOrDefault(s => s.AspNetUserId == Email.AspNetUserId)?.RoleId;
-                var physiciansRoleId = _context.Physicians.FirstOrDefault(s => s.AspNetUserId == Email.AspNetUserId)?.RoleId;
-
-                int? takenId = 0;
-                if (adminsRoleId != null )
-                {
-                    takenId = adminsRoleId;
-                }
-                else if (physiciansRoleId != null )
-                {
-                    takenId = physiciansRoleId;
-                }
-                else
-                {
-                    takenId = 0;
-                }
-
-                var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
-                var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name.Trim();
-                var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
-                bool verifiedpassword = result == PasswordVerificationResult.Success;
-
-                if (Email != null && verifiedpassword)
-                {
-
-                    HttpContext.Session.SetString("Email", patient.Email);
-                    HttpContext.Session.SetString("Role", role);
-                  
-                    var jwt = _jwtService.Generatetoken(patient.Email, role,takenId);
-                    Response.Cookies.Append("jwt", jwt);
-                    if (role == "Patient")
+                    var Email = _context.AspNetUsers.FirstOrDefault(m => m.Email == patient.Email);
+                    if (Email == null)
                     {
-                      
-                        _notyf.Success("Successfully Login");
-                        return RedirectToAction("Index", "DashBoard");
+                        _notyf.Error("Invlid Email");
+                        return View(patient);
                     }
-                    else if (role == "Admin")
+
+                    var adminsRoleId = _context.Admins.FirstOrDefault(s => s.AspNetUserId == Email.AspNetUserId)?.RoleId;
+                    var physiciansRoleId = _context.Physicians.FirstOrDefault(s => s.AspNetUserId == Email.AspNetUserId)?.RoleId;
+
+                    int? takenId = 0;
+                    if (adminsRoleId != null)
                     {
-                        _notyf.Success("Successfully Login");
-                        return RedirectToAction("AdminDash", "AdminDash");
+                        takenId = adminsRoleId;
                     }
-                    else if(role == "Physician")
+                    else if (physiciansRoleId != null)
                     {
-                       int  physicianid = _context.Physicians.FirstOrDefault(i => i.Email == patient.Email).PhysicianId;
-                        HttpContext.Session.SetInt32("PhysicianId", physicianid);
-                        _notyf.Success("Successfully Login");
-                        return RedirectToAction("ProviderDashBoard", "ProviderDashBoard");
+                        takenId = physiciansRoleId;
+                    }
+                    else
+                    {
+                        takenId = 0;
+                    }
+
+                    var user = _context.AspNetUserRoles.FirstOrDefault(i => i.UserId == Email.AspNetUserId);
+                    var role = _context.AspNetRoles.FirstOrDefault(k => k.AspNetRoleId == user.RoleId).Name.Trim();
+                    var result = _passwordHasher.VerifyHashedPassword(null, Email.PasswordHash, patient.PasswordHash);
+                    bool verifiedpassword = result == PasswordVerificationResult.Success;
+
+                    if (Email != null && verifiedpassword)
+                    {
+
+                        HttpContext.Session.SetString("Email", patient.Email);
+                        HttpContext.Session.SetString("Role", role);
+
+                        var jwt = _jwtService.Generatetoken(patient.Email, role, takenId);
+                        Response.Cookies.Append("jwt", jwt);
+                        if (role == "Patient")
+                        {
+
+                            _notyf.Success("Successfully Login");
+                            return RedirectToAction("Index", "DashBoard");
+                        }
+                        else if (role == "Admin")
+                        {
+                            _notyf.Success("Successfully Login");
+                            return RedirectToAction("AdminDash", "AdminDash");
+                        }
+                        else if (role == "Physician")
+                        {
+                            int physicianid = _context.Physicians.FirstOrDefault(i => i.Email == patient.Email).PhysicianId;
+                            HttpContext.Session.SetInt32("PhysicianId", physicianid);
+                            _notyf.Success("Successfully Login");
+                            return RedirectToAction("ProviderDashBoard", "ProviderDashBoard");
+                        }
+                    }
+                    else if (Email == null || verifiedpassword == false)
+                    {
+                        _notyf.Error("Invalid Email OR Password");
                     }
                 }
-                else if(Email == null || verifiedpassword == false)
-                {
-                    _notyf.Error("Invalid Email OR Password");
-                }
+
+
+                return View(patient);
             }
+            catch(Exception ex)
+            {
 
-          
-            return View(patient);
+                _notyf.Error("Invalid User");
+                return RedirectToAction("Patient_login");
+            }
+           
         }
 
         public IActionResult Logout()

@@ -47,9 +47,10 @@ builder.Services.AddScoped<IPasswordHasher<AdminProfile>,PasswordHasher<AdminPro
 builder.Services.AddScoped<IPasswordHasher<CreateAccount>,PasswordHasher<CreateAccount>>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddNotyf(config => {
-    config.DurationInSeconds = 5; config.IsDismissable = true;
-    config.Position = NotyfPosition.TopRight;
+    config.DurationInSeconds = 5; 
     config.IsDismissable = false;
+    config.Position = NotyfPosition.TopRight;
+    //config.IsDismissable = false;
 });
 
 //Jwt configuration starts here

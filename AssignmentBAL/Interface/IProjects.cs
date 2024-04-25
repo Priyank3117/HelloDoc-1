@@ -19,5 +19,7 @@ namespace AssignmentBAL.Interface
         public ProjectViewModel GetProject(string id);
 
         public void DeleteProject(string id);
+
+        public void UpdateProject(ProjectViewModel projectViewModel,string id);
     }
 }

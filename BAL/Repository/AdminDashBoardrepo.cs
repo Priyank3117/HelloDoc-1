@@ -305,6 +305,7 @@ namespace BAL.Repository
                     request.LastName = admin.LastName;
                     request.CreatedDate = DateTime.Now;
                     request.PhoneNumber = admin.Mobile;
+                    request.IsDeleted = new BitArray(new[] { false });
                     request.Email = Email;
                     request.RequestTypeId = 1;
                 }
@@ -315,6 +316,7 @@ namespace BAL.Repository
                     request.LastName = admin.LastName;
                     request.CreatedDate = DateTime.Now;
                     request.PhoneNumber = admin.Mobile;
+                    request.IsDeleted = new BitArray(new[] { false });
                     request.Email = Email;
                     request.PhysicianId = admin.PhysicianId;
                     request.RequestTypeId = 1;

@@ -13,7 +13,7 @@ namespace DAL.ViewModel
         [Column(TypeName = "timestamp without time zone")]
         public DateTime CreatedDate { get; set; }
 
-    
+         public int? status {  get; set; }
         public int CurrentStatus { get; set; }
 
         [StringLength(50)]

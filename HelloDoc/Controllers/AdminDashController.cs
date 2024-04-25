@@ -592,7 +592,7 @@ namespace HelloDoc.Controllers
         [HttpGet("ProviderDashBoard/CreateRequest", Name = "ProviderRequest")]
         public IActionResult CreateRequest()
         {
-            string email = HttpContext.Session.GetString("Email");
+            string? email = HttpContext.Session.GetString("Email");
 
             Admin? admin = _AdminDashboard.GetAdminByEmail(email);
             ViewBag.IsPhysican = admin != null ? false : true;
@@ -606,7 +606,7 @@ namespace HelloDoc.Controllers
         [HttpPost("AdminDash/CreateRequest", Name = "AdminRequests")]
         public IActionResult CreateRequest(CreateRequest createRequest, string SelectedStateId)
         {
-            string email = HttpContext.Session.GetString("Email");
+            string? email = HttpContext.Session.GetString("Email");
 
             Admin? admin = _AdminDashboard.GetAdminByEmail(email);
 			ViewBag.IsPhysican = admin != null ? false : true;

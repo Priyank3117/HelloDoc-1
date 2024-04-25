@@ -33,16 +33,23 @@ namespace AssignmentTask.Controllers
 
         public IActionResult GetSearchProjects(string SearchValue)
         {
-            var result = _project.ProjectList().Where(item => (string.IsNullOrEmpty(SearchValue) || item.ProjectName.ToLower().Contains(SearchValue.ToLower()))).ToList();
+            var result = _project.ProjectList().Where(item => (string.IsNullOrEmpty(SearchValue) || item.ProjectName.ToLower().Contains(SearchValue.ToLower()))).OrderBy(s =>s.ProjectId).ToList();
             return PartialView("_ProjectPartial",result);
         }
-
+        [HttpGet]
         public IActionResult EditProject(string id)
         {
+            ViewBag.Domains = _project.DomainList();
             var result = _project.GetProject(id);
-            return Json(result);
+            return PartialView("_EditModal",result);
         }
 
+        [HttpPost]
+        public IActionResult EditPost(ProjectViewModel projectViewModel,string id)
+        {
+            _project.UpdateProject(projectViewModel,id);
+            return RedirectToAction("Index");
+        }
         public IActionResult DeleteProject(string id)
         {
             _project.DeleteProject(id);

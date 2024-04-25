@@ -36,6 +36,8 @@ namespace DAL.ViewModel
         [StringLength(100)]
         public string? City { get; set; }
 
+
+        [Required]
         [StringLength(100)]
         public string? State { get; set; }
 

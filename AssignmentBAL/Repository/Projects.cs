@@ -2,11 +2,6 @@
 using AssignmentDAL.DataContext;
 using AssignmentDAL.DataModels;
 using AssignmentDAL.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AssignmentBAL.Repository
 {
@@ -67,6 +62,7 @@ namespace AssignmentBAL.Repository
                 projectViewModel.dueDate = project.DueDate;
                 projectViewModel.description = project.Description;
                 projectViewModel.city = project.City;
+                projectViewModel.projectId = project.ProjectId.ToString();
 
                 return projectViewModel;
             }
@@ -81,6 +77,26 @@ namespace AssignmentBAL.Repository
         {
             List<Project> result = _context.Projects.ToList();  
             return result;
+        }
+
+        public void UpdateProject(ProjectViewModel projectViewModel, string id)
+        {
+            var project = _context.Projects.FirstOrDefault(s => s.ProjectId == int.Parse(id));
+
+            if(project != null)
+            {
+                project.ProjectName = projectViewModel.taskName;
+                project.Assignee = projectViewModel.assignee;
+                project.DueDate = projectViewModel.dueDate;
+                project.Description = projectViewModel.description;
+                project.City = projectViewModel.city;
+                project.DomainId = int.Parse(projectViewModel.domainValue);
+                project.Domain = _context.Domains.FirstOrDefault(s => s.DomainId == int.Parse(projectViewModel.domainValue)).Name;
+
+                _context.Update(project);
+                _context.SaveChanges();
+            }
+
         }
     }
 }

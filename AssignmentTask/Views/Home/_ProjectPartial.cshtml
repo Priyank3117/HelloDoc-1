@@ -29,7 +29,7 @@
                 <td >@item.City</td>            
                 <td >
                     <div class="d-flex">
-                        <a class="btn  rounded me-2 text-white" style="background-color:#a87132"  id="Edit" >Edit</a>
+                        <a class="btn  rounded me-2 text-white" style="background-color:#a87132" id="Edit_@item.ProjectId"  onclick="Edit(@item.ProjectId)" >Edit</a>
                         <a class="btn bg-dark text-white rounded me-2" asp-action="DeleteProject" asp-route-id="@item.ProjectId">Delete</a>
                     </div>
                 </td>
@@ -43,25 +43,22 @@
 
 
 <script>
-    $(document).ready(function () {
-        $("#Edit").on("click", function () {
-          
-            $.ajax({
-                type: 'GET',
-                url: '/Home/EditProject',
+    function Edit(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/Home/EditProject',
 
-                data: {
-                    id : id
-                },
-                success: function (response) {
-                    $("#exampleModal").modal('Show')
-                },
-                error: function (response) {
-                    alert("Fail");
-                }
-            })
+            data: {
+                id: id
+            },
+            success: function (response) {
+                $(".modalPV").html(response);
+                $("#openModal").click();
+            },
+            error: function (response) {
+                alert("Fail");
+            }
+        })
 
-        });
-    });
-    
+    };
 </script>

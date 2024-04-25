@@ -17,6 +17,7 @@ namespace AssignmentDAL.ViewModel
         [Required]
         public string assignee { get; set;}
 
+        public string? projectId {  get; set;}
 
         public string? description { get; set;}
 

@@ -1,27 +1,5 @@
 ﻿@model AssignmentDAL.ViewModel.ProjectViewModel
-
-@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <div class=" text-center" style="background-color:#a87132;height:60px">  <h3 class="w-100  mt-2 text-white mb-1">Project Management Stystem</h1></div>
-  
-     <div class="w-100 bg-dark text-center" style="height:80px">
-        <div class=""><button class="btn bg-white mt-4" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD PROJECT</button></div>
-     </div>
-    <div class="w-100 mt-3">
-        <input type="text"  id="Search" class="form-control w-75 mx-auto" placeholder="search">
-
-        <div class="mt-3 w-75 mx-auto" id="Partial">
-        </div>
-    </div>
-</div>
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color:#a87132">
@@ -29,9 +7,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-           
+
             <div class="modal-body">
-                <form asp-action="ProjectAdd" >
+                <form asp-action="EditPost" asp-route-id="@Model.projectId">
                     <div class="row mt-3">
                         <div class="col">
                             <input type="text" asp-for="taskName" class="form-control" placeholder="Task Name" required>
@@ -42,74 +20,43 @@
                             <span asp-validation-for="assignee"></span>
                         </div>
                     </div>
-              
+
                     <div class="row mt-3">
                         <div class="col">
                             <input type="text" asp-for="description" class="form-control" placeholder="Description" required>
                             <span asp-validation-for="description"></span>
                         </div>
                         <div class="col">
-                            <input type="date" asp-for="dueDate"
+                            <input type="date" asp-for="dueDate" 
                                    min="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" placeholder="Due Date" required>
                             <span asp-validation-for="dueDate"></span>
                         </div>
                     </div>
-             
-               
+
+
                     <div class="row mt-3">
                         <div class="col">
-                            <input type="text" asp-for="city" class="form-control" placeholder="City" >
+                            <input type="text" asp-for="city" class="form-control" placeholder="City">
                         </div>
                         <div class="col">
                             <select class="form-control  shadow-none" asp-for="domainValue" required>
-                                <option  selected disabled>All Domain</option>
+                                <option  disabled>All Domain</option>
                                 @foreach (var state in ViewBag.Domains)
                                 {
                                     <option value="@state.DomainId">@state.Name</option>
                                 }
                             </select>
-                            
+
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit"  class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
-                </form> 
+                </form>
             </div>
-           
+
         </div>
     </div>
 </div>
-<div class="modalPV"></div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script>
-    
-    var modalBody = document.querySelector('#eventModal .modal-body');
-
-    $("#Search").on("input", function () {
-        filter();
-    });
-
-    filter();
-    function filter() { 
-      SearchValue = $("#Search").val();  
-        $.ajax({
-            type: 'GET',
-            url: '/Home/GetSearchProjects',
-           
-            data: {
-                SearchValue: SearchValue
-            },
-            success: function (response) {
-                $("#Partial").html(response);
-            },
-            error: function (response) {
-                alert("Fail");
-            }
-        })
-    }
-    
-
-</script>
+<button data-bs-target="#editModal" data-bs-toggle="modal" id="openModal" hidden></button>
