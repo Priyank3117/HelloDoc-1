@@ -93,8 +93,9 @@
    <script>
     const keys = Object.keys(localStorage);
 
-    
-    for (const key of keys) 
+    // Iterate over all keys
+    for (const key of keys) {
+        // If the key is not "myKey", delete it
         if (key !== "theme") {
             localStorage.removeItem(key);
         }
