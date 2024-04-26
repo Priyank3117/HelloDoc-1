@@ -2,11 +2,10 @@
 using BAL.Interface;
 using DAL.DataContext;
 using DAL.ViewModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
-
+    
 namespace HelloDoc.Controllers
 {
 

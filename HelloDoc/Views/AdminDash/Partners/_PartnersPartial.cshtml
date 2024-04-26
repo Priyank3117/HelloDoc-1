@@ -1,6 +1,11 @@
-﻿@model List<DAL.ViewModel.BusinessModel>
+﻿
+@{
+    int i = 0;
+}
+
+@model List<DAL.ViewModel.BusinessModel>
 <div class="white-bag border justify-content-center">
-    <table class="table">
+    <table class="table table-hover  d-md-table d-none">
 
         <thead class="table-secondary text-center">
             <tr>
@@ -34,3 +39,42 @@
         }
     </table>
 </div>
+@*Accordion*@
+
+<div class="accordion mx-2 pb-3" id="accordionExample">
+
+
+        @foreach (var item in Model)
+        {
+
+
+            <div class="accordion-item bg-info-subtle">
+                <button class=" accordion-header providermenu-accordion btn w-100 px-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@i" aria-expanded="false" aria-controls="collapseTwo">
+                    <div class="py-2 ps-3 d-flex align-items-center">
+                        <span class="fs-4 mx-3">@item.BusinessName</span>
+                    </div>
+                 
+                </button>
+                <div id="collapse_@i" class="accordion-collapse collapse border-top border-secondary" data-bs-parent="#accordionExample">
+                    <div class="accordion-body position-relative p-3">
+                        <h6 class="fw-bold text-body">Email : @item.Email</h6>
+                        <span class="fw-bold text-body">
+                        Fax : @item.FaxNumber
+                        </span>
+                    <h6 class="fw-bold text-body">Phone Number : @item.PhoneNum</h6>
+                        <h6 class="fw-bold text-body">Business Contact : @item.BusinessContact</h6>
+                        <div class="d-flex justify-content-end align-items-center">
+                        <a asp-action="EditBusinessData" asp-route-id="@item.vendorid" class="btn btn-outline-info me-2">Edit</a>
+                        <a asp-action="DeleteBusinessData" asp-route-vendorid="@item.vendorid" class="btn btn-outline-info me-2">Delete</a>
+                        <a asp-action="AddBusiness">
+                            <button class="btn btn-outline-info  shadow-none" id="providerBtn" style="width:fit-content">
+                                <span>Add Business</span>
+                            </button>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            i++;
+        }
+    

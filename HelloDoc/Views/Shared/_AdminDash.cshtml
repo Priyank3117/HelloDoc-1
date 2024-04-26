@@ -7,6 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - HelloDoc</title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/images/doctorlogo.png" />
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/AdminDash.css" asp-append-version="true" />
@@ -22,7 +23,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
-   
+
 
 </head>
 @*< div id="overlay">
@@ -35,14 +36,16 @@
         <div class="container-fluid px-0">
             <div class="row border border-bottom ">
                 <!-- -----------------nav--------------- -->
-                <div class="col col-12 d-flex mb-1 flex-row px-3 justify-content-between" style="height:5.5rem">
+                <div class="col col-12 d-flex mb-1 flex-row px-3 align-items-center justify-content-between" style="height:5.5rem">
 
-                    <button class="btn btn-outline-info  d-sm-none d-inline" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions"
-                            aria-controls="offcanvasWithBothOptions">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
-                        </svg>
-                    </button>
+                    <div class="d-sm-none d-inline  ">
+                        <button class="btn btn-outline-info  d-sm-none d-inline" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions"
+                                aria-controls="offcanvasWithBothOptions">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                            </svg>
+                        </button>
+                    </div>
 
                     <div class="doct-logo d-none d-sm-inline my-auto">
                         <img src="~/images/doct-logo-2.png" alt="" style="height:4rem" />
@@ -75,7 +78,7 @@
                         </button>
                     </div>
                 </div>
-                <!-- -----------------nav--------------- -->
+                <!-- -----------------nav----------------------------->
 
             </div>
             <!-- Nav tabs -->
@@ -83,7 +86,7 @@
                 <ul class="nav nav-tabs-info nav-underline gap-4 " id="pills-tab" role="tablist" style="font-size:20px">
                     <li class="nav-item ">
                         <a asp-action="AdminDash" asp-controller="AdminDash" style="text-decoration:none">
-                            <button class="nav-link  text-info  
+                            <button class="nav-link  text-info
 
                         @(new string[] { "AdminDash", "ViewNotes", "ViewCase","SendOrder","CreateRequest","ViewUpload" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">
@@ -117,7 +120,7 @@
                         <a asp-action="Partners" class="nav-link text-info  @(new string[] { "Partners", "AddBusiness","EditBusinessData" }
                             .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">Partners</a>
                     </li>
-                    
+
                     <li class="nav-item dropdown">
                         <a class="nav-link  text-info ms-2
 
@@ -138,7 +141,7 @@
                            role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
                         <ul class="dropdown-menu">
                             <li><a asp-action="SearchRecords" class="dropdown-item ">Search Records</a></li>
-                            
+
                             <li><a asp-action="PatientHistory" class="dropdown-item">Patient Records</a></li>
                             <li><a asp-action="BlockHistory" class="dropdown-item">Blocked History</a></li>
                         </ul>
@@ -149,7 +152,7 @@
             </div>
 
             @* ---------------- *@
-          
+
             <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title text-info" id="offcanvasWithBothOptionsLabel">Welcome : @TempData["username"]</h5>
@@ -171,7 +174,7 @@
                             <a asp-action="ProviderLocation" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "ProviderLocation" ? "active" : "")">Provider Location</a>
                         </li>
                         <li class="nav-item">
-                            <a asp-action="AdminProfile" asp-controller="AdminDash"  style="text-decoration:none">
+                            <a asp-action="AdminProfile" asp-controller="AdminDash" style="text-decoration:none">
                                 <button class="nav-link text-info
                             @(ViewContext.ActionDescriptor.RouteValues["action"] == "AdminProfile" ? "active" : "")">
                                     My Profile
@@ -214,8 +217,8 @@
                                role="button" data-bs-toggle="dropdown" aria-expanded="false"> Records </a>
                             <ul class="dropdown-menu">
                                 <li><a asp-action="SearchRecords" class="dropdown-item ">Search Records</a></li>
-                          
-                    
+
+
                                 <li><a asp-action="PatientHistory" class="dropdown-item">Patient Records</a></li>
                                 <li><a asp-action="BlockHistory" class="dropdown-item">Blocked History</a></li>
                             </ul>
@@ -225,16 +228,16 @@
                 </div>
             </div>
             @* ---------------- *@
-          
+
         </div>
     </header>
-    <div class="container-fluid pb-5  rounded-3 shadow">
+    <div class="container-fluid  rounded-3 shadow">
         <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer   bg-dark text-white pe-3 footer position-absolute  w-100 align-middle bottom-0 z-1" style="height: 6vh !important;">
+    <footer class="border-top footer    bg-dark text-white pe-3 footer position-relative w-100 align-middle   z-1" style="height: 6vh !important; bottom:1%;">
         <div class="d-flex flex-row justify-content-end align-items-center my-auto h-100 py-auto w-100">
             <span>Terms Of Condition | Privacy Policy</span>
         </div>
@@ -555,7 +558,7 @@
                                 },
                                 success: function (data) {
                                     $('#PartialViews').html(data);
-                                  
+
                                 },
 
                                 error: function (error) {
@@ -574,7 +577,7 @@
 
 
             // -------------------------------------------------------------
-           
+
 
             // -------------------------------------------------------------
 
@@ -617,7 +620,7 @@
                     type: 'POST',
                     data: formData,
                     success: function (response) {
-                        
+
                         $('#AssignCaseModalsubmit').modal('hide');
                         window.location.href = "/AdminDash/AdminDash";
                     },
