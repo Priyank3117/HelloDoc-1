@@ -495,24 +495,24 @@
                 <form id="sendLinkForm" asp-action="SendLinkForm">
                  <div class="modal-body">
                      <div class="form-floating my-3">
-                         <input type="text" class="form-control" id="sendLinkFirstname" name="sendLinkFirstname" placeholder="Firstname">
+                         <input type="text" class="form-control" id="sendLinkFirstname" name="sendLinkFirstname" placeholder="Firstname" required>
                          <label class="text-muted floating-label">Firstname</label>
                          <span class="text-danger"></span>
                      </div>
                      <div class="form-floating my-3">
-                         <input type="text" class="form-control" id="sendLinkLarstname" name="sendLinkLastname" placeholder="Lastname">
+                            <input type="text" class="form-control" id="sendLinkLarstname" name="sendLinkLastname" placeholder="Lastname" required>
                          <label class="text-muted floating-label">Lastname</label>
                          <span class="text-danger"></span>
                      </div>
                      <div class="form-floating my-3">
-                         <input type="email" class="form-control" id="sendLinkEmail" name="sendLinkEmail" placeholder="Email">
+                            <input type="email" class="form-control" id="sendLinkEmail" name="sendLinkEmail" placeholder="Email" required>
                          <label class="text-muted floating-label">Email</label>
                          <span class="text-danger"></span>
                      </div>
 
                  </div>
                  <div class="modal-footer border-top-0">
-                        <button type="submit" class="btn btn-info text-white" data-bs-dismiss="modal">Submit</button>
+                        <button type="submit" class="btn btn-info text-white" >Submit</button>
                      <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>
                  </div>
              </form>

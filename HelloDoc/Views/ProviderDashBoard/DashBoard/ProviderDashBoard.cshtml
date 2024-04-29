@@ -217,21 +217,23 @@
 
                     <div class="d-flex justify-content-center my-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radio" id="houseCallRadio" required>
-                            <label class="form-check-label btn btn-outline-info" for="flexRadioDefault1">
+                            <input class="btn-check" type="radio" name="radio" id="houseCallRadio" required>
+                            <label class=" btn btn-outline-info" for="houseCallRadio">
                                 House Call
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radio" id="consultRadio" required>
-                            <label class="form-check-label btn btn-outline-info" for="flexRadioDefault2">
+                            <input class="btn-check" type="radio" name="radio" id="consultRadio" required>
+                            <label class=" btn btn-outline-info" for="consultRadio">
                                 Consult
                             </label>
                         </div>
 
                     </div>
-                    <button type="button" class="btn btn-info" onclick="TypeOfCare()"> Save </button>
-                    <button class="btn btn-info text-white" data-bs-dismiss="modal"> cancel</button>
+                    <div class="float-end mt-4">
+                        <button type="button" class="btn btn-info" onclick="TypeOfCare()"> Save </button>
+                        <button class="btn btn-info text-white" data-bs-dismiss="modal"> cancel</button>
+                    </div>
                 </div>
             </div>
         </div>

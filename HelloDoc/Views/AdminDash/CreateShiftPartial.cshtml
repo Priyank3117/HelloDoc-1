@@ -13,7 +13,7 @@
               
                     
                 <div class="form-floating my-3">
-                    <select asp-for="Regionid" class="p-2 px-3 form-control w-100 regionDropdown" onchange="getPhysicianByregion(this.value)">
+                    <select asp-for="Regionid" class="p-2 px-3 form-control w-100 regionDropdown" onchange="getPhysicianByregion(this.value)" required>
                         <option value="" selected disabled>Regions</option>
                         @foreach (var region in ViewBag.regions)
                         {
@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <select class="form-select pt-1 physicianDropdown" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example">
+                    <select class="form-select pt-1 physicianDropdown" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example" required>
                         <option value="" selected disabled>Physician</option>
                     </select>
                 </div>
@@ -46,7 +46,7 @@
                 <div class="col-md-6 d-flex align-items-center justify-content-start mb-3">
                     <label for="floatingInput">Repeat</label>
                     <label class="switch">
-                        <input type="checkbox" asp-for="Isrepeat" id="Isrepeat" class="switch-input" onchange="toggleCheckboxes()">
+                        <input type="checkbox" asp-for="Isrepeat" id="Isrepeat" class="form-check-input switch-input ms-2" onchange="toggleCheckboxes()">
                         <span class="slider round"></span>
                     </label>
                 </div>

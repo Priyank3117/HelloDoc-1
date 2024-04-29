@@ -147,6 +147,14 @@ namespace BAL.Repository
 		public void Unblock(int id)
 		{
 			var user = _context.BlockRequests.FirstOrDefault(s => s.RequestId == id.ToString());
+            var request = _context.Requests.FirstOrDefault(s => s.RequestId == id);
+
+            if(request != null) {
+
+                request.Status = 1;
+                _context.Update(request);
+                _context.SaveChanges();
+            }
 
 			if (user != null)
 			{

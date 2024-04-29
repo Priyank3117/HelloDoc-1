@@ -13,7 +13,7 @@
 
 
                 <div class="form-floating my-3">
-                    <select asp-for="Regionid" required class="p-2 px-3 form-control w-100 regionDropdown" onchange="getPhysicianByregion(this.value)">
+                    <select asp-for="Regionid" required class="p-2 px-3 form-control w-100 regionDropdown" onchange="getPhysicianByregion(this.value)" >
                         <option value=""  selected disabled>Select Regions</option>
                         @foreach (var region in ViewBag.regions)
                         {
@@ -27,19 +27,22 @@
                 <div class="col-md-12 form-floating mb-3">
                     <input id="StartDate" asp-for="Startdate" class="form-control rounded vcs" name="Startdate" type="date" placeholder=Suchtext autocomplete=off>
                     <label for="floatingInput">Starting Date</label>
+                    <span asp-validation-for="Startdate" class="mt-2 text-danger"></span>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
                     <input id="StartTime" asp-for="Starttime" class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off>
                     <label for="floatingInput">Start</label>
+                    <span asp-validation-for="Starttime" class="mt-2 text-danger"></span>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
                     <input id="EndTime" asp-for="Endtime" class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off>
                     <label for="floatingInput">End</label>
+                    <span asp-validation-for="Endtime" class="mt-2 text-danger"></span>
                 </div>
                 <div class="col-md-6 d-flex align-items-center justify-content-start mb-3">
                     <label for="floatingInput">Repeat</label>
                     <label class="switch">
-                        <input type="checkbox" asp-for="Isrepeat" id="Isrepeat" class="switch-input" onchange="toggleCheckboxes()">
+                        <input type="checkbox" asp-for="Isrepeat" id="Isrepeat" class="form-check-input switch-input ms-2" onchange="toggleCheckboxes()">
                         <span class="slider round"></span>
                     </label>
                 </div>

@@ -136,6 +136,7 @@ namespace BAL.Repository
 		public void BlockCase(int blocknameid, string blocknotes)
 		{
 			var user = _context.Requests.FirstOrDefault(h => h.RequestId == blocknameid);
+			
 
 			if (user != null)
 			{
@@ -262,6 +263,7 @@ namespace BAL.Repository
 						  select new Encounter()
 						  {
 							  FirstName = reqclient.FirstName,
+							  Email = reqclient.Email,
 							  LastName = reqclient.LastName,
 							  Location = reqclient.Street + " " + reqclient.City,
 							  BirthDate = new DateTime((int)reqclient.IntYear, int.Parse(reqclient.StrMonth), (int)reqclient.IntDate),
@@ -517,112 +519,132 @@ namespace BAL.Repository
 			return role;
 		}
 
-		#endregion
+        #endregion
 
-		#region Creatshift
-
-
-		public void CreateShift(Scheduling model, string email, int physicianId)
-		{
-			var admin = _context.Admins.FirstOrDefault(s => s.Email == email);
+        #region Creatshift
 
 
-			bool shiftExists = _context.ShiftDetails.Any(sd => sd.IsDeleted == new BitArray(new[] {false}) && sd.Shift.PhysicianId == (physicianId != 0 ? physicianId : model.Physicianid) &&
-			sd.ShiftDate.Date == model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).Date &&
-			(sd.StartTime < model.Endtime &&
-			sd.EndTime > model.Starttime));
+        public void CreateShift(Scheduling model, string email, int physicianId)
+        {
+
+            try
+            {
+
+                var timeSpan = model.Endtime - model.Starttime;
 
 
-			if (!shiftExists)
-			{
-				Shift shift = new Shift();
-				shift.PhysicianId = physicianId != 0 ? physicianId : model.Physicianid;
-				shift.StartDate = model.Startdate;
-				shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
-				shift.RepeatUpto = model.Repeatupto;
-				shift.CreatedDate = DateTime.Now;
-				shift.CreatedBy = physicianId != 0 ? _context.Physicians.FirstOrDefault(s => s.PhysicianId == physicianId).AspNetUserId : admin.AspNetUserId;
-				_context.Shifts.Add(shift);
-				_context.SaveChanges();
+                bool timeSpanGreaterThanOneHour = timeSpan.TotalHours > 1 && timeSpan.TotalHours < 8;
 
-				ShiftDetail sd = new ShiftDetail();
-				sd.ShiftId = shift.ShiftId;
-				sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
-				sd.StartTime = model.Starttime;
-				sd.EndTime = model.Endtime;
-				sd.RegionId = model.Regionid;
-				sd.Status = model.Status;
-				sd.IsDeleted = new BitArray(new[] { false });
+                if (timeSpanGreaterThanOneHour)
+                {
+                    var admin = _context.Admins.FirstOrDefault(s => s.Email == email);
 
 
-				_context.ShiftDetails.Add(sd);
-				_context.SaveChanges();
-
-				ShiftDetailRegion sr = new ShiftDetailRegion();
-				sr.ShiftDetailId = sd.ShiftDetailId;
-				sr.RegionId = (int)model.Regionid;
-				sr.IsDeleted = new BitArray(new[] { false });
-				_context.ShiftDetailRegions.Add(sr);
-				_context.SaveChanges();
-
-				if (shift.IsRepeat[0])
-				{
-					var stringArray = model.checkWeekday.Split(",");
-					foreach (var weekday in stringArray)
-					{
-
-						DateTime startDateForWeekday = model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).AddDays((7 + int.Parse(weekday) - (int)model.Startdate.DayOfWeek) % 7);
+                    bool shiftExists = _context.ShiftDetails.Any(sd => sd.IsDeleted == new BitArray(new[] { false }) && sd.Shift.PhysicianId == (physicianId != 0 ? physicianId : model.Physicianid) &&
+                    sd.ShiftDate.Date == model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).Date &&
+                    (sd.StartTime < model.Endtime &&
+                    sd.EndTime > model.Starttime));
 
 
-						if (startDateForWeekday < model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)))
-						{
-							startDateForWeekday = startDateForWeekday.AddDays(7); // Add 7 days to move it to the next occurrence
-						}
+                    if (!shiftExists)
+                    {
+                        Shift shift = new Shift();
+                        shift.PhysicianId = physicianId != 0 ? physicianId : model.Physicianid;
+                        shift.StartDate = model.Startdate;
+                        shift.IsRepeat = new BitArray(new[] { model.Isrepeat });
+                        shift.RepeatUpto = model.Repeatupto;
+                        shift.CreatedDate = DateTime.Now;
+                        shift.CreatedBy = physicianId != 0 ? _context.Physicians.FirstOrDefault(s => s.PhysicianId == physicianId).AspNetUserId : admin.AspNetUserId;
+                        _context.Shifts.Add(shift);
+                        _context.SaveChanges();
 
-						// Iterate over Refill times
-						for (int i = 1; i <= shift.RepeatUpto; i++)
-						{
-							bool shiftDetailsExists = _context.ShiftDetails.Any(sd => sd.IsDeleted == new BitArray(new[] { false }) && sd.Shift.PhysicianId == model.Physicianid &&
-							sd.ShiftDate.Date == startDateForWeekday.Date &&
-							(sd.StartTime <= model.Endtime ||
-							 sd.EndTime >= model.Starttime));
-							// Create a new ShiftDetail instance for each occurrence
+                        ShiftDetail sd = new ShiftDetail();
+                        sd.ShiftId = shift.ShiftId;
+                        sd.ShiftDate = new DateTime(model.Startdate.Year, model.Startdate.Month, model.Startdate.Day);
+                        sd.StartTime = model.Starttime;
+                        sd.EndTime = model.Endtime;
+                        sd.RegionId = model.Regionid;
+                        sd.Status = model.Status;
+                        sd.IsDeleted = new BitArray(new[] { false });
 
-							if (!shiftDetailsExists)
-							{
-								ShiftDetail shiftDetail = new ShiftDetail
-								{
-									ShiftId = shift.ShiftId,
-									ShiftDate = startDateForWeekday.AddDays(i * 7), // Add i  7 days to get the next occurrence
-									RegionId = (int)model.Regionid,
-									StartTime = model.Starttime,
-									EndTime = model.Endtime,
-									Status = 0,
-									IsDeleted = new BitArray(new[] { false })
-								};
 
-								// Add the ShiftDetail to the database context
-								_context.Add(shiftDetail);
-								_context.SaveChanges();
-							}
-							else
-							{
+                        _context.ShiftDetails.Add(sd);
+                        _context.SaveChanges();
 
-								_notyf.Error($"A shift already exists at {startDateForWeekday.ToString("dddd, MMMM d, yyyy")} from {model.Starttime.ToString("h:mm tt")} to {model.Endtime.ToString("h:mm tt")}");
-							}
+                        ShiftDetailRegion sr = new ShiftDetailRegion();
+                        sr.ShiftDetailId = sd.ShiftDetailId;
+                        sr.RegionId = (int)model.Regionid;
+                        sr.IsDeleted = new BitArray(new[] { false });
+                        _context.ShiftDetailRegions.Add(sr);
+                        _context.SaveChanges();
 
-						}
-					}
-				}
-			}
-			else
-			{
-				 _notyf.Error($"A shift already exists from {model.Startdate.ToString("dddd, MMMM d, yyyy")} from {model.Starttime.ToString("h:mm tt")} to {model.Endtime.ToString("h:mm tt")}");
-			}
+                        if (shift.IsRepeat[0])
+                        {
+                            var stringArray = model.checkWeekday.Split(",");
+                            foreach (var weekday in stringArray)
+                            {
 
-		}
+                                DateTime startDateForWeekday = model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)).AddDays((7 + int.Parse(weekday) - (int)model.Startdate.DayOfWeek) % 7);
 
-		public List<Physician> GetPhysicianShiftList(int region)
+
+                                if (startDateForWeekday < model.Startdate.ToDateTime(TimeOnly.FromDateTime(DateTime.Now)))
+                                {
+                                    startDateForWeekday = startDateForWeekday.AddDays(7); // Add 7 days to move it to the next occurrence
+                                }
+
+                                // Iterate over Refill times
+                                for (int i = 1; i <= shift.RepeatUpto; i++)
+                                {
+                                    bool shiftDetailsExists = _context.ShiftDetails.Any(sd => sd.IsDeleted == new BitArray(new[] { false }) && sd.Shift.PhysicianId == model.Physicianid &&
+                                    sd.ShiftDate.Date == startDateForWeekday.Date &&
+                                  (sd.StartTime < model.Endtime &&
+                                    sd.EndTime > model.Starttime));
+                                    // Create a new ShiftDetail instance for each occurrence
+
+                                    if (!shiftDetailsExists)
+                                    {
+                                        ShiftDetail shiftDetail = new ShiftDetail
+                                        {
+                                            ShiftId = shift.ShiftId,
+                                            ShiftDate = startDateForWeekday.AddDays(i * 7), // Add i  7 days to get the next occurrence
+                                            RegionId = (int)model.Regionid,
+                                            StartTime = model.Starttime,
+                                            EndTime = model.Endtime,
+                                            Status = 0,
+                                            IsDeleted = new BitArray(new[] { false })
+                                        };
+
+                                        // Add the ShiftDetail to the database context
+                                        _context.Add(shiftDetail);
+                                        _context.SaveChanges();
+                                    }
+                                    else
+                                    {
+
+                                        _notyf.Error($"A shift already exists at {startDateForWeekday.ToString("dddd, MMMM d, yyyy")} from {model.Starttime.ToString("h:mm tt")} to {model.Endtime.ToString("h:mm tt")}");
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _notyf.Error($"A shift already exists from {model.Startdate.ToString("dddd, MMMM d, yyyy")} from {model.Starttime.ToString("h:mm tt")} to {model.Endtime.ToString("h:mm tt")}");
+                    }
+                }
+                else
+                {
+                    _notyf.Error("Shift must be greater than 1 hour and less than 8 hours");
+                }
+            }
+            catch
+            {
+                _notyf.Error("Error While Making Shift Please Try Again");
+
+            }
+        }
+        public List<Physician> GetPhysicianShiftList(int region)
 		{
 			var physicians = (from physicianRegion in _context.PhysicianRegions
 							  where region == 0 || physicianRegion.RegionId == region
