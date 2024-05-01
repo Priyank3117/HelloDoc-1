@@ -52,6 +52,12 @@ public partial class AspNetUser
     [InverseProperty("ModifiedByNavigation")]
     public virtual ICollection<Business> BusinessModifiedByNavigations { get; set; } = new List<Business>();
 
+    [InverseProperty("CreatedByNavigation")]
+    public virtual ICollection<PayrateByProvider> PayrateByProviderCreatedByNavigations { get; set; } = new List<PayrateByProvider>();
+
+    [InverseProperty("ModifiedByNavigation")]
+    public virtual ICollection<PayrateByProvider> PayrateByProviderModifiedByNavigations { get; set; } = new List<PayrateByProvider>();
+
     [InverseProperty("AspNetUser")]
     public virtual ICollection<Physician> PhysicianAspNetUsers { get; set; } = new List<Physician>();
 
@@ -66,6 +72,21 @@ public partial class AspNetUser
 
     [InverseProperty("CreatedByNavigation")]
     public virtual ICollection<Shift> Shifts { get; set; } = new List<Shift>();
+
+    [InverseProperty("CreatedByNavigation")]
+    public virtual ICollection<Timesheet> TimesheetCreatedByNavigations { get; set; } = new List<Timesheet>();
+
+    [InverseProperty("CreatedByNavigation")]
+    public virtual ICollection<TimesheetDetailReimbursement> TimesheetDetailReimbursementCreatedByNavigations { get; set; } = new List<TimesheetDetailReimbursement>();
+
+    [InverseProperty("ModifiedByNavigation")]
+    public virtual ICollection<TimesheetDetailReimbursement> TimesheetDetailReimbursementModifiedByNavigations { get; set; } = new List<TimesheetDetailReimbursement>();
+
+    [InverseProperty("ModifiedByNavigation")]
+    public virtual ICollection<TimesheetDetail> TimesheetDetails { get; set; } = new List<TimesheetDetail>();
+
+    [InverseProperty("ModifiedByNavigation")]
+    public virtual ICollection<Timesheet> TimesheetModifiedByNavigations { get; set; } = new List<Timesheet>();
 
     [InverseProperty("AspNetUser")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
