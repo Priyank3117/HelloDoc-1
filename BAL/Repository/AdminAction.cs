@@ -870,7 +870,11 @@ namespace BAL.Repository
 
 
 		#endregion Creatshift
-
+		public List<Physician> GetPhysicianList()
+		{
+			var physicianList = _context.Physicians.ToList();
+			return	physicianList;
+		}
 
 	}
 }

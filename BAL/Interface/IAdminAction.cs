@@ -66,8 +66,9 @@ namespace BAL.Interface
 
 		public void DeleteShift(int shiftDetailId, int region);
 
+        public List<Physician> GetPhysicianList();
 
-		public List<Physician> OnDuty(string region);
+        public List<Physician> OnDuty(string region);
         public List<Physician> OffDuty(string region);
         #endregion
 

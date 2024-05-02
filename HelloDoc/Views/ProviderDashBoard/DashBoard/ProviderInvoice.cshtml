@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminDash.cshtml";
+}
+
+
+<div class="bg-body-secondary">
+    <div class="container d-flex justify-content-between text-center align-items-center my-3 bg-body-secondary">
+        <h3 class="text-body fw-semibold">Timesheet</h3>
+        <a asp-action="ProviderDashBoard" class="btn btn-outline-info"> ❮  Back </a>
+    </div>
+
+
+    <div class="container my-3 white-bag shadow p-3">
+        <div class="d-flex justify-content-between">
+
+
+
+            <select class="form-select py-3  w-25 " aria-label="Default select example">
+                <option value="0">Search By Timesheetperiod</option>
+                @{
+                    int month = 1;
+                    int year = DateTime.Now.Year;
+
+                }
+                @for (month = 1; month <= 12; month++)
+                {
+
+                    @if (month < DateTime.Now.Month)
+                    {
+                        string startdate1 = new DateTime(year, month, 1).Date.ToString("yyyy/MM/dd");
+                        string enddate1 = new DateTime(year, month, 15).Date.ToString("yyyy/MM/dd");
+
+                        <option value="@startdate1">@startdate1 - @enddate1</option>
+
+                        string startdate2 = new DateTime(year, month, 16).Date.ToString("yyyy/MM/dd");
+                        string enddate2 = new DateTime(year, month, 1).AddMonths(1).AddDays(-1).Date.ToString("yyyy/MM/dd");
+                        <option value="@startdate2">@startdate2 - @enddate2</option>
+                    }
+                }
+            </select>
+
+            <button class="btn btn-outline-info">Finalize Timesheet </button>
+ 
+        </div>
+    </div>
+</div>
+
+

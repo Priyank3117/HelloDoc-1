@@ -391,5 +391,16 @@ namespace HelloDoc.Controllers
                 FileName = "Encounter_Form.pdf"
             };
         }
+
+        public IActionResult ProviderInvoice()
+        {
+            ViewBag.Physicians = _adminAction.GetPhysicianList();
+            return View("DashBoard/ProviderInvoice");
+        }
+
+        public IActionResult Payrate()
+        {
+            return View();
+        }
     }
 }

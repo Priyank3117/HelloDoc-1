@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using DAL.DataModels;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using OfficeOpenXml;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -1373,6 +1374,12 @@ namespace HelloDoc.Controllers
         #endregion
 
         #endregion     
+
+        public IActionResult AdminInvoice()
+        {
+            ViewBag.Physicians = _adminAction.GetPhysicianList();
+            return View();
+        }
 
     }
 

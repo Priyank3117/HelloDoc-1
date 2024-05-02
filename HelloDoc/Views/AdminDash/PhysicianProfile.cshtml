@@ -163,9 +163,14 @@
                     <div class="d-flex justify-content-end my-1">
                         @if (!ViewBag.IsPhysican)
                         {
+                            
+                                <a asp-action="Payrate" type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn">
+                                    Enter Payrate
+                                </a>
+                           
                         <button onclick="toggleEdit()" type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn">
                             Edit
-                        </button>      
+                        </button>    
                         }
                         <button onclick="toggleSave()" type="submit" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="SaveBtn">
                             Save

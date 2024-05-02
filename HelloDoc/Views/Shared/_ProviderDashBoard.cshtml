@@ -89,7 +89,9 @@
                         </a>
                     </li>
 
-
+                    <li class="nav-item">
+                        <a asp-action="ProviderInvoice" asp-controller="ProviderDashBoard" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" ? "active" : "")">invoicing</a>
+                    </li>
 
                     <li class="nav-item">
                         <a asp-action="Scheduling" asp-controller="ProviderDashBoard" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" ? "active" : "")">My Schedule</a>
