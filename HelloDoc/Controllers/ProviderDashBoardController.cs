@@ -398,9 +398,6 @@ namespace HelloDoc.Controllers
             return View("DashBoard/ProviderInvoice");
         }
 
-        public IActionResult Payrate()
-        {
-            return View();
-        }
+       
     }
 }

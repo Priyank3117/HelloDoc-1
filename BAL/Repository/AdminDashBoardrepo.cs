@@ -7,6 +7,7 @@ using DAL.ViewModel;
 using DAL.DataModels;
 using System.Drawing;
 using AspNetCoreHero.ToastNotification.Notyf;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 
 
@@ -18,13 +19,15 @@ namespace BAL.Repository
         private readonly ApplicationDbContext _context;
         private readonly IPasswordHasher<AdminProfile> _passwordHasher;
         private readonly IUploadProvider _uploadprovider;
+        private readonly INotyfService _notyf;
 
 
-        public AdminDashBoardrepo(ApplicationDbContext context, IUploadProvider uploadprovider, IPasswordHasher<AdminProfile> passwordHasher)
+        public AdminDashBoardrepo(ApplicationDbContext context, IUploadProvider uploadprovider, IPasswordHasher<AdminProfile> passwordHasher,INotyfService notyf)
         {
             _context = context;
             _uploadprovider = uploadprovider;
             _passwordHasher = passwordHasher;
+            _notyf = notyf;
         }
 
 		public AspNetUser GetAspNetUserByEmail(string email)
@@ -601,7 +604,62 @@ namespace BAL.Repository
             return email;
 
 		}
-	}
+        public List<PayRate> GetPayrates(int physicianId)
+        {
+
+            List<PayRate> payrates = (from payrateCategory in _context.PayrateCategories
+                                               join payrateProvider in _context.PayrateByProviders
+                                               on new { payrateCategory.PayrateCategoryId, PhysicianId = physicianId } equals new { payrateProvider.PayrateCategoryId, payrateProvider.PhysicianId }
+                                               into payrateByProvider
+                                               from payrate in payrateByProvider.DefaultIfEmpty()
+                                               select new PayRate
+                                               {
+                                                   PayrateId = payrate != null ? payrate.PayrateId : null,
+                                                   PayrateCategoryId = payrateCategory.PayrateCategoryId,
+                                                   PayrateCategoryName = payrateCategory.CategoryName,
+                                                   Physicianid = physicianId,
+                                                   Payrate = payrate != null ? payrate.Payrate : null
+                                               }).ToList();
+            return payrates;
+        }
+
+        public bool UpdatePayrate(int payrateId, decimal payrateValue, string? email)
+        {
+            PayrateByProvider? payrateByProvider = _context.PayrateByProviders.FirstOrDefault(x => x.PayrateId == payrateId);
+            if (payrateByProvider != null)
+            {
+                if(payrateByProvider.Payrate == payrateValue)
+                {
+                    _notyf.Warning("New Value can not be same as previous");
+                    return false;
+                }
+                else
+                {
+                    payrateByProvider.Payrate = payrateValue;
+                    payrateByProvider.ModifiedBy = _context.AspNetUsers.FirstOrDefault(x => x.Email == email)?.AspNetUserId ?? string.Empty;
+                    payrateByProvider.ModifiedDate = DateTime.Now;
+
+                    _context.Update(payrateByProvider);
+                    _context.SaveChanges();
+                }
+            }
+                    return true;
+        }
+
+        public void CreatePayrate(decimal payrateValue, string? email, int physicianId, int payrateCategoryId)
+        {
+            PayrateByProvider payrateByProvider = new()
+            {
+                PayrateCategoryId = payrateCategoryId,
+                PhysicianId = physicianId,
+                Payrate = payrateValue,
+                CreatedBy = _context.AspNetUsers.FirstOrDefault(x => x.Email == email)?.AspNetUserId ?? string.Empty,
+                CreatedDate = DateTime.Now
+            };
+            _context.Add(payrateByProvider);
+            _context.SaveChanges();
+        }
+    }
 }
 
 

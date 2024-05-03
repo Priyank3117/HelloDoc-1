@@ -56,6 +56,10 @@ namespace BAL.Interface
         public List<PhysicianLocation> GetLocationsList();
         public string GetPhyEmail(string id);
         public string GetAdminEmailById(int id);
+        public List<PayRate> GetPayrates(int physicianId);
+        public bool UpdatePayrate(int payrateId, decimal payrateValue, string? email);
+
+        public void CreatePayrate(decimal payrateValue, string? email, int physicianId, int payrateCategoryId);
 
     }
 }

@@ -1,0 +1,79 @@
+﻿@model List<DAL.ViewModel.PayRate>
+
+@{
+    ViewData["Title"] = "Payrate";
+    Layout = "~/Views/Shared/_AdminDash.cshtml";
+    var physicianId = ViewBag.PhysicianId;
+}
+
+
+
+
+
+          
+<div class="row justify-content-center bg-body-secondary">
+    <div class="col-10 col-lg-8 d-inline-flex justify-content-between">
+        <div class="d-flex">
+            <h4 class="h4 mt-5 mb-3">Payrate</h4>
+        </div>
+        <div class="d-flex">
+          
+                <button class="btn btn-outline-info mt-5 mb-3 ms-auto " onclick="history.back()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                         height="16" fill="currentColor" class="bi bi-chevron-left fw-medium mb-1" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                    </svg>Back
+                </button>
+            
+          
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center  bg-body-secondary ">
+    <div class="col-10 col-lg-8 rounded mb-3 white-bag ">
+        <div class="table-responsive ">
+                <table class="table">
+                    <colgroup>
+                        <col span="1" style="width: 40%;">
+                        <col span="1" style="width: 40%;">
+                        <col span="1" style="width: 20%;">
+                    </colgroup>
+                    <tbody>
+                        <tr class="tableHead">
+                            <th scope="col" class="text-center">Category</th>
+                            <th scope="col" class="text-center">Payrate</th>
+                            <th scope="col" class="text-center">Action</th>
+                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                        <form id="payrateForm" class="payrateForm" asp-action="EditPayrate">
+                                <td class="text-center">
+                                    @item.PayrateCategoryName
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control payrateValue" value="@item.Payrate" name="payrateValue">
+                                        <label class="text-muted floating-label">Payrate</label>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <input type="number" value="@item.PayrateId" name="payrateId" hidden>
+                                    <input type="number" value="@physicianId" name="physicianId" hidden>
+                                    <input type="number" value="@item.PayrateCategoryId" name="payrateCategoryId" hidden>
+                                    <button type="submit" class="btn rounded btn-info mb-1 px-4 text-white editButton">
+                                        Edit
+                                    </button>
+                                </td>
+                            </form>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+
+<

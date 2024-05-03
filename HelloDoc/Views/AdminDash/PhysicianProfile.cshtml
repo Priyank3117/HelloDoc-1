@@ -164,7 +164,7 @@
                         @if (!ViewBag.IsPhysican)
                         {
                             
-                                <a asp-action="Payrate" type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn">
+                                <a asp-action="Payrate" asp-route-physicianId="@Model.physicianid" type="button" class="btn border-none bg-info p-3 text-light fw-semibold me-4" id="EditBtn">
                                     Enter Payrate
                                 </a>
                            

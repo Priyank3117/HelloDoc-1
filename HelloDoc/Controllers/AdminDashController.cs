@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 
+
 namespace HelloDoc.Controllers
 {
 
@@ -1379,6 +1380,37 @@ namespace HelloDoc.Controllers
         {
             ViewBag.Physicians = _adminAction.GetPhysicianList();
             return View();
+        }
+
+        public IActionResult Payrate(int physicianId)
+        {
+            List<PayRate> payrates = _AdminDashboard.GetPayrates(physicianId);
+            ViewBag.PhysicianId = physicianId;
+            return View(payrates);
+        }
+        public IActionResult EditPayrate(int? payrateId, decimal? payrateValue, int physicianId, int payrateCategoryId)
+        {
+            string? email = HttpContext.Session.GetString("Email");
+            if (payrateValue != null)
+            {
+                if (payrateId != null)
+                {
+                   if(_AdminDashboard.UpdatePayrate((int)payrateId, (decimal)payrateValue, email))
+                    {
+                        _notyf.Success("Data added successfully");
+                    }
+                }
+                else
+                {
+                    _AdminDashboard.CreatePayrate((decimal)payrateValue, email, physicianId, payrateCategoryId);
+                }  
+           
+            return RedirectToAction("Payrate",new {physicianId = physicianId });
+            }
+
+            _notyf.Error("Please enter payrateValue");
+            return RedirectToAction("Payrate",new {physicianId = physicianId });
+            
         }
 
     }
