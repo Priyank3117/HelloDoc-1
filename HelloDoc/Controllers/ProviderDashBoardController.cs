@@ -26,10 +26,11 @@ namespace HelloDoc.Controllers
         private readonly IAddFile _files;
         private readonly IPatient_Request _patient;
         private readonly INotyfService _notyf;
+        private readonly IInvoicing _Invoicing;
 
         public ProviderDashBoardController(ApplicationDbContext context,IProviderDashBoard providerDashBoard,
             IAdminDashBoard adminDashBoard,IAdminAction adminAction,IEmailService emailService, IHostingEnvironment hostEnvironment, IAddFile files, 
-            IPatient_Request patient,INotyfService notyf) { 
+            IPatient_Request patient,INotyfService notyf ,IInvoicing invoicing) { 
            
 
            _context = context;
@@ -41,6 +42,7 @@ namespace HelloDoc.Controllers
             _patient = patient;
             _files = files;
             _notyf = notyf;
+            _Invoicing = invoicing;
         }
      
         public IActionResult ProviderDashBoard()
@@ -395,9 +397,33 @@ namespace HelloDoc.Controllers
         public IActionResult ProviderInvoice()
         {
             ViewBag.Physicians = _adminAction.GetPhysicianList();
+           
             return View("DashBoard/ProviderInvoice");
         }
 
-       
+        
+          public IActionResult OpenSheet(string date)
+            {
+            var timeSheet = new TimeSheet();
+            timeSheet.startdate = DateOnly.Parse(date);
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            timeSheet.physicianId = physicianId;
+
+            bool isSheetExist = _Invoicing.isTimeSheetExist(timeSheet.startdate);
+
+            if (!isSheetExist)
+            {
+                _Invoicing.AddNewSheet(timeSheet.startdate, physicianId.ToString());
+            }
+
+            timeSheet.enddate = DateOnly.FromDateTime( timeSheet.startdate.Day == 1 ? 
+                new DateTime(timeSheet.startdate.Year, timeSheet.startdate.Month, 15) :
+                new DateTime(timeSheet.startdate.Year, timeSheet.startdate.Month, 1).AddMonths(1).AddDays(-1));
+
+            var result = _Invoicing.getTimesheetdetails(physicianId.ToString(), date);
+            timeSheet.forms = result;
+
+            return PartialView("DashBoard/_TimeSheetPartial", timeSheet);
+        }
     }
 }

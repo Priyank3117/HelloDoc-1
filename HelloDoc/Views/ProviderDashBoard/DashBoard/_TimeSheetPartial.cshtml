@@ -1,0 +1,56 @@
+﻿@model DAL.ViewModel.TimeSheet
+@{
+    int startDate = Model.startdate.Day;
+    int month = Model.startdate.Month;
+    int endDate = Model.enddate.Day;
+    int year = Model.startdate.Year;
+    var form = Model.forms;
+}
+
+<table class="table mb-0 table-borderless ">
+    <thead class="text-body border-4 bg-body-secondary">
+        <tr>
+            <th class="text-center">Date</th>
+            <th class=" text-center">On Call Hours</th>
+            <th class=" text-center">Total Hours</th>
+            <th class=" text-center">Weekend/Holiday</th>
+            <th class=" text-center">Number Of HouseCalls</th>
+            <th class="text-center">Number Of Phone Calls</th>
+        </tr>
+    </thead>
+    <tbody class="white-bag">
+        @{
+            int j = 0;
+        }
+        @for (int i = startDate; i <= endDate; i++)
+        {
+            <tr>
+                @{
+                    string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
+                }
+                <td class="align-middle text-center">@date</td>
+                <td class="align-middle text-center">@(form[j] == null ? 0 : form[j].onCallhours)</td>
+                <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 : @form[j].totalHours)"></td>
+                <td class="align-middle text-center d-flex justify-content-center py-3">
+                    <input type="checkbox" class="form-check-input" checked="@(form[j] == null ? false : form[j].isWeekend)" />
+                </td>
+                <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 : form[j].HouseCallNo)"></td>
+                <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 :form[j].PhoneCallNo)"></td>
+            </tr>
+            j++;
+
+        }
+    </tbody>
+</table>
+<div class="d-flex white-bag justify-content-end">
+    <button class="btn btn-info">submit</button>
+</div>
+
+
+<div class="d-flex justify-content-between mt-2 mb-5">
+    <button class="btn btn-info">Add Receipts</button>
+    <button class="btn btn-info">Finalize</button>
+</div>
+
+
+                 
