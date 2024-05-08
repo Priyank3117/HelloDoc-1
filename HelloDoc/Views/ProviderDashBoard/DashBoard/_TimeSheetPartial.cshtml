@@ -4,9 +4,9 @@
     int month = Model.startdate.Month;
     int endDate = Model.enddate.Day;
     int year = Model.startdate.Year;
-    var form = Model.forms;
+    var timesheetdata = Model.timesheetdata;
 }
-
+ <form asp-action="SubmitTimeSheet" id="form">
 <table class="table mb-0 table-borderless ">
     <thead class="text-body border-4 bg-body-secondary">
         <tr>
@@ -20,31 +20,36 @@
     </thead>
     <tbody class="white-bag">
         @{
-            int j = 0;
+            int k = 0;
         }
         @for (int i = startDate; i <= endDate; i++)
         {
+            
             <tr>
-                @{
-                    string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
-                }
+                    @{
+                        string date = new DateTime(year, month, i).Date.ToString("dd/MM/yyyy");
+                    }
+                    <input asp-for="@Model.timesheetdata[k].date"  hidden/>
                 <td class="align-middle text-center">@date</td>
-                <td class="align-middle text-center">@(form[j] == null ? 0 : form[j].onCallhours)</td>
-                <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 : @form[j].totalHours)"></td>
+                <td class="align-middle text-center">@(timesheetdata[k] == null ? 0 : timesheetdata[k].onCallhours)</td>
+                <td class="align-middle text-center"><input asp-for="@Model.timesheetdata[k].totalHours" type="number" class="form-control" min="0" max="24" value="@(timesheetdata[k] == null ? 0 : @timesheetdata[k].totalHours)"></td>
                 <td class="align-middle text-center d-flex justify-content-center py-3">
-                    <input type="checkbox" class="form-check-input" checked="@(form[j] == null ? false : form[j].isWeekend)" />
+                        <input type="checkbox" asp-for="@Model.timesheetdata[k].isWeekend" class="form-check-input" checked="@(timesheetdata[k] == null ? false : timesheetdata[k].isWeekend)" />
                 </td>
-                <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 : form[j].HouseCallNo)"></td>
-                <td class="align-middle text-center"><input type="number" class="form-control" value="@(form[j] == null ? 0 :form[j].PhoneCallNo)"></td>
+                <td class="align-middle text-center"><input type="number" asp-for="@Model.timesheetdata[k].HouseCallNo" class="form-control" value="@(timesheetdata[k] == null ? 0 : timesheetdata[k].HouseCallNo)"></td>
+                <td class="align-middle text-center"><input type="number" asp-for="@Model.timesheetdata[k].PhoneCallNo" class="form-control" value="@(timesheetdata[k] == null ? 0 :timesheetdata[k].PhoneCallNo)"></td>
             </tr>
-            j++;
+            k++;
+          
 
         }
     </tbody>
 </table>
+
 <div class="d-flex white-bag justify-content-end">
-    <button class="btn btn-info">submit</button>
+    <button  class="btn btn-info" onclick="FormSubmit()">submit</button>
 </div>
+ </form>
 
 
 <div class="d-flex justify-content-between mt-2 mb-5">
@@ -53,4 +58,9 @@
 </div>
 
 
-                 
+ <script>
+
+     function FormSubmit() {
+        document.getElementById("form").submit();
+     }
+ </script>       

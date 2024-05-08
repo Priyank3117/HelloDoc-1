@@ -11,6 +11,8 @@ using Microsoft.CodeAnalysis.Elfie.Serialization;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Rotativa.AspNetCore;
 
+using System.Collections.Generic;
+
 
 namespace HelloDoc.Controllers
 {
@@ -403,7 +405,7 @@ namespace HelloDoc.Controllers
 
         
           public IActionResult OpenSheet(string date)
-            {
+        {
             var timeSheet = new TimeSheet();
             timeSheet.startdate = DateOnly.Parse(date);
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
@@ -421,9 +423,38 @@ namespace HelloDoc.Controllers
                 new DateTime(timeSheet.startdate.Year, timeSheet.startdate.Month, 1).AddMonths(1).AddDays(-1));
 
             var result = _Invoicing.getTimesheetdetails(physicianId.ToString(), date);
-            timeSheet.forms = result;
+            timeSheet.timesheetdata = result;
 
             return PartialView("DashBoard/_TimeSheetPartial", timeSheet);
         }
+
+        public IActionResult SubmitTimeSheet(TimeSheet timeSheet)
+        {
+
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var modifier = HttpContext.Session.GetString("aspnetuserid");
+
+            foreach (var i in timeSheet.timesheetdata)
+            {
+
+                TimesheetDetail? timeSheetDetail = _Invoicing.GetTimeSheetDetailOccurance(timeSheet.physicianId, i.date);
+                timeSheetDetail.TotalHours = i.totalHours;
+                timeSheetDetail.IsWeekend = i.isWeekend;
+                timeSheetDetail.NumberOfHouseCall = i.HouseCallNo;
+                timeSheetDetail.NumberOfPhoneCall = i.PhoneCallNo;
+                timeSheetDetail.ModifiedDate = DateTime.Now;
+                timeSheetDetail.ModifiedBy = modifier;
+
+                _context.TimesheetDetails.Update(timeSheetDetail);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ProviderInvoice");
+        }
+
+        //public IActionResult GetTimeSheetData(DateOnly date)
+        //{
+           
+        //}
+
     }
 }

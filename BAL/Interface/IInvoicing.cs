@@ -1,4 +1,5 @@
-﻿using DAL.ViewModels;
+﻿using DAL.DataModels;
+using DAL.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace BAL.Interface
         public void AddNewSheet(DateOnly date, string physicianId);
         public List<TimeSheetForm> getTimesheetdetails(string physicianId, string date);
         public bool isTimeSheetExist(DateOnly startdate);
+        public TimesheetDetail GetTimeSheetDetailOccurance(int? physicianId, DateOnly date);
     }
 }

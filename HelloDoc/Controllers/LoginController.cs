@@ -96,6 +96,8 @@ namespace HelloDoc.Controllers
                         else if (role == "Physician")
                         {
                             int physicianid = _context.Physicians.FirstOrDefault(i => i.Email == patient.Email).PhysicianId;
+                            string aspNetUserId = _context.AspNetUsers.FirstOrDefault(i => i.Email == patient.Email).AspNetUserId;
+                            HttpContext.Session.SetString("aspnetuserid", aspNetUserId);
                             HttpContext.Session.SetInt32("PhysicianId", physicianid);
                             _notyf.Success("Successfully Login");
                             return RedirectToAction("ProviderDashBoard", "ProviderDashBoard");

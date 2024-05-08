@@ -13,6 +13,8 @@ namespace BAL.Repository
         {
             _context = context;
         }
+
+
         public List<TimeSheetForm> getTimesheetdetails(string physicianId, string date)
         {
             var startdate = DateTime.Parse(date);
@@ -29,7 +31,7 @@ namespace BAL.Repository
                               physicianId = timesheet.PhysicianId,
                               onCallhours = 0,
                               totalHours = timesheetdetail.TotalHours,
-                              isWeekend = timesheetdetail.IsWeekend,
+                              isWeekend = (bool)timesheetdetail.IsWeekend,
                               HouseCallNo = timesheetdetail.NumberOfHouseCall,
                               PhoneCallNo = timesheetdetail.NumberOfPhoneCall
 
@@ -73,6 +75,12 @@ namespace BAL.Repository
             }
             _context.SaveChanges();
         }
-      
+
+        public  TimesheetDetail  GetTimeSheetDetailOccurance(int? physicianId,DateOnly date)
+        {
+            var timesheetdetail = _context.TimesheetDetails.FirstOrDefault(s => s.Timesheet.PhysicianId != physicianId && s.TimesheetDate == date) ;
+            return timesheetdetail;
+        }
+
     }
 }

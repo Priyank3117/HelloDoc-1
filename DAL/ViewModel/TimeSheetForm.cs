@@ -12,9 +12,11 @@ namespace DAL.ViewModels
         public DateOnly date { get; set; }
         public int onCallhours { get; set; }
         public decimal? totalHours { get; set; }
-        public bool? isWeekend { get; set; } = false;
+        public bool isWeekend { get; set; } = false;
         public int? HouseCallNo { get; set; }
         public int? PhoneCallNo { get; set; }
+
+       
 
     }
 }

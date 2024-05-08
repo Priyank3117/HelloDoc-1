@@ -14,7 +14,7 @@
         <div class="d-flex justify-content-between">
 
 
-            <select class="form-select py-3 w-25" id="selectedDate" aria-label="Default select example">
+            <select class="form-select py-3 w-25" onchange="LoadTimeSheet()" id="selectedDate" aria-label="Default select example">
                 <option value="0">Search By Timesheetperiod</option>
                 @{
                     int month = 1;
@@ -46,6 +46,9 @@
     </div>
             <div class="container  w-75" id="timssheet">
             </div>
+            
+            <div class="container  w-75" id="timssheetdata">
+            </div>
 </div>
 <script>
 
@@ -61,20 +64,40 @@
                 url: '/ProviderDashBoard/OpenSheet',
                 data: { date: date },
                 success: function (response) {
-                    console.log(response)
+
                     $("#timssheet").html(response);
                     $("#TopDiv").hide();
                     $("#text").css('visibility','hidden');  
 
                 },
                 error: function (data) {
-                    alert(data.d);
+                    alert(data);
                 }
             });
         } else {
             alert("please select the date");
         }
     }
+
+    function LoadTimeSheet(){
+
+
+        var date = $("#selectedDate").val();
+
+        if (date != "0") { 
+            $.ajax({
+                type : 'GET',
+                url : '/ProviderDashBoard/GetTimeSheetData',
+                data: { date: date },
+                success: function (response) { 
+
+                    $("#timssheetdata").html(response);
+                }
+            });
+        }
+    }
+
+
 </script>
 
 

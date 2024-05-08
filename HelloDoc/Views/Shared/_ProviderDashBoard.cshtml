@@ -82,7 +82,7 @@
                         <a asp-action="ProviderDashBoard" asp-controller="ProviderDashBoard" style="text-decoration:none">
                             <button class="nav-link  text-info
 
-                            @(new string[] { "ProviderDashBoard", "ViewCase", "ViewNotes","Accept","ViewUpload","SendOrder","EncounterForm","CreateRequest" }
+                            @(new string[] { "ProviderDashBoard", "ViewCase", "ViewNotes","Accept","ViewUpload","SendOrder","EncounterForm","CreateRequest"}
                                 .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">
                                 Dashboard
                             </button>
@@ -90,7 +90,8 @@
                     </li>
 
                     <li class="nav-item">
-                        <a asp-action="ProviderInvoice" asp-controller="ProviderDashBoard" class="nav-link text-info @(ViewContext.ActionDescriptor.RouteValues["action"] == "Scheduling" ? "active" : "")">invoicing</a>
+                        <a asp-action="ProviderInvoice" asp-controller="ProviderDashBoard" class="nav-link text-info     @(new string[] {"ProviderInvoice" }
+                                .Contains(ViewContext.ActionDescriptor.RouteValues["action"]) ? "active" : "")">invoicing</a>
                     </li>
 
                     <li class="nav-item">
