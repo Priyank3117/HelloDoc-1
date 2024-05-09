@@ -159,8 +159,8 @@
         </main>
     </div>
 
-    <footer class="border-top footer  bg-dark text-white pe-3 footer position-absolute  w-100 align-middle bottom-0" style="height: 6vh !important;">
-        <div class="d-flex flex-row justify-content-end align-items-center my-auto h-100 py-auto w-100">
+    <footer class="border-top footer   bg-dark text-white pe-3 footer position-sticky  w-100 align-middle bottom-0" style="height: 6vh !important;">
+        <div class="d-flex flex-row justify-content-end align-items-center my-auto h-100 py-auto bottom-0 w-100">
             <span>Terms Of Condition | Privacy Policy</span>
         </div>
     </footer>
@@ -278,7 +278,7 @@
             }
 
             $(document).on("click", "#pagination a.page-link", function () {
-                console.log("Pagination link clicked!");
+                
                 var id = $(this).attr("id");
                 currentpage = $("#" + id).data("page");
                 console.log("Current Page: " + currentpage);
@@ -398,7 +398,7 @@
                         var SearchValue = $("#Search").val();
                         var Filterselect = $('.filter-btn.active').data('value');
 
-                        console.log(Filterselect);
+                        
                         var selectopt = $(".form-select").find(':selected');
                         var selectvalue = selectopt.data('value');
 
@@ -420,7 +420,7 @@
                                 },
                                 success: function (data) {
                                     $('#PartialViews').html(data);
-                                    console.log(data)
+
                                 },
 
                                 error: function (error) {
@@ -442,7 +442,7 @@
                 event.preventDefault();
 
                 var formData = $(this).serialize();
-                console.log(formData);
+                
                 $.ajax({
                     url: '/ProviderDashBoard/TransferCase',
                     type: 'POST',
@@ -462,8 +462,6 @@
                 $(this).find('form')[0].reset();
             });
 
-            //     // -------------------
-            //     // -------------------
             $('#SendAgreementModalSubmit').submit(function (event) {
                 event.preventDefault();
 

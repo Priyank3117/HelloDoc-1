@@ -5,6 +5,7 @@
     int endDate = Model.enddate.Day;
     int year = Model.startdate.Year;
     var timesheetdata = Model.timesheetdata;
+    string takeDate = DateOnly.FromDateTime( new DateTime(year, month, startDate)).ToString();
 }
  <form asp-action="SubmitTimeSheet" id="form">
 <table class="table mb-0 table-borderless ">
@@ -52,9 +53,9 @@
  </form>
 
 
-<div class="d-flex justify-content-between mt-2 mb-5">
+<div class="d-flex justify-content-between mt-2">
     <button class="btn btn-info">Add Receipts</button>
-    <button class="btn btn-info">Finalize</button>
+    <a class="btn btn-info float-end" asp-action="FinalizeForm" asp-route-id="@Model.timesheetdata[0].timeSheetId">Finalize</a>
 </div>
 
 
@@ -63,4 +64,6 @@
      function FormSubmit() {
         document.getElementById("form").submit();
      }
+
+     
  </script>       

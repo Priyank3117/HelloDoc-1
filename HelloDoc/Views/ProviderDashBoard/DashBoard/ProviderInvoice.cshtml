@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_ProviderDashBoard.cshtml";
+    
 }
 
 
@@ -10,7 +11,7 @@
     </div>
 
 
-    <div class="container my-3 white-bag shadow p-3" id="TopDiv">
+    <div class="container w-75 mt-3 white-bag shadow p-3" id="TopDiv">
         <div class="d-flex justify-content-between">
 
 
@@ -39,7 +40,8 @@
             </select>
 
 
-            <button class="btn btn-outline-info" onclick="openTimesheet()">Finalize Timesheet</button>
+
+            <button class="btn btn-outline-info" id="btn" onclick="openTimesheet()">Finalize Timesheet</button>
           
  
         </div>
@@ -47,7 +49,7 @@
             <div class="container  w-75" id="timssheet">
             </div>
             
-            <div class="container  w-75" id="timssheetdata">
+            <div class="container px-0 w-75" id="timssheetdata">
             </div>
 </div>
 <script>
@@ -68,6 +70,7 @@
                     $("#timssheet").html(response);
                     $("#TopDiv").hide();
                     $("#text").css('visibility','hidden');  
+                    $('#timssheetdata').hide();
 
                 },
                 error: function (data) {
@@ -84,14 +87,17 @@
 
         var date = $("#selectedDate").val();
 
+                  
         if (date != "0") { 
             $.ajax({
                 type : 'GET',
                 url : '/ProviderDashBoard/GetTimeSheetData',
                 data: { date: date },
                 success: function (response) { 
-
                     $("#timssheetdata").html(response);
+                },
+                error: function (response) {
+                    alert(response.d);
                 }
             });
         }

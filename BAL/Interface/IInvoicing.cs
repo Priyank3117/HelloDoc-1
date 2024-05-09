@@ -1,4 +1,5 @@
 ﻿using DAL.DataModels;
+using DAL.ViewModel;
 using DAL.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,9 @@ namespace BAL.Interface
         public List<TimeSheetForm> getTimesheetdetails(string physicianId, string date);
         public bool isTimeSheetExist(DateOnly startdate);
         public TimesheetDetail GetTimeSheetDetailOccurance(int? physicianId, DateOnly date);
+
+        public TimeSheetMainModel getTimesheetTableData(string date, int? physicianId);
+
+        public void Finalize(int id);
     }
 }

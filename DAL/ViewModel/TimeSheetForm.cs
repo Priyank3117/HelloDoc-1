@@ -9,6 +9,8 @@ namespace DAL.ViewModels
     public class TimeSheetForm
     {
         public int physicianId { get; set; }
+        
+        public int timeSheetId { get; set; }
         public DateOnly date { get; set; }
         public int onCallhours { get; set; }
         public decimal? totalHours { get; set; }

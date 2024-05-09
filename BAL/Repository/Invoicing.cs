@@ -1,7 +1,9 @@
 ﻿using BAL.Interface;
 using DAL.DataContext;
 using DAL.DataModels;
+using DAL.ViewModel;
 using DAL.ViewModels;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BAL.Repository
 {
@@ -28,6 +30,7 @@ namespace BAL.Repository
                           select new TimeSheetForm()
                           {
                               date = timesheetdetail.TimesheetDate,
+                              timeSheetId = timesheet.TimesheetId,
                               physicianId = timesheet.PhysicianId,
                               onCallhours = 0,
                               totalHours = timesheetdetail.TotalHours,
@@ -82,5 +85,47 @@ namespace BAL.Repository
             return timesheetdetail;
         }
 
+        public TimeSheetMainModel getTimesheetTableData(string date, int? physicianId)
+        {
+            var table = new TimeSheetMainModel();
+
+            table.isFinalize =(bool) _context.Timesheets.FirstOrDefault(i => i.PhysicianId == physicianId && i.StartDate == DateOnly.Parse(date)).IsFinalize;
+
+            table.timeSheetdataMainPage = (from timesheetdetails in _context.TimesheetDetails
+                                join timesheet in _context.Timesheets
+                                on timesheetdetails.TimesheetId equals timesheet.TimesheetId into timesheetjoin
+                                from timesheetTotal in timesheetjoin.DefaultIfEmpty()
+                                where timesheetTotal.PhysicianId == physicianId && timesheetTotal.StartDate == DateOnly.Parse(date)
+                                select new TimeSheetdataMainPage()
+                                {
+                                    shiftDate = timesheetdetails.TimesheetDate,
+                                    shift = _context.ShiftDetails.Where(u => DateOnly.FromDateTime(u.ShiftDate) == timesheetdetails.TimesheetDate && u.Shift.PhysicianId == physicianId && u.IsDeleted != new System.Collections.BitArray(new[] { true })).Count(),
+                                    NightShiftWeekend = 0,
+                                    HouseCallNightWeekend = 0,
+                                    PhoneConsultant = 0,
+                                    HouseCall = 0,
+                                    PhoneConsultantNightWeekend = 0,
+                                    BatchTesting = 0,
+
+                                }).Distinct().ToList();
+
+            
+
+            return table;   
+
+        }
+
+        public void Finalize(int id)
+        {
+            var isFinalize = _context.Timesheets.FirstOrDefault(i => i.TimesheetId == id);
+
+            if (isFinalize != null)
+            {
+                isFinalize.IsFinalize = true;
+                _context.Timesheets.Update(isFinalize);
+                _context.SaveChanges();
+            }
+
+        }
     }
 }

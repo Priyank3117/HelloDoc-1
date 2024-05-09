@@ -2,16 +2,12 @@
 using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
-using DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using static BAL.Repository.Authorizationrepo;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Rotativa.AspNetCore;
-
-using System.Collections.Generic;
 
 
 namespace HelloDoc.Controllers
@@ -399,6 +395,7 @@ namespace HelloDoc.Controllers
         public IActionResult ProviderInvoice()
         {
             ViewBag.Physicians = _adminAction.GetPhysicianList();
+            
            
             return View("DashBoard/ProviderInvoice");
         }
@@ -451,10 +448,24 @@ namespace HelloDoc.Controllers
             return RedirectToAction("ProviderInvoice");
         }
 
-        //public IActionResult GetTimeSheetData(DateOnly date)
-        //{
-           
-        //}
+        public IActionResult GetTimeSheetData(string date)
+        {
+            var PhysicianId = HttpContext.Session.GetInt32("PhysicianId");
+            
+            var result = _Invoicing.getTimesheetTableData(date, PhysicianId);
+            ViewBag.IsNull = result.timeSheetdataMainPage.Count == 0 ? true : false;
+            
+
+            return PartialView("DashBoard/_InvoiceMainPage", result);
+
+
+        }
+
+        public IActionResult FinalizeForm(int id)
+        {
+            _Invoicing.Finalize(id);
+            return RedirectToAction("ProviderInvoice");
+        }
 
     }
 }

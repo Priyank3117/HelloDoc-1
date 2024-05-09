@@ -8,6 +8,8 @@ namespace DAL.ViewModel
 {
     public class TimeSheetdataMainPage
     {
+
+        public DateOnly shiftDate {  get; set; }
         public int shift { get; set; }
         public int NightShiftWeekend { get; set; }
         public int HouseCall { get; set; }
