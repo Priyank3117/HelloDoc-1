@@ -54,7 +54,7 @@
 
 
 <div class="d-flex justify-content-between mt-2">
-    <button class="btn btn-info">Add Receipts</button>
+    <button class="btn btn-info" onclick="openRecieptForm()">Add Receipts</button>
     <a class="btn btn-info float-end" asp-action="FinalizeForm" asp-route-id="@Model.timesheetdata[0].timeSheetId">Finalize</a>
 </div>
 
@@ -65,5 +65,26 @@
         document.getElementById("form").submit();
      }
 
-     
+    function openRecieptForm() {
+        
+        var date = $("#selectedDate").val();
+
+        if (date != 0) {
+            $.ajax({
+                type: 'GET',
+                url: "/ProviderDashBoard/GetRecieptForm",
+                data: {  date: date },
+                success: function (response) {
+
+
+                    $("#addReciept").html(response);
+                },
+                error: function (data) {
+                    alert(data.d);
+                }
+            });
+        } else {
+            alert("please select date");
+        }
+    }
  </script>       
