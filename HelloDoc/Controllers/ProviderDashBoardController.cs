@@ -8,6 +8,9 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using static BAL.Repository.Authorizationrepo;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Rotativa.AspNetCore;
+using Microsoft.AspNetCore.Http;
+
+
 
 
 namespace HelloDoc.Controllers
@@ -477,7 +480,7 @@ namespace HelloDoc.Controllers
             ViewBag.endDate = DateOnly.FromDateTime(ViewBag.startDate.Day == 1 ? new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 15) : new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 1).AddMonths(1).AddDays(-1));
                 var physicianId = HttpContext.Session.GetInt32("PhysicianId");
             ViewBag.PhysicianId = physicianId;
-            var details = (from timesheetReimbutrsment in _context.TimesheetDetailReimbursements
+            var data = (from timesheetReimbutrsment in _context.TimesheetDetailReimbursements
                            join timesheetdetails in _context.TimesheetDetails
                            on timesheetReimbutrsment.TimesheetDetailId equals timesheetdetails.TimesheetDetailId
                            where timesheetdetails.Timesheet.PhysicianId == physicianId && timesheetdetails.Timesheet.StartDate == DateOnly.Parse(date)
@@ -492,11 +495,11 @@ namespace HelloDoc.Controllers
                            }).ToList();
 
 
-            return PartialView("DashBoard/_AddReceipts", details);
+            return PartialView("DashBoard/_AddReceipts", data);
         }
 
         
-        public IActionResult SubmitReceipt(string Item, int Amount, DateOnly Date, IFormFile file)
+        public IActionResult SubmitReceipt(string Item, int Amount, DateOnly Date, IFormFile file ,string dos)
             {
 
              var physicianId = HttpContext.Session.GetInt32("PhysicianId");
@@ -508,10 +511,29 @@ namespace HelloDoc.Controllers
             obj.IsDeleted = false;
             obj.Bill = file.FileName;
 
+            var uniquefilesavetoken = Guid.NewGuid().ToString();
+
+
+            string folderPath = "wwwroot\\Receipts\\" + physicianId;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            string fileExtension = Path.GetExtension(file.FileName);
+             string day = Date.Day.ToString();
+            string fileName = day + file + fileExtension;
+            string filePath = Path.Combine(path, fileName);
+            
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+          
+
             _context.TimesheetDetailReimbursements.Add(obj);
             _context.SaveChanges();
 
-            return RedirectToAction("GetRecieptForm", new { date = Date.ToString() });
+            return RedirectToAction("GetRecieptForm", new { date = dos });
         
         }
 
