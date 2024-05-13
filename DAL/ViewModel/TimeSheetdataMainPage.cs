@@ -13,6 +13,9 @@ namespace DAL.ViewModel
         public int shift { get; set; }
         public int NightShiftWeekend { get; set; }
         public int HouseCall { get; set; }
+
+        
+
         public int HouseCallNightWeekend { get; set;}
         public int PhoneConsultant { get; set; }
         public int PhoneConsultantNightWeekend { get; set; }    

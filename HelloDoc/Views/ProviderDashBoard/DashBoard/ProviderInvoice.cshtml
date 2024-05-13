@@ -38,7 +38,7 @@
                     }
                 }
             </select>
-            <button class="btn btn-outline-info" id="btn" onclick="openTimesheet()">Finalize Timesheet</button>
+            <button class="btn btn-outline-info" id="btnoffinalize" onclick="openTimesheet()">Finalize Timesheet</button>
           
  
         </div>
@@ -91,14 +91,25 @@
 
         var date = $("#selectedDate").val();
 
-                  
         if (date != "0") { 
             $.ajax({
                 type : 'GET',
                 url : '/ProviderDashBoard/GetTimeSheetData',
                 data: { date: date },
                 success: function (response) { 
+                debugger
                     $("#timssheetdata").html(response);
+
+                    var finalizeValue = $(".FinalizeValue").val();
+
+                    if (finalizeValue == "true") {
+                        $("#btnoffinalize").hide();
+                    }
+                    else {
+                        $("#btnoffinalize").show();
+                    }
+                
+
                 },
                 error: function (response) {
                     alert(response.d);

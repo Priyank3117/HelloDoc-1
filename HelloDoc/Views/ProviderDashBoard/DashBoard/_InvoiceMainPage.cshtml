@@ -7,9 +7,11 @@
 else if (Model.isFinalize == false)
 {
     <div class=" my-3 fs-3 fw-bold text-center">Time Sheet Has not finalized.......</div>
+    <input class="FinalizeValue"  value="false" hidden/>
 }
 else
 {
+    <input class="FinalizeValue"  value="true" hidden/>
     <table class="d-none d-md-table table m-0 mb-3 white-bag" style="margin-bottom: 0 !important;">
         <thead class="table-secondary">
             <tr>
@@ -26,6 +28,7 @@ else
         <tbody>
             @foreach (var item in Model.timeSheetdataMainPage)
             {
+                
                 <tr>
                     <td scope="col" class="ps-3">@item.shiftDate</td>
                     <td scope="col" class="ps-3">@item.shift</td>

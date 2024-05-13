@@ -5,11 +5,12 @@ using DAL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 using static BAL.Repository.Authorizationrepo;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Rotativa.AspNetCore;
-using Microsoft.AspNetCore.Http;
-
+using System.Net;
 
 
 
@@ -461,7 +462,7 @@ namespace HelloDoc.Controllers
             ViewBag.endDate = DateOnly.FromDateTime(ViewBag.startDate.Day == 1 ? new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 15) : new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 1).AddMonths(1).AddDays(-1));
             var physicianId = HttpContext.Session.GetInt32("PhysicianId");
             ViewBag.PhysicianId = physicianId;
-            
+            ViewBag.IsFinalizeStatus = result.isFinalize;
 
             return PartialView("DashBoard/_InvoiceMainPage", result);
 
@@ -483,7 +484,9 @@ namespace HelloDoc.Controllers
             var data = (from timesheetReimbutrsment in _context.TimesheetDetailReimbursements
                            join timesheetdetails in _context.TimesheetDetails
                            on timesheetReimbutrsment.TimesheetDetailId equals timesheetdetails.TimesheetDetailId
-                           where timesheetdetails.Timesheet.PhysicianId == physicianId && timesheetdetails.Timesheet.StartDate == DateOnly.Parse(date)
+                           orderby timesheetdetails.TimesheetDetailId
+                           where timesheetdetails.Timesheet.PhysicianId == physicianId && timesheetdetails.Timesheet.StartDate == DateOnly.Parse(date) 
+                     
                            select new TimesheetDetailReimbursement()
                            {
                                TimesheetDetailId = timesheetdetails.TimesheetDetailId,
@@ -491,6 +494,7 @@ namespace HelloDoc.Controllers
                                ItemName = timesheetReimbutrsment.ItemName,
                                Amount = timesheetReimbutrsment.Amount,
                                CreatedBy = timesheetReimbutrsment.CreatedBy,
+                               IsDeleted = timesheetReimbutrsment.IsDeleted
 
                            }).ToList();
 
@@ -537,6 +541,60 @@ namespace HelloDoc.Controllers
         
         }
 
+        public IActionResult SubmitEditReceipt(string Item, int Amount, DateOnly Date, IFormFile file, string dos,int tdId)
+        {
 
+            var physicianId = HttpContext.Session.GetInt32("PhysicianId");
+            TimesheetDetailReimbursement obj = _context.TimesheetDetailReimbursements.FirstOrDefault(s => s.TimesheetDetailId == tdId);
+            obj.ItemName = Item;
+            obj.Amount = Amount;
+            obj.CreatedBy = _context.Physicians.FirstOrDefault(u => u.PhysicianId == physicianId).AspNetUserId;
+            obj.IsDeleted = false;
+            obj.Bill = file.FileName;
+
+            var uniquefilesavetoken = Guid.NewGuid().ToString();
+
+
+            string folderPath = "wwwroot\\Receipts\\" + physicianId;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            string fileExtension = Path.GetExtension(file.FileName);
+            string day = Date.Day.ToString();
+       
+            string getfileName = day + Path.GetFileNameWithoutExtension(file.FileName) + fileExtension;
+            string getfilePath = Path.Combine(path, getfileName);
+
+            string[] existingFiles = Directory.GetFiles(path, day + "*");
+            foreach (var existingFile in existingFiles)
+            {
+                System.IO.File.Delete(existingFile);
+            }
+
+            using (var fileStream = new FileStream(getfilePath, FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+
+
+            _context.TimesheetDetailReimbursements.Update(obj);
+            _context.SaveChanges();
+
+            return RedirectToAction("GetRecieptForm", new { date = dos });
+
+        }
+
+
+        public IActionResult DeleteReceipt(int tdId, string dos)
+        {
+            TimesheetDetailReimbursement obj = _context.TimesheetDetailReimbursements.FirstOrDefault(s => s.TimesheetDetailId == tdId);
+            obj.IsDeleted = true;
+
+            _context.TimesheetDetailReimbursements.Update(obj);
+            _context.SaveChanges();
+
+            return RedirectToAction("GetRecieptForm", new { date = dos });
+
+        }
     }
 }
