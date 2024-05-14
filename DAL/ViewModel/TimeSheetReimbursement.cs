@@ -8,8 +8,10 @@ namespace DAL.ViewModel
 {
     public class TimeSheetReimbursement
     {
-        public string item { get; set; }
 
+        public string date {  get; set; }
+        public string item { get; set; }
+        public int? day { get; set; }
         public int Amount { get; set; }
 
         public string Bill { get; set; }

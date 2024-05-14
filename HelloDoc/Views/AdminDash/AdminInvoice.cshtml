@@ -10,16 +10,16 @@
     </div>
 
 
-    <div class="container my-3 white-bag shadow p-3">
+    <div class="container w-75  white-bag shadow pt-3 pb-3 ">
         <div class="d-flex w-50">
-            <select class="form-select mx-2 py-3" aria-label="Default select example">
+            <select class="form-select mx-2 py-3" id="PhysicianId" aria-label="Default select example">
                 <option value="0">Search By Physician</option>
                 @foreach (var item in ViewBag.Physicians)
                 {
                     <option value="@item.PhysicianId">@item.FirstName</option>
                 }
             </select>
-            <select class="form-select py-3" aria-label="Default select example">
+            <select class="form-select py-3" aria-label="Default select example" id="selectedDate" onchange="Load()">
                 <option value="0">Search By Timesheetperiod</option>
                 @{
                     int month = 1;
@@ -46,6 +46,69 @@
             </select>
         </div>
     </div>
+
+    
+    <div class="container px-0  w-75" id="timssheetdata">
+
+    </div> 
+    <div class="container  px-0 w-75" id="reimbursement">
+
+    </div>
 </div>
 
+<script>
+    function Load() { 
+        debugger
+        var PhysicianId = $("#PhysicianId").val();
+        var date = $("#selectedDate").val();
 
+        if (PhysicianId != "0") {
+
+            if (date != "0") {
+             
+                $.ajax({
+
+                    type :'GET',
+                    url: '/AdminDash/GetTimeSheetData',
+                    data: { PhysicianId: PhysicianId, date: date },
+                    success: function (response) {
+
+                        LoadReimbursement();
+                        $("#timssheetdata").html(response);
+                    }
+
+                });
+            }
+            else {
+                alert("Please Select the date");
+            }
+        }
+        else { 
+            alert("Please Select the physician");
+            const select = document.getElementById("selectedDate");
+            select.selectedIndex = 0;
+
+        }
+    }
+
+  
+
+    function LoadReimbursement() {
+        var date = $("#selectedDate").val();
+        var PhysicianId = $("#PhysicianId").val();
+        if (date != "0") {
+            $.ajax({
+                type: 'GET',
+                url: '/AdminDash/GetReimbursementData',
+                data: { date: date, PhysicianId: PhysicianId },
+                success: function (response) {
+                    
+                    $("#reimbursement").html(response);
+                },
+                error: function (response) {
+                    alert("LoadReimbursement");
+                }
+            });
+        }
+    }
+</script>

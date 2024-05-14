@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BAL.Interface
 {
@@ -17,7 +18,8 @@ namespace BAL.Interface
         public TimesheetDetail GetTimeSheetDetailOccurance(int? physicianId, DateOnly date);
 
         public TimeSheetMainModel getTimesheetTableData(string date, int? physicianId);
-
+        public TimeSheetMainModel getReimbursementTableData(DateOnly startdateonly, DateOnly enddateonly);
         public void Finalize(int id);
+
     }
 }

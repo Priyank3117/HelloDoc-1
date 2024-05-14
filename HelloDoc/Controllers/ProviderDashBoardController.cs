@@ -11,6 +11,8 @@ using static BAL.Repository.Authorizationrepo;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Rotativa.AspNetCore;
 using System.Net;
+using Microsoft.AspNetCore.Http.HttpResults;
+
 
 
 
@@ -469,6 +471,19 @@ namespace HelloDoc.Controllers
 
         }
 
+        public IActionResult GetReimbursementData(string date)
+        {
+            DateTime startdate = DateTime.Parse(date);
+            DateOnly startdateonly = DateOnly.Parse(date);
+            DateTime enddate = startdate.Day == 1 ? new DateTime(startdate.Year,startdate.Month,15) : new DateTime(startdate.Year, startdate.Month, 1).AddMonths(1).AddDays(-1);
+            DateOnly enddateonly = DateOnly.FromDateTime((DateTime)enddate);
+            var PhysicianId = HttpContext.Session.GetInt32("PhysicianId");
+            var result = _Invoicing.getReimbursementTableData(startdateonly, enddateonly);
+            ViewBag.PhysicianId = PhysicianId;
+            ViewBag.Isnull = result.timeSheetReimbursements.Count == 0 ? true : false;
+            return PartialView("DashBoard/_ReimbursementPage",result);
+        }
+
         public IActionResult FinalizeForm(int id)
         {
             _Invoicing.Finalize(id);
@@ -497,7 +512,6 @@ namespace HelloDoc.Controllers
                                IsDeleted = timesheetReimbutrsment.IsDeleted
 
                            }).ToList();
-
 
             return PartialView("DashBoard/_AddReceipts", data);
         }

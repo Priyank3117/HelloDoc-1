@@ -1,0 +1,39 @@
+﻿@model DAL.ViewModel.TimeSheetMainModel
+<div class="white-bag" style="height:60px !important">
+    <h4  class="white-bag pt-3 ps-3">TimeSheet Reimbursement</h4>
+</div>
+<div class="">
+    @if (ViewBag.Isnull)
+    {
+        <div class=" py-3 fs-4 ps-4 white-bag">No Record(s) Found</div>
+    }
+
+    else
+    {
+        <table class="d-none d-md-table table m-0 mb-3 white-bag" style="margin-bottom: 0 !important;">
+            <thead class="table-secondary">
+                <tr>
+                    <th class="ps-3 align-middle">Date</th>
+                    <th class="ps-3 align-middle">item</th>
+                    <th class="ps-3 align-middle">Amount</th>
+                    <th class="ps-3 align-middle">Bill</th>
+                    <th class="ps-3 align-middle">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.timeSheetReimbursements)
+                {
+
+                    <tr>
+                        <td scope="col" class="ps-3">@item.date</td>
+                        <td scope="col" class="ps-3">@item.item</td>
+                        <td scope="col" class="ps-3">@item.Amount</td>
+                        <td scope="col" class="ps-3">@item.Bill</td>
+                        <td scope="col" class="ps-3"><a class="btn btn-outline-info" href='~/Receipts/@ViewBag.PhysicianId/@item.day@item.Bill'>View</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

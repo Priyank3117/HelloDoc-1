@@ -15,7 +15,7 @@
         <div class="d-flex justify-content-between">
 
 
-            <select class="form-select py-3 w-25" onchange="LoadTimeSheet()" id="selectedDate" aria-label="Default select example">
+            <select class="form-select py-3 w-25" onchange="LoadPageData()" id="selectedDate" aria-label="Default select example">
                 <option value="0">Search By Timesheetperiod</option>
                 @{
                     int month = 1;
@@ -47,7 +47,9 @@
             </div>
             
             <div class="container px-0 w-75" id="timssheetdata">
+            </div>
 
+    <div class="container px-0 w-75 pt-3" id="reimbursement">
 
             </div>
 
@@ -58,37 +60,17 @@
 </div>
 <script>
 
-   
+    function LoadPageData() {
+        LoadTimeSheet()
+        LoadReimbursement();
 
-    function openTimesheet() {
-    
-        var date = $("#selectedDate").val();
-
-        if (date != "0") {
-            $.ajax({
-                type: 'GET',
-                url: '/ProviderDashBoard/OpenSheet',
-                data: { date: date },
-                success: function (response) {
-
-                    $("#timssheet").html(response);
-                    $("#TopDiv").hide();
-                    $("#text").css('visibility','hidden');  
-                    $('#timssheetdata').hide();
-
-                },
-                error: function (data) {
-                    alert(data);
-                }
-            });
-        } else {
-            alert("please select the date");
-        }
     }
 
+
+
+
+    //onchange
     function LoadTimeSheet(){
-
-
         var date = $("#selectedDate").val();
 
         if (date != "0") { 
@@ -115,6 +97,66 @@
                     alert(response.d);
                 }
             });
+        }
+    }
+
+    
+
+    function LoadReimbursement() {
+        var date = $("#selectedDate").val();
+
+        if (date != "0") {
+            $.ajax({
+                type: 'GET',
+                url: '/ProviderDashBoard/GetReimbursementData',
+                data: { date: date },
+                success: function (response) {
+                    debugger
+                    $("#reimbursement").html(response);
+
+                    // var finalizeValue = $(".FinalizeValue").val();
+
+                    // if (finalizeValue == "true") {
+                    //     $("#btnoffinalize").hide();
+                    // }
+                    // else {
+                    //     $("#btnoffinalize").show();
+                    // }
+
+
+                },
+                error: function (response) {
+                    alert("LoadReimbursement");
+                }
+            });
+        }
+    }
+
+
+    function openTimesheet() {
+
+        var date = $("#selectedDate").val();
+
+        if (date != "0") {
+            $.ajax({
+                type: 'GET',
+                url: '/ProviderDashBoard/OpenSheet',
+                data: { date: date },
+                success: function (response) {
+
+                    $("#timssheet").html(response);
+                    $("#TopDiv").hide();
+                    $("#text").css('visibility', 'hidden');
+                    $('#timssheetdata').hide();
+                    $('#reimbursement').hide();
+
+                },
+                error: function (data) {
+                    alert(data);
+                }
+            });
+        } else {
+            alert("please select the date");
         }
     }
 </script>

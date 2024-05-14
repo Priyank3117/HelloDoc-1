@@ -4,6 +4,7 @@ using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BAL.Repository
 {
@@ -108,11 +109,30 @@ namespace BAL.Repository
                                     BatchTesting = 0,
 
                                 }).Distinct().ToList();
+            return table;
+        }
 
+        public TimeSheetMainModel getReimbursementTableData(DateOnly startdateonly,DateOnly enddateonly)
+        {
+            var table = new TimeSheetMainModel();
 
-           
-            return table;   
+            table.startdate = startdateonly.ToString("MMM dd, yyyy");
+            table.enddate = enddateonly.ToString("MMM dd, yyyy");
 
+            table.timeSheetReimbursements =(from timesheetdetails in _context.TimesheetDetails 
+                                            join timesheetDetailReimbursement in _context.TimesheetDetailReimbursements
+                                            on timesheetdetails.TimesheetDetailId equals timesheetDetailReimbursement.TimesheetDetailId
+                                            where timesheetDetailReimbursement.IsDeleted == false && timesheetdetails.TimesheetDate >= startdateonly && timesheetdetails.TimesheetDate < enddateonly
+                                            select new TimeSheetReimbursement()
+                                            {
+                                                day = timesheetdetails.TimesheetDate.Day,
+                                                date = timesheetdetails.TimesheetDate.ToString("MMM dd, yyyy"),
+                                                item = timesheetDetailReimbursement.ItemName,
+                                                Bill = timesheetDetailReimbursement.Bill,
+                                                Amount = timesheetDetailReimbursement.Amount
+                                            }).ToList();
+
+            return table;
         }
 
         public void Finalize(int id)
@@ -127,5 +147,7 @@ namespace BAL.Repository
             }
 
         }
+
+        
     }
 }

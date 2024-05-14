@@ -11,6 +11,7 @@ using DAL.DataModels;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using OfficeOpenXml;
 using Microsoft.EntityFrameworkCore;
+using BAL.Repository;
 
 
 
@@ -33,12 +34,13 @@ namespace HelloDoc.Controllers
         private readonly IAdminAction _adminAction;
         private readonly IAccountsAccess _acc;
         private readonly IAdminDashboardRecords _adminDashboardRecords;
+        private readonly IInvoicing _Invoicing;
 
 
         public AdminDashController(IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
             IPasswordHasher<AdminProfile> passwordHasher,
             INotyfService notyf, IUploadProvider uploadProvider,
-            IAdminAction adminAction, IAccountsAccess accountsAccess, IAdminDashboardRecords adminDashboardRecords)
+            IAdminAction adminAction, IAccountsAccess accountsAccess, IAdminDashboardRecords adminDashboardRecords,IInvoicing invoicing)
         {
            
             _AdminDashboard = adminDashboard;
@@ -52,6 +54,7 @@ namespace HelloDoc.Controllers
             _adminAction = adminAction;
             _acc = accountsAccess;
             _adminDashboardRecords = adminDashboardRecords;
+            _Invoicing = invoicing;
         }
 
         #endregion
@@ -1412,6 +1415,36 @@ namespace HelloDoc.Controllers
             return RedirectToAction("Payrate",new {physicianId = physicianId });
             
         }
+
+        public IActionResult GetTimeSheetData(string date,int PhysicianId)
+            {
+            
+
+            var result = _Invoicing.getTimesheetTableData(date, PhysicianId);
+
+            ViewBag.startDate = DateOnly.Parse(date);
+            ViewBag.endDate = DateOnly.FromDateTime(ViewBag.startDate.Day == 1 ? new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 15) : new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 1).AddMonths(1).AddDays(-1));
+            ViewBag.PhysicianId = PhysicianId;
+
+
+            return PartialView("_TimeSheetMainView", result);
+
+
+        }
+
+        public IActionResult GetReimbursementData(string date, int PhysicianId)
+        {
+            DateTime startdate = DateTime.Parse(date);
+            DateOnly startdateonly = DateOnly.Parse(date);
+            DateTime enddate = startdate.Day == 1 ? new DateTime(startdate.Year, startdate.Month, 15) : new DateTime(startdate.Year, startdate.Month, 1).AddMonths(1).AddDays(-1);
+            DateOnly enddateonly = DateOnly.FromDateTime((DateTime)enddate);
+           
+            var result = _Invoicing.getReimbursementTableData(startdateonly, enddateonly);
+            ViewBag.PhysicianId = PhysicianId;
+            ViewBag.Isnull = result.timeSheetReimbursements.Count == 0 ? true : false;
+            return PartialView("_TimeSheetMainView", result);
+        }
+      
 
     }
 
