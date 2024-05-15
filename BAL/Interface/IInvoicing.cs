@@ -19,6 +19,7 @@ namespace BAL.Interface
 
         public TimeSheetMainModel getTimesheetTableData(string date, int? physicianId);
         public TimeSheetMainModel getReimbursementTableData(DateOnly startdateonly, DateOnly enddateonly);
+        public TimeSheetMainModel GetTableData(DateOnly startdateonly, DateOnly enddateonly, string date, int? physicianId);
         public void Finalize(int id);
 
     }

@@ -47,6 +47,7 @@ namespace HelloDoc.Controllers
             _files = files;
             _notyf = notyf;
             _Invoicing = invoicing;
+            
         }
      
         public IActionResult ProviderDashBoard()
@@ -610,5 +611,7 @@ namespace HelloDoc.Controllers
             return RedirectToAction("GetRecieptForm", new { date = dos });
 
         }
+
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using DAL.ViewModels;
+﻿using DAL.DataModels;
+using DAL.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace DAL.ViewModel
         public DateOnly enddate { get; set; }
         public int? physicianId { get; set; }
         public List<TimeSheetForm> timesheetdata { get; set; }
+
+        public List<TimesheetDetailReimbursement> reimbursementdata { get; set; }
 
 
 

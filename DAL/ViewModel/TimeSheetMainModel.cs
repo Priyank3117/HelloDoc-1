@@ -11,6 +11,8 @@ namespace DAL.ViewModel
 
         public string startdate {  get; set; }
 
+        public string physicianName { get; set; }
+
         public string enddate { get; set; } 
 
         public bool isFinalize {get;set;}

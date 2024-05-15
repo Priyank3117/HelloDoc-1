@@ -3,6 +3,7 @@ using DAL.DataContext;
 using DAL.DataModels;
 using DAL.ViewModel;
 using DAL.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -116,9 +117,6 @@ namespace BAL.Repository
         {
             var table = new TimeSheetMainModel();
 
-            table.startdate = startdateonly.ToString("MMM dd, yyyy");
-            table.enddate = enddateonly.ToString("MMM dd, yyyy");
-
             table.timeSheetReimbursements =(from timesheetdetails in _context.TimesheetDetails 
                                             join timesheetDetailReimbursement in _context.TimesheetDetailReimbursements
                                             on timesheetdetails.TimesheetDetailId equals timesheetDetailReimbursement.TimesheetDetailId
@@ -135,6 +133,64 @@ namespace BAL.Repository
             return table;
         }
 
+        public TimeSheetMainModel GetTableData(DateOnly startdateonly, DateOnly enddateonly, string date, int? physicianId)
+        {
+            var table = new TimeSheetMainModel();
+
+                var isFinalize = (bool)_context.Timesheets.Any(i => i.PhysicianId == physicianId && i.StartDate == DateOnly.Parse(date));
+
+               if(isFinalize)
+            {
+                 table.isFinalize = (bool)_context.Timesheets.FirstOrDefault(i => i.PhysicianId == physicianId && i.StartDate == DateOnly.Parse(date)).IsFinalize;
+
+                table.isApproved = (bool)_context.Timesheets.FirstOrDefault(i => i.PhysicianId == physicianId && i.StartDate == DateOnly.Parse(date)).IsApproved;
+                table.startdate = startdateonly.ToString("MMM dd, yyyy");
+                table.enddate = enddateonly.ToString("MMM dd, yyyy");
+                table.timeSheetdataMainPage = (from timesheetdetails in _context.TimesheetDetails
+                                               join timesheet in _context.Timesheets
+                                               on timesheetdetails.TimesheetId equals timesheet.TimesheetId into timesheetjoin
+                                               from timesheetTotal in timesheetjoin.DefaultIfEmpty()
+                                               where timesheetTotal.PhysicianId == physicianId && timesheetTotal.StartDate == DateOnly.Parse(date)
+                                               select new TimeSheetdataMainPage()
+                                               {
+                                                   shiftDate = timesheetdetails.TimesheetDate,
+                                                   shift = _context.ShiftDetails.Where(u => DateOnly.FromDateTime(u.ShiftDate) == timesheetdetails.TimesheetDate && u.Shift.PhysicianId == physicianId && u.IsDeleted != new System.Collections.BitArray(new[] { true })).Count(),
+                                                   NightShiftWeekend = 0,
+                                                   HouseCallNightWeekend = 0,
+                                                   PhoneConsultant = 0,
+                                                   HouseCall = 0,
+                                                   PhoneConsultantNightWeekend = 0,
+                                                   BatchTesting = 0,
+
+                                               }).Distinct().ToList();
+
+
+                table.timeSheetReimbursements = (from timesheetdetails in _context.TimesheetDetails
+                                                 join timesheetDetailReimbursement in _context.TimesheetDetailReimbursements
+                                                 on timesheetdetails.TimesheetDetailId equals timesheetDetailReimbursement.TimesheetDetailId
+                                                 where timesheetDetailReimbursement.IsDeleted == false && timesheetdetails.TimesheetDate >= startdateonly && timesheetdetails.TimesheetDate < enddateonly
+                                                 select new TimeSheetReimbursement()
+                                                 {
+                                                     day = timesheetdetails.TimesheetDate.Day,
+                                                     date = timesheetdetails.TimesheetDate.ToString("MMM dd, yyyy"),
+                                                     item = timesheetDetailReimbursement.ItemName,
+                                                     Bill = timesheetDetailReimbursement.Bill,
+                                                     Amount = timesheetDetailReimbursement.Amount
+                                                 }).ToList();
+            }
+
+               else
+            {
+                table.isFinalize = false;
+                table.physicianName= _context.Physicians.FirstOrDefault(s => s.PhysicianId == physicianId).FirstName ;
+
+
+            }
+
+
+            return table;
+        }
+
         public void Finalize(int id)
         {
             var isFinalize = _context.Timesheets.FirstOrDefault(i => i.TimesheetId == id);
@@ -147,7 +203,5 @@ namespace BAL.Repository
             }
 
         }
-
-        
     }
 }

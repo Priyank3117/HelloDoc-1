@@ -12,6 +12,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using OfficeOpenXml;
 using Microsoft.EntityFrameworkCore;
 using BAL.Repository;
+using DAL.DataContext;
 
 
 
@@ -35,12 +36,12 @@ namespace HelloDoc.Controllers
         private readonly IAccountsAccess _acc;
         private readonly IAdminDashboardRecords _adminDashboardRecords;
         private readonly IInvoicing _Invoicing;
-
+        private readonly ApplicationDbContext _context;
 
         public AdminDashController(IAdminDashBoard adminDashboard, IHostingEnvironment environment, IAddFile files, IPatient_Request patient, IEmailService emailService,
             IPasswordHasher<AdminProfile> passwordHasher,
             INotyfService notyf, IUploadProvider uploadProvider,
-            IAdminAction adminAction, IAccountsAccess accountsAccess, IAdminDashboardRecords adminDashboardRecords,IInvoicing invoicing)
+            IAdminAction adminAction, IAccountsAccess accountsAccess, IAdminDashboardRecords adminDashboardRecords,IInvoicing invoicing,ApplicationDbContext applicationDbContext)
         {
            
             _AdminDashboard = adminDashboard;
@@ -55,6 +56,7 @@ namespace HelloDoc.Controllers
             _acc = accountsAccess;
             _adminDashboardRecords = adminDashboardRecords;
             _Invoicing = invoicing;
+            _context = applicationDbContext;
         }
 
         #endregion
@@ -1416,20 +1418,45 @@ namespace HelloDoc.Controllers
             
         }
 
-        public IActionResult GetTimeSheetData(string date,int PhysicianId)
+        public IActionResult GetApprovalSheetData(string date, int PhysicianId)
             {
-            
+            var timeSheet = new TimeSheet();
+            timeSheet.startdate = DateOnly.Parse(date);
+           
+            timeSheet.physicianId = PhysicianId;
 
-            var result = _Invoicing.getTimesheetTableData(date, PhysicianId);
+            timeSheet.enddate = DateOnly.FromDateTime(timeSheet.startdate.Day == 1 ?
+              new DateTime(timeSheet.startdate.Year, timeSheet.startdate.Month, 15) :
+              new DateTime(timeSheet.startdate.Year, timeSheet.startdate.Month, 1).AddMonths(1).AddDays(-1));
+
+            var result = _Invoicing.getTimesheetdetails(PhysicianId.ToString(), date);
+            timeSheet.timesheetdata = result;
+
 
             ViewBag.startDate = DateOnly.Parse(date);
             ViewBag.endDate = DateOnly.FromDateTime(ViewBag.startDate.Day == 1 ? new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 15) : new DateTime(ViewBag.startDate.Year, ViewBag.startDate.Month, 1).AddMonths(1).AddDays(-1));
+
             ViewBag.PhysicianId = PhysicianId;
+            var data = (from timesheetReimbutrsment in _context.TimesheetDetailReimbursements
+                        join timesheetdetails in _context.TimesheetDetails
+                        on timesheetReimbutrsment.TimesheetDetailId equals timesheetdetails.TimesheetDetailId
+                        orderby timesheetdetails.TimesheetDetailId
+                        where timesheetdetails.Timesheet.PhysicianId == PhysicianId && timesheetdetails.Timesheet.StartDate == DateOnly.Parse(date)
 
+                        select new TimesheetDetailReimbursement()
+                        {
+                            TimesheetDetailId = timesheetdetails.TimesheetDetailId,
+                            Bill = timesheetReimbutrsment.Bill,
+                            ItemName = timesheetReimbutrsment.ItemName,
+                            Amount = timesheetReimbutrsment.Amount,
+                            CreatedBy = timesheetReimbutrsment.CreatedBy,
+                            IsDeleted = timesheetReimbutrsment.IsDeleted
 
-            return PartialView("_TimeSheetMainView", result);
+                        }).ToList();
 
+            timeSheet.reimbursementdata = data;
 
+            return PartialView("_OpenForApproval", timeSheet);
         }
 
         public IActionResult GetReimbursementData(string date, int PhysicianId)
@@ -1439,9 +1466,8 @@ namespace HelloDoc.Controllers
             DateTime enddate = startdate.Day == 1 ? new DateTime(startdate.Year, startdate.Month, 15) : new DateTime(startdate.Year, startdate.Month, 1).AddMonths(1).AddDays(-1);
             DateOnly enddateonly = DateOnly.FromDateTime((DateTime)enddate);
            
-            var result = _Invoicing.getReimbursementTableData(startdateonly, enddateonly);
+            var result = _Invoicing.GetTableData(startdateonly, enddateonly,date, PhysicianId);
             ViewBag.PhysicianId = PhysicianId;
-            ViewBag.Isnull = result.timeSheetReimbursements.Count == 0 ? true : false;
             return PartialView("_TimeSheetMainView", result);
         }
       
