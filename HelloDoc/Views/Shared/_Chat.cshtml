@@ -1,0 +1,120 @@
+﻿
+
+<!-- Include SignalR scripts -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header bg-info">
+        <div class="d-flex">
+            <img id="providerImage" src="" alt="Provider Image" width="40">
+            <p id="physicianName"></p>
+        </div>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <input type="hidden" id="displayName" />
+        <ul id="chats"></ul>
+        <div class="d-flex w-100">
+            <input type="text" id="userMessage" class="form-control" placeholder="Type a Message">
+            <button type="button" id="sendMessage" class="btn btn-info text-white ms-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"></path>
+                </svg>
+            </button>
+        </div>
+        @*  <input  type="text" />
+        <input type="button"  value="Send" /> *@
+    </div>
+</div>
+<script>
+    let connection;
+    let physicianId;
+    // Check if connection is undefined
+    if (typeof connection === 'undefined') {
+        // Define connection variable
+
+        // Event listener for sendMessage button
+        document.getElementById("sendMessage").addEventListener("click", event => {
+            debugger
+            const message = document.getElementById("userMessage").value;
+            connection.invoke("SendMessage", physicianId.toString(), message).catch(err => console.error(err.toString()));
+        });
+
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        var loginconnectionId = '';
+        connection.start().then(function () {
+            connection.invoke("GetConnectionId").then(function (id) {
+                console.log(id);
+                loginconnectionId = id;
+            });
+
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        // Define event handler for ReceiveMessage
+        connection.on("ReceiveMessage", (ConnectionId, user, message) => {
+            console.log(ConnectionId)
+            console.log(user)
+            console.log(message)
+            // if (ConnectionId == loginconnectionId) {
+
+            const msg = message.replace(/&/g, "&").replace(/</g, "<");
+            const encodedMsg = user + " :: " + msg;
+            const li = document.createElement("li");
+            li.textContent = encodedMsg;
+            document.getElementById("chats").appendChild(li);
+            console.log(loginconnectionId, user, message);
+            // }
+        });
+
+
+        // Show offcanvasRight event handler
+        $('#offcanvasRight').on('shown.bs.offcanvas', function (event) {
+            var button = $(event.relatedTarget);
+            console.log(button);
+            physicianId = button.data('bs-physician-id');
+            console.log(typeof physicianId)
+            // Create SignalR connection
+
+
+            // Start the SignalR connection
+
+
+
+            // Ajax call to retrieve physician details
+            $.ajax({
+                method: "GET",
+                url: "/AdminDash/ChatPerSonDetails",
+                data: { physicianId: physicianId },
+                success: function (data) {
+                    console.log(data)
+                    if (Boolean('@ViewBag.IsPhysician') === false) {
+                        $('#physicianName').text(data.physicianAspnetusers.firstname);
+                        $('#providerImage').attr('src', '/Physician/' + data.physicianAspnetusers.physicianId + '/' + data.physicianAspnetusers.photo);
+                    }
+                    else {
+                        $('#physicianName').text(data.username);
+                        // $('#providerImage').attr('src', '/Physician/' + data.physicianId + '/' + data.photo);
+                    }
+                }
+            });
+
+
+            // Set physician ID in a hidden field or element for later use
+            $('#physicianIdDisplay').val(physicianId);
+            console.log($('#physicianIdDisplay').val(physicianId))
+        });
+        $('#offcanvasRight').on('hide.bs.offcanvas', function (event) {
+            // Stop the SignalR connection
+            connection.stop();
+        });
+    }
+</script>
+
+
+
+
+
+

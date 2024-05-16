@@ -2,6 +2,7 @@ using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using BAL.Interface;
 using BAL.Repository;
+using BusinessLogic.Repository;
 using DAL.DataContext;
 using DAL.ViewModel;
 using DAL.ViewModels;
@@ -72,7 +73,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
      };
  });
 //Jwt configuration ends here 
-
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -91,6 +92,8 @@ app.UseRotativa();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<ChatHub>("/chatHub");
+
 app.UseSession();
 app.UseNotyf();
 

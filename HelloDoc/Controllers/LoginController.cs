@@ -90,6 +90,8 @@ namespace HelloDoc.Controllers
                         }
                         else if (role == "Admin")
                         {
+                            string aspNetUserId = _context.AspNetUsers.FirstOrDefault(i => i.Email == patient.Email).AspNetUserId;
+                            HttpContext.Session.SetString("aspnetuserid", aspNetUserId);
                             _notyf.Success("Successfully Login");
                             return RedirectToAction("AdminDash", "AdminDash");
                         }
