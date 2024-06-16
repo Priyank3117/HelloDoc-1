@@ -31,10 +31,18 @@ namespace AssignmentTask.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult GetSearchProjects(string SearchValue)
+        public IActionResult GetSearchProjects(string SearchValue, int currentpage = 1, int pagesize = 5)
         {
-            var result = _project.ProjectList().Where(item => (string.IsNullOrEmpty(SearchValue) || item.ProjectName.ToLower().Contains(SearchValue.ToLower()))).OrderBy(s =>s.ProjectId).ToList();
-            return PartialView("_ProjectPartial",result);
+            var result = _project.ProjectList().Where(item => (string.IsNullOrEmpty(SearchValue) || item.ProjectName.ToLower().Contains(SearchValue.ToLower()))).OrderBy(s => s.ProjectId).ToList();
+
+
+            int totalItems = result.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pagesize);
+
+            var paginatedData = result.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = currentpage;
+            return PartialView("_ProjectPartial", paginatedData);
         }
         [HttpGet]
         public IActionResult EditProject(string id)

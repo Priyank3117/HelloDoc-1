@@ -37,7 +37,74 @@
         }
     </tbody>
 </table>
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<nav id="pagination" aria-label="Page navigation" class="d-flex justify-content-end">
+    <ul class="pagination justify-content-center">
+        @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+        {
+            int prevPage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+            int currPage = Convert.ToInt32(ViewBag.CurrentPage);
+            int nextPage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+            int totalPages = Convert.ToInt32(ViewBag.TotalPages);
+            int displayPagesAround = 1;
+
+            // Page number links with gaps
+            if (currPage > displayPagesAround + 2)
+            {
+                <li class="page-item">
+                    <a class="page-link" data-page="1" aria-label="Page 1">
+                        <span>1</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" data-page="2" aria-label="Page 2">
+                        <span>2</span>
+                    </a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            }
+
+            int startPage = Math.Max(currPage - displayPagesAround, 1);
+            int endPage = Math.Min(currPage + displayPagesAround, totalPages);
+
+            for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currPage ? "active" : "")">
+                    <a class="page-link" id="currPage_@i" data-page="@(i)" aria-label="Page @(i)">
+                        <span>@i</span>
+                    </a>
+                </li>
+            }
+
+            if (currPage < totalPages - displayPagesAround - 1)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                for (int i = totalPages - 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currPage ? "active" : "")">
+                        <a class="page-link" id="currPage_@i" data-page="@(i)" aria-label="Page @(i)">
+                            <span>@i</span>
+                        </a>
+                    </li>
+                }
+            }
+        }
+
+        <!-- Input for direct page navigation -->
+        <li class="page-item d-flex">
+            <input type="number" id="pageInput" class="form-control" min="1" max="@ViewBag.TotalPages" data-max="@ViewBag.TotalPages" placeholder="Page #" style="width: 80px;">
+            <button id="pageSubmit" class="btn btn-primary">Go</button>
+        </li>
+    </ul>
+</nav>
+
 
 
 
@@ -61,4 +128,207 @@
         })
 
     };
+
+    $(document).on("click", "#pageSubmit", function () {
+
+        currentpage = $("#pageInput").val();
+        var totalpage = $("#pageInput").data("max");
+
+
+        if (currentpage > totalpage ) { 
+            currentpage = totalpage
+        }
+
+        if (currentpage < 1) { 
+            currentpage = 1
+        }
+
+        var pagesize = $("#variablepagesize").val();
+        filtertable(currentpage, pagesize);
+    });
+
 </script>
+
+
+@* 
+    pagination of  <-1 2 3->   
+
+<nav id="pagination" aria-label="Page navigation" class=" d-flex justify-content-end">
+    <ul class="pagination justify-content-center ">
+        @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+        {
+            int prevpage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+            int currpage = Convert.ToInt32(ViewBag.CurrentPage);
+            int nextpage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+            if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" id="previous" data-page="@(prevpage)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                </li>
+            }
+            for (int z = 0; z < 3; z++)
+            {
+                if (currpage + z <= ViewBag.TotalPages)
+                {
+                    <li class="page-item @(currpage + z ==ViewBag.CurrentPage ?"active":"")">
+                        <a class="page-link" id="current_@z" data-page="@(currpage + z)" aria-label="Current">
+                            <span>@(ViewBag.CurrentPage + z)</span>
+                        </a>
+                    </li>
+                }
+            }
+            if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" id="next" data-page="@(nextpage)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</nav> *@
+
+
+@* 
+    
+  pagination of the   jump on first page <- 1 2 3 -> jump on last page
+
+<nav id="pagination" aria-label="Page navigation" class="d-flex justify-content-end">
+    <ul class="pagination justify-content-center">
+        @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+        {
+            int prevPage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+            int currPage = Convert.ToInt32(ViewBag.CurrentPage);
+            int nextPage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+            int totalPages = Convert.ToInt32(ViewBag.TotalPages);
+
+            // First Page link
+            if (currPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" id="first" data-page="1" aria-label="First">
+                        <span aria-hidden="true">First</span>
+                    </a>
+                </li>
+            }
+
+            // Previous Page link
+            if (currPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" id="previous" data-page="@(prevPage)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                </li>
+            }
+
+            // Page number links
+            int startPage = currPage > 1 ? currPage - 1 : 1;
+            int endPage = currPage + 1 <= totalPages ? currPage + 1 : totalPages;
+
+            for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currPage ? "active" : "")">
+                    <a class="page-link" id="currPage_@i" data-page="@(i)" aria-label="Page @(i)">
+                        <span>@i</span>
+                    </a>
+                </li>
+            }
+
+            // Next Page link
+            if (currPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" id="next" data-page="@(nextPage)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                </li>
+            }
+
+            // Last Page link
+            if (currPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" id="last" data-page="@(totalPages)" aria-label="Last">
+                        <span aria-hidden="true">Last</span>
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</nav> *@
+
+
+
+@* 
+    pagination in which show all the page like ----------------- 1 2 3 ... 4 5 6 ... 12
+
+<nav id="pagination" aria-label="Page navigation" class="d-flex justify-content-end">
+    <ul class="pagination justify-content-center">
+        @if (ViewBag.CurrentPage >= 1 && ViewBag.CurrentPage <= ViewBag.TotalPages)
+        {
+            int prevPage = Convert.ToInt32(ViewBag.CurrentPage) - 1;
+            int currPage = Convert.ToInt32(ViewBag.CurrentPage);
+            int nextPage = Convert.ToInt32(ViewBag.CurrentPage) + 1;
+            int totalPages = Convert.ToInt32(ViewBag.TotalPages);
+            int displayPagesAround = 1;
+
+
+
+            // Page number links with gaps
+            if (currPage > displayPagesAround + 2)
+            {
+                <li class="page-item">
+                    <a class="page-link" data-page="1" aria-label="Page 1">
+                        <span>1</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" data-page="2" aria-label="Page 2">
+                        <span>2</span>
+                    </a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            }
+
+            int startPage = Math.Max(currPage - displayPagesAround, 1);
+            int endPage = Math.Min(currPage + displayPagesAround, totalPages);
+
+            for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currPage ? "active" : "")">
+                    <a class="page-link" id="currPage_@i" data-page="@(i)" aria-label="Page @(i)">
+                        <span>@i</span>
+                    </a>
+                </li>
+            }
+
+            if (currPage < totalPages - displayPagesAround - 1)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                for (int i = totalPages - 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currPage ? "active" : "")">
+                        <a class="page-link" id="currPage_@i" data-page="@(i)" aria-label="Page @(i)">
+                            <span>@i</span>
+                        </a>
+                    </li>
+                }
+            }
+
+
+
+        }
+    </ul>
+</nav> *@

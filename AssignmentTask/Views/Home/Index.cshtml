@@ -6,17 +6,32 @@
 
 <div class="text-center">
     <div class=" text-center" style="background-color:#a87132;height:60px">  <h3 class="w-100  mt-2 text-white mb-1">Project Management Stystem</h1></div>
-  
-     <div class="w-100 bg-dark text-center" style="height:80px">
+
+    <div class="w-100 bg-dark text-center" style="height:80px">
         <div class=""><button class="btn bg-white mt-4" data-bs-toggle="modal" data-bs-target="#exampleModal">ADD PROJECT</button></div>
-     </div>
+    </div>
     <div class="w-100 mt-3">
-        <input type="text"  id="Search" class="form-control w-75 mx-auto" placeholder="search">
+        <input type="text" id="Search" class="form-control w-75 mx-auto" placeholder="search">
 
         <div class="mt-3 w-75 mx-auto" id="Partial">
         </div>
     </div>
+
 </div>
+
+<div class="d-flex" style="margin-top:-50px;margin-left:220px">
+    <div>
+        <select class="form-select  form-select-sm" id="variablepagesize" aria-label=".form-select-sm example">
+
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+</div>
+
 
 
 
@@ -29,9 +44,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-           
+
             <div class="modal-body">
-                <form asp-action="ProjectAdd" >
+                <form asp-action="ProjectAdd">
                     <div class="row mt-3">
                         <div class="col">
                             <input type="text" asp-for="taskName" class="form-control" placeholder="Task Name" required>
@@ -42,7 +57,7 @@
                             <span asp-validation-for="assignee"></span>
                         </div>
                     </div>
-              
+
                     <div class="row mt-3">
                         <div class="col">
                             <input type="text" asp-for="description" class="form-control" placeholder="Description" required>
@@ -54,38 +69,41 @@
                             <span asp-validation-for="dueDate"></span>
                         </div>
                     </div>
-             
-               
+
+
                     <div class="row mt-3">
                         <div class="col">
-                            <input type="text" asp-for="city" class="form-control" placeholder="City" >
+                            <input type="text" asp-for="city" class="form-control" placeholder="City">
                         </div>
                         <div class="col">
                             <select class="form-control  shadow-none" asp-for="domainValue" required>
-                                <option  selected disabled>All Domain</option>
+                                <option selected disabled>All Domain</option>
                                 @foreach (var state in ViewBag.Domains)
                                 {
                                     <option value="@state.DomainId">@state.Name</option>
                                 }
                             </select>
-                            
+
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit"  class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
-                </form> 
+                </form>
             </div>
-           
+
         </div>
     </div>
+
 </div>
 <div class="modalPV"></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script>
-    
+
+
+@* <script>
+
     var modalBody = document.querySelector('#eventModal .modal-body');
 
     $("#Search").on("input", function () {
@@ -93,12 +111,12 @@
     });
 
     filter();
-    function filter() { 
-      SearchValue = $("#Search").val();  
+    function filter() {
+        SearchValue = $("#Search").val();
         $.ajax({
             type: 'GET',
             url: '/Home/GetSearchProjects',
-           
+
             data: {
                 SearchValue: SearchValue
             },
@@ -110,6 +128,16 @@
             }
         })
     }
-    
 
+
+</script> *@
+
+<script>
+
+    $("#variablepagesize").on("change", function () {
+        console.log("baba");
+        var currentpage = 1;
+        var pagesize = $("#variablepagesize").val();
+        filtertable(currentpage, pagesize);
+    });
 </script>

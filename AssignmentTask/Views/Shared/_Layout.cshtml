@@ -30,21 +30,68 @@
     </script>
 </head>
 <body>
-   
+
     <div class="container-fluid">
         <main role="main" class="">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - AssignmentTask - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+
+    var currentpage = 1;
+    var pagesize = $("#variablepagesize").val();
+
+    filtertable(currentpage, pagesize);
+
+    $(document).on("click", "#pagination a.page-link", function () {
+
+        console.log("Pagination link clicked!");
+        var id = $(this).attr("id");
+        currentpage = $("#" + id).data("page");
+        console.log("Current Page: " + currentpage);
+        var pagesize = $("#variablepagesize").val();
+        filtertable(currentpage, pagesize);
+    });
+
+
+
+
+    $("#Search").on("input", function () {
+        var pagesize = $("#variablepagesize").val();
+        filtertable(currentpage, pagesize);
+    });
+
+
+    function filtertable(currentpage, pagesize)
+    {
+        var SearchValue = $("#Search").val();
+
+        $.ajax({
+            type: "GET",
+            url: '/Home/GetSearchProjects',
+            traditional: true,
+            data: {
+                SearchValue: SearchValue, currentpage: currentpage, pagesize: pagesize
+            },
+            success: function (data) {
+                $('#Partial').html(data);
+                $("#pageInput").text = currentpage;
+
+            },
+            error: function (error) {
+                console.error(" ", error);
+            }
+        });
+    }
+</script>
